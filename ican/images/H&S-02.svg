@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80.16 47.82">
+  <defs>
+    <style>
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.5px;
+      }
+
+      .cls-1, .cls-3 {
+        stroke-linejoin: round;
+      }
+
+      .cls-2 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-3 {
+        stroke-linecap: round;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <polyline class="cls-3" points="64.89 13.39 71.49 25.57 75.55 26.62"/>
+      <path class="cls-3" d="M75.55,26.62s1.54.32,2.54,1.54c1.02,1.26.8,3.95.8,3.95"/>
+      <polyline class="cls-3" points="78.89 32.11 78.89 40.59 71.04 40.59"/>
+      <polyline class="cls-2" points="24.2 40.61 50.13 40.61 50.13 12.48 73.79 12.48"/>
+      <path class="cls-2" d="M73.79,12.48c4.77,0,3.41-4.13,3.41-4.13-2.04-7.59-14.45-7.08-14.45-7.08"/>
+      <line class="cls-2" x1="62.74" y1="1.26" x2="4.93" y2="1.26"/>
+      <path class="cls-2" d="M4.93,1.26s-3.68-.45-3.68,3.97"/>
+      <line class="cls-2" x1="1.26" y1="5.24" x2="1.26" y2="37.1"/>
+      <path class="cls-2" d="M1.26,37.1s-.34,3.59,3.77,3.59"/>
+      <line class="cls-2" x1="5.02" y1="40.7" x2="8.25" y2="40.68"/>
+      <line class="cls-3" x1="56.66" y1="25.78" x2="71.67" y2="25.78"/>
+      <line class="cls-3" x1="56.66" y1="25.6" x2="56.66" y2="13.75"/>
+      <path class="cls-3" d="M12.8,41.11c0,3.01,2.44,5.45,5.46,5.45s5.45-2.44,5.45-5.45-2.44-5.45-5.45-5.45-5.46,2.45-5.46,5.45Z"/>
+      <path class="cls-3" d="M59.96,41.11c0,3.01,2.44,5.45,5.46,5.45s5.45-2.44,5.45-5.45-2.44-5.45-5.45-5.45-5.46,2.45-5.46,5.45Z"/>
+      <polyline class="cls-1" points="31.87 35.92 31.87 12.29 43.07 12.29 43.07 35.92"/>
+      <rect class="cls-3" x="9.68" y="12.63" width="13.74" height="10.45"/>
+      <line class="cls-3" x1="65.19" y1="6.72" x2="59.8" y2="6.72"/>
+      <line class="cls-2" x1="46.92" y1="40.61" x2="55.19" y2="40.61"/>
+    </g>
+  </g>
+</svg>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 72.96 51.66">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+        stroke: #141313;
+        stroke-width: 2.5px;
+      }
+
+      .cls-4 {
+        fill: #141313;
+      }
+
+      .cls-2 {
+        stroke-linecap: round;
+      }
+
+      .cls-2, .cls-3 {
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <line class="cls-2" x1="9.84" y1="50.41" x2="14.34" y2="50.41"/>
+      <line class="cls-2" x1="58.62" y1="50.41" x2="63.12" y2="50.41"/>
+      <line class="cls-1" x1="1.25" y1="13.75" x2="1.25" y2="39.07"/>
+      <path class="cls-1" d="M1.25,39.07c0,3.12,2.55,5.67,5.67,5.67"/>
+      <line class="cls-1" x1="6.92" y1="44.74" x2="66.04" y2="44.74"/>
+      <path class="cls-1" d="M66.04,44.74c3.12,0,5.67-2.55,5.67-5.67"/>
+      <line class="cls-1" x1="71.71" y1="39.07" x2="71.71" y2="6.92"/>
+      <path class="cls-1" d="M71.71,6.92c0-3.12-2.55-5.67-5.67-5.67"/>
+      <line class="cls-1" x1="66.04" y1="1.25" x2="6.92" y2="1.25"/>
+      <path class="cls-1" d="M6.92,1.25C3.8,1.25,1.25,3.8,1.25,6.92"/>
+      <polyline class="cls-1" points="1.25 6.92 1.25 8.87 47.22 8.87"/>
+      <line class="cls-2" x1="47.75" y1="43.78" x2="47.75" y2="1.75"/>
+      <line class="cls-2" x1="1.53" y1="37.55" x2="47.47" y2="37.55"/>
+      <line class="cls-2" x1="41.04" y1="16.27" x2="41.04" y2="30.27"/>
+      <path class="cls-4" d="M66.48,7.27h-13.73v9.59h13.73V7.27ZM63.98,9.77v4.59h-8.73v-4.59h8.73Z"/>
+      <line class="cls-3" x1="52.75" y1="21.05" x2="58.33" y2="21.05"/>
+      <line class="cls-3" x1="60.89" y1="21.05" x2="66.48" y2="21.05"/>
+      <path class="cls-4" d="M59.61,28.26h0c-3.11,0-5.64,2.52-5.64,5.64s2.52,5.63,5.64,5.63,5.64-2.53,5.64-5.63-2.52-5.64-5.64-5.64M59.61,30.76c1.73,0,3.14,1.41,3.14,3.14s-1.41,3.13-3.14,3.13-3.14-1.41-3.14-3.13,1.41-3.14,3.14-3.14Z"/>
+    </g>
+  </g>
+</svg>

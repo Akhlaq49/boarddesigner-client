@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 46.39 73.71">
+  <defs>
+    <style>
+      .cls-1, .cls-2 {
+        stroke-linejoin: round;
+      }
+
+      .cls-1, .cls-2, .cls-3 {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.5px;
+      }
+
+      .cls-2 {
+        stroke-linecap: round;
+      }
+
+      .cls-3 {
+        stroke-miterlimit: 22.93;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <path class="cls-1" d="M4.8,55.3c-.04-.46-.05-.92-.05-1.39"/>
+      <line class="cls-1" x1="4.75" y1="53.9" x2="4.75" y2="25.34"/>
+      <path class="cls-1" d="M4.75,25.34C4.75,15.52,12.79,7.49,22.61,7.49"/>
+      <line class="cls-1" x1="22.61" y1="7.49" x2="23.78" y2="7.49"/>
+      <path class="cls-1" d="M23.78,7.49c9.82,0,17.86,8.04,17.86,17.86"/>
+      <line class="cls-1" x1="41.64" y1="25.34" x2="41.64" y2="53.9"/>
+      <path class="cls-1" d="M41.64,53.9c0,2.01-.34,3.94-.95,5.75"/>
+      <rect class="cls-2" x="1.25" y="59.98" width="43.89" height="12.48"/>
+      <polyline class="cls-2" points="15.16 47.23 29.76 47.23 29.76 53.44"/>
+      <path class="cls-2" d="M29.76,53.44c0,3.42-3.28,6.21-7.3,6.21s-7.3-2.8-7.3-6.21"/>
+      <line class="cls-2" x1="15.16" y1="53.44" x2="15.16" y2="47.23"/>
+      <line class="cls-2" x1="29.93" y1="50.63" x2="34.16" y2="50.63"/>
+      <path class="cls-2" d="M31.87,24.04c0-4.79-3.89-8.68-8.68-8.68s-8.68,3.88-8.68,8.68c0,3.78,2.42,6.98,5.78,8.17"/>
+      <polyline class="cls-2" points="20.3 32.22 20.3 38.51 26.08 38.51 26.08 32.22"/>
+      <path class="cls-2" d="M26.08,32.22c3.37-1.19,5.79-4.4,5.79-8.17"/>
+      <path class="cls-2" d="M15.73,2.25c2.18-.65,4.49-1,6.87-1"/>
+      <line class="cls-2" x1="22.61" y1="1.25" x2="23.78" y2="1.25"/>
+      <path class="cls-2" d="M23.78,1.25c2.39,0,4.69.35,6.87,1"/>
+      <path d="M34.69,35.89c0,.43-.35.78-.78.78s-.78-.35-.78-.78.35-.78.78-.78.78.35.78.78Z"/>
+      <path class="cls-3" d="M34.69,35.89c0,.43-.35.78-.78.78s-.78-.35-.78-.78.35-.78.78-.78.78.35.78.78Z"/>
+    </g>
+  </g>
+</svg>

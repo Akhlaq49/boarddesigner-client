@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30.42 92.16">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #060a0b;
+        font-family: Montserrat-SemiBold, Montserrat;
+        font-size: 10px;
+        font-weight: 600;
+      }
+
+      .cls-2 {
+        stroke-miterlimit: 10;
+      }
+
+      .cls-2, .cls-3 {
+        fill: none;
+        stroke: #000;
+        stroke-width: 2.5px;
+      }
+
+      .cls-3 {
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <path class="cls-2" d="M22.11,7.44c0,3.42-2.77,6.19-6.19,6.19s-6.19-2.77-6.19-6.19S12.5,1.25,15.92,1.25s6.19,2.77,6.19,6.19Z"/>
+      <line class="cls-3" x1="22.71" y1="71.63" x2="23.3" y2="47.39"/>
+      <path class="cls-3" d="M23.3,47.39c2.27-.82,4.99-2.72,4.75-5.11"/>
+      <line class="cls-3" x1="28.05" y1="42.28" x2="26.19" y2="23.85"/>
+      <path class="cls-3" d="M26.19,23.85c-.24-2.39-2.41-4.35-4.81-4.35"/>
+      <line class="cls-3" x1="21.38" y1="19.5" x2="10.47" y2="19.5"/>
+      <path class="cls-3" d="M10.47,19.5c-2.4,0-4.57,1.96-4.81,4.35"/>
+      <line class="cls-3" x1="5.66" y1="23.85" x2="3.8" y2="42.28"/>
+      <path class="cls-3" d="M3.8,42.28c-.24,2.39,2.48,4.29,4.75,5.11"/>
+      <line class="cls-3" x1="8.55" y1="47.39" x2="9.14" y2="71.63"/>
+      <text class="cls-1" transform="translate(0 89.51)"><tspan x="0" y="0">OB-01</tspan></text>
+    </g>
+  </g>
+</svg>

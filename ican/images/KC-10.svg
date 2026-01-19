@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 53.27 74.29">
+  <defs>
+    <style>
+      .cls-1 {
+        stroke-linecap: round;
+      }
+
+      .cls-1, .cls-2 {
+        fill: none;
+        stroke: #141313;
+        stroke-linejoin: round;
+        stroke-width: 2.5px;
+      }
+    </style>
+  </defs>
+  <g id="Layer_1-2" data-name="Layer 1">
+    <g>
+      <line class="cls-1" x1="36.51" y1="1.25" x2="20.42" y2="1.25"/>
+      <g>
+        <line class="cls-1" x1="15.05" y1="52.08" x2="7.13" y2="73.04"/>
+        <line class="cls-1" x1="41.95" y1="60.77" x2="38.49" y2="51.83"/>
+        <line class="cls-2" x1="9.72" y1="66.2" x2="38.05" y2="66.2"/>
+        <path class="cls-1" d="M44.22,60.54c3.45,0,6.24,2.79,6.24,6.24s-2.79,6.25-6.24,6.25-6.25-2.8-6.25-6.25,2.8-6.24,6.25-6.24Z"/>
+        <path class="cls-1" d="M15.86,37.66c-1.72-1.57-3.09-3.53-3.95-5.74"/>
+        <line class="cls-1" x1="1.25" y1="24.87" x2="52.02" y2="24.87"/>
+        <path class="cls-2" d="M3.69,26.4c0,12.67,10.27,22.94,22.94,22.94s22.94-10.27,22.94-22.94"/>
+        <line class="cls-2" x1="49.57" y1="26.4" x2="49.57" y2="24.91"/>
+        <path class="cls-1" d="M20.42,1.25c-2.05,0-3.73,1.84-3.73,3.89s1.68,3.89,3.73,3.89"/>
+        <line class="cls-1" x1="20.42" y1="9.04" x2="27.63" y2="9.04"/>
+        <path class="cls-1" d="M27.63,9.04c1.6,0,2.9,1.39,2.9,2.99s-1.31,3-2.9,3"/>
+        <line class="cls-1" x1="27.63" y1="15.02" x2="24.47" y2="15.02"/>
+        <path class="cls-1" d="M24.47,15.02c-1.6,0-2.91,1.31-2.91,2.9"/>
+        <line class="cls-1" x1="21.56" y1="17.93" x2="21.56" y2="19.21"/>
+      </g>
+    </g>
+  </g>
+</svg>

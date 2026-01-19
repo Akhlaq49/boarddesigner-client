@@ -1,0 +1,1377 @@
+/* Reset and Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background-color: #f5f5f5; /* Material Design background */
+    color: rgba(0, 0, 0, 0.87); /* Material Design text color */
+}
+
+/* Utility Classes */
+.fixed {
+    position: fixed;
+}
+
+/* Ensure section doesn't clip Bootstrap grid content */
+section.fixed.w-full.h-full.overflow-hidden {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.flex {
+    display: flex;
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.flex-row {
+    flex-direction: row;
+}
+
+.items-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.align-middle {
+    align-items: center;
+}
+
+.transition-colors {
+    transition-property: color, background-color, border-color;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+.select-none {
+    user-select: none;
+}
+
+/* Header Styles */
+.wrapper {
+    min-height: 100vh;
+    background-color: #f5f5f5; /* Material Design background */
+}
+
+.x-card {
+    border-radius: 4px; /* Material Design standard */
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12); /* Material Design elevation 2 */
+    background-color: #ffffff;
+    transition: box-shadow 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.x-card:hover {
+    box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.2), 
+                0 7px 10px 1px rgba(0, 0, 0, 0.14), 
+                0 2px 16px 1px rgba(0, 0, 0, 0.12); /* Material Design elevation 4 */
+}
+
+.container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.max-w-6xl {
+    max-width: 72rem;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.px-2 {
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+}
+
+.py-2 {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+}
+
+.pt-2 {
+    padding-top: 0.5rem;
+}
+
+.pb-1 {
+    padding-bottom: 0.25rem;
+}
+
+.z-30 {
+    z-index: 30;
+}
+
+.z-50 {
+    z-index: 50;
+}
+
+.top-0 {
+    top: 0;
+}
+
+.left-0 {
+    left: 0;
+}
+
+.right-0 {
+    right: 0;
+}
+
+.transition-opacity {
+    transition-property: opacity;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.hover\:opacity-100:hover {
+    opacity: 1;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+/* Material Design Background Colors */
+.bg-material-surface {
+    background-color: #ffffff;
+}
+
+.bg-material-background {
+    background-color: #f5f5f5;
+}
+
+.shadow {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.rounded-md {
+    border-radius: 0.375rem;
+}
+
+/* Material Design Button Styles */
+.x-button {
+    position: relative;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    border: none;
+    appearance: none;
+    flex-shrink: 0;
+    border-radius: 4px; /* Material Design */
+    padding: 10px 16px; /* Material Design spacing */
+    font-size: 14px;
+    cursor: pointer;
+    background-color: transparent;
+    color: #1976d2; /* Material Design primary blue */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    min-width: 64px;
+    box-shadow: none;
+}
+
+.x-button:hover {
+    background-color: rgba(25, 118, 210, 0.08); /* Material Design hover */
+}
+
+.x-button:active {
+    background-color: rgba(25, 118, 210, 0.16);
+    box-shadow: none;
+}
+
+/* Material Design Raised Button */
+.x-button.raised {
+    background-color: #1976d2;
+    color: #ffffff;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.x-button.raised:hover {
+    background-color: #1565c0;
+    box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.2), 
+                0 7px 10px 1px rgba(0, 0, 0, 0.14), 
+                0 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.x-button.raised:active {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 
+                0 1px 1px 0 rgba(0, 0, 0, 0.14), 
+                0 2px 1px -1px rgba(0, 0, 0, 0.12);
+}
+
+/* Tab Styles */
+.x-tab-group {
+    position: relative;
+}
+
+.x-tab {
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+    text-align: center;
+    padding: 12px 16px; /* Material Design spacing */
+    flex-shrink: 0;
+    flex: 1;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: rgba(0, 0, 0, 0.6); /* Material Design inactive tab */
+    font-weight: 500;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    position: relative;
+}
+
+.x-tab.active {
+    color: #1976d2; /* Material Design primary */
+}
+
+.x-tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #1976d2;
+}
+
+.x-tab:hover {
+    color: #1976d2;
+    background-color: rgba(25, 118, 210, 0.04);
+}
+
+.border-b {
+    border-bottom-width: 1px;
+}
+
+.border-secondary-200 {
+    border-color: rgba(0, 0, 0, 0.12); /* Material Design divider */
+}
+
+/* Grid Type Selector */
+.grid-type-selector {
+    margin-bottom: 1rem;
+}
+
+.grid-type-btn {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.grid-type-btn:hover {
+    border-color: #1976d2;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.grid-type-btn.active {
+    border-color: #1976d2;
+    background-color: #e3f2fd; /* Material Design light blue */
+    box-shadow: 0 2px 4px -1px rgba(25, 118, 210, 0.2), 
+                0 4px 5px 0 rgba(25, 118, 210, 0.14), 
+                0 1px 10px 0 rgba(25, 118, 210, 0.12);
+}
+
+.grid-type-btn svg {
+    display: block;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+/* Device Layout Styles */
+.layout {
+    display: grid;
+    gap: 8px; /* Material Design 8dp grid */
+    padding: 16px; /* Material Design spacing */
+    background-color: #ffffff;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    margin: 0 auto;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+/* 2x4 Layout (Default) */
+.layout-2x4 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    min-width: 300px;
+    min-height: 400px;
+}
+
+/* 1x8 Layout */
+.layout-1x8 {
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(8, 1fr);
+    min-width: 200px;
+    min-height: 500px;
+}
+
+/* 2x6 Layout */
+.layout-2x6 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(6, 1fr);
+    min-width: 300px;
+    min-height: 500px;
+}
+
+.drop-zone {
+    border: 1px dashed rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #fafafa;
+    pointer-events: auto;
+    cursor: default;
+}
+
+.drop-zone.drag-over {
+    border-color: #1976d2;
+    border-style: solid;
+    background-color: #e3f2fd;
+    box-shadow: 0 2px 4px -1px rgba(25, 118, 210, 0.2), 
+                0 4px 5px 0 rgba(25, 118, 210, 0.14), 
+                0 1px 10px 0 rgba(25, 118, 210, 0.12);
+}
+
+.drop-zone.has-content {
+    border-style: solid;
+    border-color: #1976d2;
+    border-width: 1px;
+    background-color: #ffffff;
+    pointer-events: auto;
+    cursor: pointer;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.drop-zone.selected {
+    border-color: #1976d2;
+    border-width: 2px;
+    box-shadow: 0 4px 5px -2px rgba(25, 118, 210, 0.2), 
+                0 7px 10px 1px rgba(25, 118, 210, 0.14), 
+                0 2px 16px 1px rgba(25, 118, 210, 0.12);
+}
+
+.drop-zone.selected .dropped-button {
+    border-color: #2563eb;
+}
+
+/* Ensure drop zones can receive drops - children should not block */
+.drop-zone > * {
+    pointer-events: auto;
+}
+
+.col-span-2 {
+    grid-column: span 2;
+}
+
+.row-span-2 {
+    grid-row: span 2;
+}
+
+.hidden {
+    display: none;
+}
+
+.merged-hidden {
+    display: none !important;
+}
+
+/* Draggable Button Styles */
+.draggable-btn {
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    cursor: grab;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: #ffffff;
+    position: relative;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.draggable-btn:hover {
+    border-color: #1976d2;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.draggable-btn:active {
+    cursor: grabbing;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.draggable-btn.dragging {
+    opacity: 0.6;
+    cursor: grabbing;
+    box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.2), 
+                0 7px 10px 1px rgba(0, 0, 0, 0.14), 
+                0 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+/* Pattern/Texture Styles */
+.polar-white {
+    background-color: #ffffff;
+}
+
+.royal-silver {
+    background-color: #cbd5e1;
+}
+
+.anthracite-gray {
+    background-color: #475569;
+}
+
+.meteor-black {
+    background-color: #1e293b;
+}
+
+.texture-black {
+    background-color: #0f172a;
+}
+
+.pure-gold {
+    background-color: #fbbf24;
+}
+
+.antique-copper {
+    background-color: #b45309;
+}
+
+.antique-bronze {
+    background-color: #78350f;
+}
+
+.red-cherry {
+    background-color: #dc2626;
+}
+
+.green-leaf {
+    background-color: #16a34a;
+}
+
+/* Button Part Styles */
+.custom-button-1 {
+    min-height: 60px;
+    background-color: #ffffff;
+}
+
+.custom-button-2 {
+    min-height: 60px;
+    background-color: #ffffff;
+}
+
+.custom-button-3 {
+    min-height: 120px;
+    background-color: #ffffff;
+}
+
+.custom-button-4 {
+    min-height: 120px;
+    background-color: #ffffff;
+}
+
+/* Grid for Button Parts */
+.grid {
+    display: grid;
+}
+
+.grid-cols-2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-rows-5 {
+    grid-template-rows: repeat(5, 1fr);
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+/* Main 3-Column Layout using Bootstrap */
+.main-layout-container {
+    /* Bootstrap handles the grid, we just need height */
+    height: calc(100vh - 80px);
+    padding-top: 80px; /* Space for header */
+}
+
+/* Ensure columns take full height */
+.layout-column {
+    height: 100%;
+    overflow-y: auto;
+}
+
+/* Ensure Bootstrap container takes full height and is visible */
+.container-fluid.h-100 {
+    min-height: calc(100vh - 80px);
+    visibility: visible !important;
+    width: 100%;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+/* Ensure row takes full height and is visible */
+/* Bootstrap already uses flexbox for rows, just ensure visibility */
+.row.h-100 {
+    min-height: 100%;
+    visibility: visible !important;
+}
+
+/* Ensure Bootstrap columns are visible and side by side */
+/* Don't override Bootstrap's flexbox display - let Bootstrap handle it */
+.col-md-3, .col-md-6, .col-lg-3, .col-lg-6 {
+    visibility: visible !important;
+    min-height: 0; /* Allow flexbox to work properly */
+    position: relative; /* Ensure proper stacking context */
+    opacity: 1 !important; /* Ensure they're not transparent */
+}
+
+/* Force columns to show on all screen sizes */
+@media (max-width: 767.98px) {
+    .col-md-3, .col-md-6 {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 1rem;
+    }
+}
+
+/* Ensure the layout container and its children are visible */
+#key.layout {
+    visibility: visible !important;
+    display: grid !important;
+    opacity: 1 !important;
+}
+
+/* Ensure color palette is visible */
+.col-md-3 .x-card {
+    visibility: visible !important;
+    display: block !important;
+    opacity: 1 !important;
+}
+
+/* Legacy sidebar styles - kept for compatibility */
+.button-parts-wrapper {
+    display: none;
+}
+
+.color-palette-wrapper {
+    display: none;
+}
+
+.frame-container {
+    display: none;
+}
+
+.color-palette-wrapper .x-card {
+    max-height: 85vh;
+    overflow-y: auto;
+}
+
+.color-palette-list {
+    max-height: calc(85vh - 120px);
+    overflow-y: auto;
+    padding-right: 0.25rem;
+}
+
+/* Scrollbar styling for color palette */
+.color-palette-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.color-palette-list::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.color-palette-list::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 3px;
+}
+
+.color-palette-list::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+.pattern-select {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+}
+
+.pattern-select.active .color-btn {
+    border: 2px solid #1976d2;
+    box-shadow: 0 2px 4px -1px rgba(25, 118, 210, 0.2), 
+                0 4px 5px 0 rgba(25, 118, 210, 0.14), 
+                0 1px 10px 0 rgba(25, 118, 210, 0.12);
+}
+
+.pattern-select .frame-color-btn,
+.pattern-select .all-color-btn {
+    flex: 1;
+    padding: 8px 16px; /* Material Design spacing */
+    font-size: 14px;
+    border: none;
+    background-color: transparent;
+    color: #1976d2; /* Material Design primary */
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 64px;
+}
+
+.pattern-select .frame-color-btn:hover,
+.pattern-select .all-color-btn:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+}
+
+.pattern-select .frame-color-btn.active,
+.pattern-select .all-color-btn.active {
+    background-color: #1976d2;
+    color: #ffffff;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.color-btn {
+    width: 100%;
+    height: 48px; /* Material Design touch target */
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.color-btn:hover {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.color-actions {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.color-actions .x-button {
+    flex: 1;
+    padding: 8px 16px;
+    font-size: 14px;
+    border: none;
+    background-color: transparent;
+    color: #1976d2;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+}
+
+.color-actions .x-button:hover {
+    background-color: rgba(25, 118, 210, 0.08);
+}
+
+.color-actions .x-button.active {
+    background-color: #1976d2;
+    color: #ffffff;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.h-9 {
+    height: 2.25rem;
+}
+
+.mt-1 {
+    margin-top: 0.25rem;
+}
+
+.gap-1 {
+    gap: 0.25rem;
+}
+
+/* Icon & Text Tab Styles */
+.icon-text-config {
+    max-height: calc(85vh - 150px);
+    overflow-y: auto;
+}
+
+.x-radio {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+}
+
+.radio-circle {
+    border: 2px solid rgba(0, 0, 0, 0.54);
+    border-radius: 50%;
+    width: 20px; /* Material Design size */
+    height: 20px;
+    position: relative;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.x-radio input:checked + .radio-circle {
+    border-color: #1976d2;
+    background-color: #1976d2;
+}
+
+.x-radio input:checked + .radio-circle::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 0.5rem;
+    height: 0.5rem;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.icon-grid {
+    max-height: 10rem;
+    overflow-y: auto;
+    padding: 0.5rem;
+    background-color: #f9fafb;
+    border-radius: 0.375rem;
+}
+
+.icon-item {
+    padding: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.25rem;
+    background-color: white;
+    transition: all 200ms ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-item:hover {
+    background-color: #f3f4f6;
+    border-color: #059669;
+    transform: scale(1.05);
+}
+
+.icon-item img {
+    width: 100%;
+    height: 2rem;
+    object-fit: contain;
+}
+
+.text-input input {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    transition: all 200ms ease;
+}
+
+.text-input input:focus {
+    outline: none;
+    border-color: #059669;
+    box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
+}
+
+fieldset {
+    border: none;
+    padding: 0;
+    margin: 0;
+}
+
+legend {
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: #374151;
+}
+
+.h-10 {
+    height: 2.5rem;
+}
+
+.mb-4 {
+    margin-bottom: 1rem;
+}
+
+.mt-2 {
+    margin-top: 0.5rem;
+}
+
+.text-xs {
+    font-size: 0.75rem;
+}
+
+.pl-2 {
+    padding-left: 0.5rem;
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+.w-6 {
+    width: 1.5rem;
+}
+
+.h-6 {
+    height: 1.5rem;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-8 {
+    height: 2rem;
+}
+
+.object-contain {
+    object-fit: contain;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}
+
+.ring-2 {
+    box-shadow: 0 0 0 2px;
+}
+
+.ring-green-500 {
+    box-shadow: 0 0 0 2px #10b981;
+}
+
+.grid-cols-4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.max-h-40 {
+    max-height: 10rem;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+}
+
+.w-60 {
+    width: 15rem;
+}
+
+.bg-slate-100 {
+    background-color: #fafafa; /* Material Design surface color */
+}
+
+.shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.shadow-black\/50 {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+.p-2 {
+    padding: 0.5rem;
+}
+
+/* Info Text */
+.text-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+}
+
+.text-blue-600 {
+    color: #2563eb;
+}
+
+.my-4 {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+    .sm\:flex {
+        display: flex;
+    }
+
+    .sm\:block {
+        display: block;
+    }
+
+    .sm\:hidden {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .md\:flex {
+        display: flex;
+    }
+}
+
+/* Animation for dropped items */
+@keyframes dropAnimation {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.drop-zone.has-content {
+    animation: dropAnimation 0.3s ease;
+}
+
+/* Dropped Button Styles */
+.dropped-button {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    border-radius: 4px;
+    background-color: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.12);
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: auto;
+    z-index: 1;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+.dropped-button:hover {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.button-content {
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    width: 100%;
+    height: 100%;
+    position: relative;
+    padding: 0.25rem;
+}
+
+.button-content .s0,
+.button-content .s1,
+.button-content .s2 {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.button-content .s0 {
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding-right: 0.25rem;
+    padding-top: 0.25rem;
+    grid-row: 1;
+}
+
+.button-content .s1 {
+    justify-content: center;
+    align-items: center;
+    grid-row: 2;
+    flex: 1;
+}
+
+.button-content .s2 {
+    justify-content: flex-start;
+    align-items: flex-end;
+    padding-left: 0.25rem;
+    padding-bottom: 0.25rem;
+    grid-row: 3;
+}
+
+.button-content i {
+    font-size: 1.5rem;
+    color: #1976d2; /* Material Design primary */
+}
+
+.button-indicator {
+    font-size: 0.75rem;
+    color: #1976d2;
+    font-weight: 500;
+    text-align: center;
+}
+
+.remove-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px; /* Material Design touch target */
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background-color: #f44336; /* Material Design red */
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.button-color-btn {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background-color: #1976d2; /* Material Design primary */
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+    opacity: 0;
+    z-index: 10;
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.dropped-button:hover .remove-button,
+.dropped-button:hover .button-color-btn {
+    opacity: 1;
+}
+
+.button-color-btn:hover {
+    background-color: #1565c0;
+    box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.2), 
+                0 7px 10px 1px rgba(0, 0, 0, 0.14), 
+                0 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.remove-button:hover {
+    background-color: #d32f2f;
+    box-shadow: 0 4px 5px -2px rgba(0, 0, 0, 0.2), 
+                0 7px 10px 1px rgba(0, 0, 0, 0.14), 
+                0 2px 16px 1px rgba(0, 0, 0, 0.12);
+}
+
+.remove-button:active,
+.button-color-btn:active {
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.12), 
+                0 1px 2px 0 rgba(0, 0, 0, 0.24);
+}
+
+/* Part number indicators */
+.part-1::before,
+.part-2::before,
+.part-3::before,
+.part-4::before,
+.part-5::before,
+.part-6::before,
+.part-7::before,
+.part-8::before {
+    content: attr(data-part-number);
+    position: absolute;
+    top: 0.25rem;
+    left: 0.25rem;
+    font-size: 0.75rem;
+    color: #6b7280;
+    font-weight: 600;
+    opacity: 0.5;
+}
+
+.drop-zone.has-content .part-1::before,
+.drop-zone.has-content .part-2::before,
+.drop-zone.has-content .part-3::before,
+.drop-zone.has-content .part-4::before,
+.drop-zone.has-content .part-5::before,
+.drop-zone.has-content .part-6::before,
+.drop-zone.has-content .part-7::before,
+.drop-zone.has-content .part-8::before {
+    display: none;
+}
+
+/* Feedback Messages */
+.drag-feedback {
+    position: fixed;
+    top: 5rem;
+    right: 2rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.5rem;
+    color: white;
+    font-weight: 500;
+    font-size: 0.875rem;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 300ms ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.drag-feedback.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.drag-feedback-success {
+    background-color: #4caf50; /* Material Design green */
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.drag-feedback-error {
+    background-color: #f44336; /* Material Design red */
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.drag-feedback-info {
+    background-color: #2196f3; /* Material Design blue */
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 
+                0 4px 5px 0 rgba(0, 0, 0, 0.14), 
+                0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+
+/* Icon Popup Modal Styles */
+.icon-popup-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-popup-modal.hidden {
+    display: none;
+}
+
+.icon-popup-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.icon-popup-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 
+                0 24px 38px 3px rgba(0, 0, 0, 0.14), 
+                0 9px 46px 8px rgba(0, 0, 0, 0.12); /* Material Design elevation 24 */
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+}
+
+.icon-popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.icon-popup-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0;
+    width: 40px; /* Material Design touch target */
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.icon-popup-close:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.icon-popup-body {
+    overflow-y: auto;
+    padding: 16px;
+}
+
+/* Button Color Popup Styles */
+.button-color-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.button-color-popup.hidden {
+    display: none;
+}
+
+.button-color-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.button-color-content {
+    position: relative;
+    background: #ffffff;
+    border-radius: 4px;
+    box-shadow: 0 11px 15px -7px rgba(0, 0, 0, 0.2), 
+                0 24px 38px 3px rgba(0, 0, 0, 0.14), 
+                0 9px 46px 8px rgba(0, 0, 0, 0.12); /* Material Design elevation 24 */
+    max-width: 400px;
+    width: 90%;
+    max-height: 80vh;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+}
+
+.button-color-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.button-color-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: rgba(0, 0, 0, 0.54);
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.button-color-close:hover {
+    background-color: rgba(0, 0, 0, 0.04);
+    color: rgba(0, 0, 0, 0.87);
+}
+
+.button-color-body {
+    overflow-y: auto;
+    max-height: 60vh;
+}

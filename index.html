@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNX Switch Designer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Material Design Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Roboto Font (Material Design) -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section class="fixed w-full h-full overflow-hidden">
+        <div class="wrapper flex flex-col align-middle justify-center transition-colors duration-300 select-none" style="background-color: #f5f5f5;">
+            <!-- Header -->
+            <div class="w-full fixed py-2 z-40 top-0 left-0 right-0 transition-opacity hover:opacity-100">
+                <div class="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow container max-w-6xl mx-auto px-2 pt-2 pb-1">
+                    <div class="flex flex-col sm:flex-row sm:gap-4 items-start">
+                        <div class="flex flex-row w-full sm:w-auto sm:block">
+                            <a href="/" class="inline-block px-5">
+                                <img class="h-8 sm:h-12" src="data:image/svg+xml,%3c?xml%20version='1.0'%20encoding='UTF-8'?%3e%3csvg%20id='Layer_1'%20xmlns='http://www.w3.org/2000/svg'%20xmlns:xlink='http://www.w3.org/1999/xlink'%20viewBox='0%200%201900.25%20501.04'%3e%3cdefs%3e%3clinearGradient%20id='linear-gradient'%20x1='107.6'%20y1='246.02'%20x2='2012.04'%20y2='246.02'%20gradientUnits='userSpaceOnUse'%3e%3cstop%20offset='0'%20stop-color='%232ba74b'/%3e%3cstop%20offset='1'%20stop-color='%23036cb2'/%3e%3c/linearGradient%3e%3c/defs%3e%3cpath%20d='M155.9,484.42c0,4.16-3.47,7.62-7.62,7.62H61.76c-4.16,0-7.62-3.47-7.62-7.62l-.08-275.82H7.62c-4.16,0-7.62-3.47-7.62-7.62v-58.21c0-4.17,3.47-7.63,7.62-7.63h46.44v-23.56C54.06,30.49,110.88,0,170.48,0c20.79,0,45.74,3.47,63.06,5.54,4.16.7,7.62,4.86,7.62,9.01v57.51c0,3.47-3.47,6.24-7.62,5.55-10.4-2.08-22.87-3.47-38.8-3.47-22.87,0-38.81,11.09-38.81,47.13v13.85h77.62c4.16,0,7.62,3.47,7.62,7.63v58.21c0,4.16-3.47,7.62-7.62,7.62h-77.62l-.03,275.82Z'%20fill='url(%23linear-gradient)'%20stroke-width='0'/%3e%3c/svg%3e" alt="Future KNX Logo">
+                            </a>
+                            <div class="hidden sm:block">
+                                <a href="/" class="x-button">
+                                    <i class="fas fa-arrow-left"></i> Home Page
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Main 3-Column Layout using Bootstrap Grid -->
+            <div class="container-fluid h-100" style="padding-top: 80px;">
+                <div class="row h-100 g-3">
+                    <!-- Left Column - Button Parts -->
+                    <div class="col-md-3 col-lg-3 h-100 overflow-auto">
+                        <div class="h-100">
+                            <div class="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
+                                <div class="h-full">
+                                    <div class="relative x-tab-group">
+                                        <div class="flex relative overflow-hidden max-w-full max-h-full">
+                                            <div class="relative overflow-auto w-full">
+                                                <div class="relative flex min-w-full w-fit border-b border-secondary-200 dark:border-secondary-700">
+                                                    <button type="button" data-value="parts" class="x-tab active tab-button" aria-selected="true">
+                                                        <div class="font-medium">Button Parts</div>
+                                                    </button>
+                                                    <button type="button" data-value="label" class="x-tab tab-button" aria-selected="false">
+                                                        <div class="font-medium">Icon & Text</div>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Button Parts Tab Panel -->
+                                    <div role="tabpanel" class="py-2" data-tab="parts">
+                                        <div class="grid grid-cols-2 grid-rows-5 gap-2">
+                                            <button type="button" class="custom-button-1 polar-white draggable-btn" draggable="true" data-button-type="1"></button>
+                                            <button type="button" class="custom-button-3 row-span-2 polar-white ring-2 ring-secondary-700 dark:ring-secondary-200 draggable-btn" draggable="true" data-button-type="3"></button>
+                                            <button type="button" class="custom-button-2 col-span-2 polar-white draggable-btn" draggable="true" data-button-type="2"></button>
+                                            <button type="button" class="custom-button-4 col-span-2 row-span-2 polar-white draggable-btn" draggable="true" data-button-type="4"></button>
+                                        </div>
+                                        <div class="flex flex-row gap-2 my-4">
+                                            <div><i class="fas fa-info-circle text-blue-600"></i></div>
+                                            <div class="text-xs">Drag and drop parts over the device.</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Icon & Text Tab Panel -->
+                                    <div role="tabpanel" class="py-2 hidden" data-tab="label">
+                                        <div class="relative flex flex-col icon-text-config">
+                                            <!-- Right / Top Position -->
+                                            <fieldset class="mb-4">
+                                                <legend class="text-sm font-medium mb-2">Right / Top</legend>
+                                                <div class="flex flex-row items-center gap-5">
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s0" data-type="empty">
+                                                        <div class="flex items-center">
+                                                            <input name="s0" type="radio" class="invisible absolute" value="empty" checked>
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Empty</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s0" data-type="icon">
+                                                        <div class="flex items-center">
+                                                            <input name="s0" type="radio" class="invisible absolute" value="icon">
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Icon</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s0" data-type="text">
+                                                        <div class="flex items-center">
+                                                            <input name="s0" type="radio" class="invisible absolute" value="text">
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Text</div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="h-10 mt-2">
+                                                    <div class="icon-selector hidden" data-position="s0">
+                                                        <button type="button" class="open-icon-popup-btn x-button px-3 py-1 text-sm" data-position="s0">
+                                                            <span>Select Icon</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-input hidden" data-position="s0">
+                                                        <input type="text" placeholder="Enter text" class="w-full px-2 py-1 text-sm border rounded">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                            
+                                            <!-- Center Position -->
+                                            <fieldset class="mb-4">
+                                                <legend class="text-sm font-medium mb-2">Center</legend>
+                                                <div class="flex flex-row items-center gap-5">
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s1" data-type="empty">
+                                                        <div class="flex items-center">
+                                                            <input name="s1" type="radio" class="invisible absolute" value="empty" checked>
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Empty</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s1" data-type="icon">
+                                                        <div class="flex items-center">
+                                                            <input name="s1" type="radio" class="invisible absolute" value="icon">
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Icon</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s1" data-type="text">
+                                                        <div class="flex items-center">
+                                                            <input name="s1" type="radio" class="invisible absolute" value="text">
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Text</div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="h-10 mt-2">
+                                                    <div class="icon-selector hidden" data-position="s1">
+                                                        <button type="button" class="open-icon-popup-btn x-button px-3 py-1 text-sm" data-position="s1">
+                                                            <span>Select Icon</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-input hidden" data-position="s1">
+                                                        <input type="text" placeholder="Enter text" class="w-full px-2 py-1 text-sm border rounded">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                            
+                                            <!-- Left / Bottom Position -->
+                                            <fieldset class="mb-4">
+                                                <legend class="text-sm font-medium mb-2">Left / Bottom</legend>
+                                                <div class="flex flex-row items-center gap-5">
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s2" data-type="empty">
+                                                        <div class="flex items-center">
+                                                            <input name="s2" type="radio" class="invisible absolute" value="empty" checked>
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Empty</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s2" data-type="icon">
+                                                        <div class="flex items-center">
+                                                            <input name="s2" type="radio" class="invisible absolute" value="icon">
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Icon</div>
+                                                        </div>
+                                                    </label>
+                                                    <label class="x-radio inline-block relative cursor-pointer" data-position="s2" data-type="text">
+                                                        <div class="flex items-center">
+                                                            <input name="s2" type="radio" class="invisible absolute" value="text">
+                                                            <div class="radio-circle rounded-full flex justify-center items-center shrink-0 border-2 h-4 w-4"></div>
+                                                            <div class="text-sm pl-2 font-medium">Text</div>
+                                                        </div>
+                                                    </label>
+                                                </div>
+                                                <div class="h-10 mt-2">
+                                                    <div class="icon-selector hidden" data-position="s2">
+                                                        <button type="button" class="open-icon-popup-btn x-button px-3 py-1 text-sm" data-position="s2">
+                                                            <span>Select Icon</span>
+                                                        </button>
+                                                    </div>
+                                                    <div class="text-input hidden" data-position="s2">
+                                                        <input type="text" placeholder="Enter text" class="w-full px-2 py-1 text-sm border rounded">
+                                                    </div>
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    
+                    
+                    <!-- Center Column - Frame -->
+                    <div class="col-md-6 col-lg-6 h-100 d-flex align-items-center justify-content-center">
+                        <div class="w-100 d-flex flex-column align-items-center">
+                            <!-- Grid Type Selector -->
+                            <div class="grid-type-selector d-flex flex-row align-items-center justify-content-center gap-4 mb-4">
+                                <button type="button" class="grid-type-btn active" data-grid-type="2x4" title="2 Columns × 4 Rows">
+                                    <svg width="40" height="50" viewBox="0 0 40 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="2" width="16" height="20" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="2" width="16" height="20" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="26" width="16" height="20" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="26" width="16" height="20" fill="#414142" stroke="none"/>
+                                        <rect x="0.5" y="0.5" width="39" height="49" stroke="#414142" stroke-width="1" fill="none"/>
+                                    </svg>
+                                </button>
+                                <button type="button" class="grid-type-btn" data-grid-type="1x8" title="1 Column × 8 Rows">
+                                    <svg width="30" height="50" viewBox="0 0 30 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="2" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="9" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="16" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="23" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="30" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="37" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="44" width="26" height="5" fill="#414142" stroke="none"/>
+                                        <rect x="0.5" y="0.5" width="29" height="49" stroke="#414142" stroke-width="1" fill="none"/>
+                                    </svg>
+                                </button>
+                                <button type="button" class="grid-type-btn" data-grid-type="2x6" title="2 Columns × 6 Rows">
+                                    <svg width="40" height="70" viewBox="0 0 40 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect x="2" y="2" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="2" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="14" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="14" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="26" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="26" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="38" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="38" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="50" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="50" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="2" y="62" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="22" y="62" width="16" height="10" fill="#414142" stroke="none"/>
+                                        <rect x="0.5" y="0.5" width="39" height="69" stroke="#414142" stroke-width="1" fill="none"/>
+                                    </svg>
+                                </button>
+                            </div>
+                            <!-- Device Layout - Drop Zone -->
+                            <div id="key" class="layout polar-white custom basic layout-2x4" data-place="frame" data-grid-type="2x4">
+                                <div data-place="button1" data-grid-row="1" data-grid-col="1" class="polar-white part-1 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button2" data-grid-row="1" data-grid-col="2" class="polar-white part-2 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button3" data-grid-row="2" data-grid-col="1" class="polar-white part-3 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button4" data-grid-row="2" data-grid-col="2" class="polar-white part-4 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button5" data-grid-row="3" data-grid-col="1" class="polar-white part-5 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button6" data-grid-row="3" data-grid-col="2" class="polar-white part-6 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button7" data-grid-row="4" data-grid-col="1" class="polar-white part-7 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button8" data-grid-row="4" data-grid-col="2" class="polar-white part-8 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <!-- Additional zones for 1x8 and 2x6 layouts -->
+                                <div data-place="button9" data-grid-row="5" data-grid-col="1" class="hidden polar-white part-9 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button10" data-grid-row="6" data-grid-col="1" class="hidden polar-white part-10 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button11" data-grid-row="7" data-grid-col="1" class="hidden polar-white part-11 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button12" data-grid-row="8" data-grid-col="1" class="hidden polar-white part-12 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button13" data-grid-row="5" data-grid-col="2" class="hidden polar-white part-13 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button14" data-grid-row="6" data-grid-col="2" class="hidden polar-white part-14 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button15" data-grid-row="7" data-grid-col="2" class="hidden polar-white part-15 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                                <div data-place="button16" data-grid-row="8" data-grid-col="2" class="hidden polar-white part-16 drop-zone">
+                                    <span class="s0"></span>
+                                    <span class="s1"></span>
+                                    <span class="s2"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Right Column - Color Palette -->
+                    <div class="col-md-3 col-lg-3 h-100 overflow-auto">
+                        <div class="h-100">
+                        <div class="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
+                        <div class="h-full">
+                            <div class="relative x-tab-group">
+                                <div class="flex relative overflow-hidden max-w-full max-h-full">
+                                    <div class="relative overflow-auto w-full">
+                                        <div class="relative flex min-w-full w-fit border-b border-secondary-200 dark:border-secondary-700">
+                                            <button type="button" data-value="textures" class="x-tab active color-tab" aria-selected="true">
+                                                <div class="font-medium">Textures</div>
+                                            </button>
+                                            <button type="button" data-value="wall" class="x-tab color-tab" aria-selected="false">
+                                                <div class="font-medium">Wall Color</div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="py-2" data-tab="textures">
+                                <div class="flex flex-col gap-2 color-palette-list">
+                                    <!-- Polar White -->
+                                    <div class="pattern-select relative" data-color="polar-white">
+                                        <button type="button" class="btn pattern h-9 polar-white color-btn" draggable="true" title="Polar White" data-color-name="polar-white"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="polar-white">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="polar-white">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Polar White -->
+                                    <div class="pattern-select relative" data-color="polar-white">
+                                        <button type="button" class="btn pattern h-9 polar-white color-btn" draggable="true" title="Polar White" data-color-name="polar-white"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="polar-white">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="polar-white">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Royal Silver -->
+                                    <div class="pattern-select relative active" data-color="royal-silver">
+                                        <button type="button" class="btn pattern h-9 royal-silver ring-2 ring-secondary-500 color-btn" draggable="true" title="Royal Silver" data-color-name="royal-silver"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="royal-silver">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="royal-silver">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Anthracite Gray -->
+                                    <div class="pattern-select relative" data-color="anthracite-gray">
+                                        <button type="button" class="btn pattern h-9 anthracite-gray color-btn" draggable="true" title="Anthracite Gray" data-color-name="anthracite-gray"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="anthracite-gray">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="anthracite-gray">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Meteor Black -->
+                                    <div class="pattern-select relative" data-color="meteor-black">
+                                        <button type="button" class="btn pattern h-9 meteor-black color-btn" draggable="true" title="Meteor Black" data-color-name="meteor-black"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="meteor-black">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="meteor-black">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Texture Black -->
+                                    <div class="pattern-select relative" data-color="texture-black">
+                                        <button type="button" class="btn pattern h-9 texture-black color-btn" draggable="true" title="Texture Black" data-color-name="texture-black"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="texture-black">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="texture-black">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Pure Gold -->
+                                    <div class="pattern-select relative" data-color="pure-gold">
+                                        <button type="button" class="btn pattern h-9 pure-gold color-btn" draggable="true" title="Pure Gold" data-color-name="pure-gold"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="pure-gold">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="pure-gold">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Antique Copper -->
+                                    <div class="pattern-select relative" data-color="antique-copper">
+                                        <button type="button" class="btn pattern h-9 antique-copper color-btn" draggable="true" title="Antique Copper" data-color-name="antique-copper"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="antique-copper">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="antique-copper">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Antique Bronze -->
+                                    <div class="pattern-select relative" data-color="antique-bronze">
+                                        <button type="button" class="btn pattern h-9 antique-bronze color-btn" draggable="true" title="Antique Bronze" data-color-name="antique-bronze"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="antique-bronze">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="antique-bronze">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Red Cherry -->
+                                    <div class="pattern-select relative" data-color="red-cherry">
+                                        <button type="button" class="btn pattern h-9 red-cherry color-btn" draggable="true" title="Red Cherry" data-color-name="red-cherry"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="red-cherry">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="red-cherry">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                    <!-- Green Leaf -->
+                                    <div class="pattern-select relative" data-color="green-leaf">
+                                        <button type="button" class="btn pattern h-9 green-leaf color-btn" draggable="true" title="Green Leaf" data-color-name="green-leaf"></button>
+                                        <button type="button" class="x-button frame-color-btn" data-place="frame" data-color="green-leaf">
+                                            <span>FRAME</span>
+                                        </button>
+                                        <button type="button" class="x-button all-color-btn" data-place="full" data-color="green-leaf">
+                                            <span>ALL</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div role="tabpanel" class="py-2 hidden" data-tab="wall">
+                                <div class="flex flex-col gap-2">
+                                    <p class="text-sm text-secondary-600 dark:text-secondary-400">Wall color options coming soon...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Icon Selection Popup Modal -->
+    <div id="icon-popup-modal" class="icon-popup-modal hidden">
+        <div class="icon-popup-overlay"></div>
+        <div class="icon-popup-content">
+            <div class="icon-popup-header">
+                <h3 class="text-lg font-semibold">Select Icon</h3>
+                <button type="button" class="icon-popup-close" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="icon-popup-body">
+                <div class="icon-grid grid grid-cols-6 gap-3 max-h-96 overflow-y-auto p-4"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button Color Selection Popup -->
+    <div id="button-color-popup" class="button-color-popup hidden">
+        <div class="button-color-overlay"></div>
+        <div class="button-color-content">
+            <div class="button-color-header">
+                <h3 class="text-lg font-semibold">Select Button Color</h3>
+                <button type="button" class="button-color-close" aria-label="Close">
+                    <span>&times;</span>
+                </button>
+            </div>
+            <div class="button-color-body">
+                <div class="flex flex-col gap-2 color-palette-list p-4">
+                    <!-- Color options will be populated here -->
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+    <!-- Bootstrap JS Bundle (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    <!-- Custom Scripts -->
+    <script src="drag-drop.js"></script>
+</body>
+</html>
+
