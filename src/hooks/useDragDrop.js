@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 
 const COLORS = {
   'polar-white': '#ffffff',
@@ -105,7 +105,7 @@ export function useDragDrop() {
     setTimeout(() => setFeedback({ message: '', type: '', show: false }), 3000);
   }, []);
 
-  const getColorValue = (colorName) => COLORS[colorName] || '#ffffff';
+  const getColorValue = useCallback((colorName) => COLORS[colorName] || '#ffffff', []);
 
   const getButtonDimensions = (buttonType) => {
     const dimensions = {
@@ -157,18 +157,16 @@ export function useDragDrop() {
   }, [updateDropZone]);
 
   const applyFrameColor = useCallback((colorName) => {
-    const colorValue = getColorValue(colorName);
     setFrameColor(colorName);
     setFullColor(null); // Clear full color when applying frame color
     showFeedback(`${colorName} applied to frame`, 'success');
-  }, [showFeedback, getColorValue]);
+  }, [showFeedback]);
 
   const applyFullColor = useCallback((colorName) => {
-    const colorValue = getColorValue(colorName);
     setFullColor(colorName);
     setFrameColor(null); // Clear frame color when applying full color
     showFeedback(`${colorName} applied to all`, 'success');
-  }, [showFeedback, getColorValue]);
+  }, [showFeedback]);
 
   const applyIconToButton = useCallback((buttonId, position, iconPath) => {
     if (!buttonId) {
