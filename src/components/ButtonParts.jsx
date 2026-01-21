@@ -10,7 +10,8 @@ function ButtonParts({
   applyTextToButton,
   showFeedback,
   fullColor,
-  getColorValue
+  getColorValue,
+  getTextureImage
 }) {
   const [activeTab, setActiveTab] = useState('parts');
   const [positionTypes, setPositionTypes] = useState({
@@ -104,7 +105,10 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 1)}
               onDragEnd={handleDragEnd}
               data-button-type="1"
-              style={fullColor ? { backgroundColor: getColorValue(fullColor) } : {}}
+              style={fullColor ? { 
+                backgroundColor: getColorValue(fullColor),
+                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              } : {}}
             ></button>
             <button
               type="button"
@@ -113,7 +117,10 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 3)}
               onDragEnd={handleDragEnd}
               data-button-type="3"
-              style={fullColor ? { backgroundColor: getColorValue(fullColor) } : {}}
+              style={fullColor ? { 
+                backgroundColor: getColorValue(fullColor),
+                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              } : {}}
             ></button>
             <button
               type="button"
@@ -122,7 +129,10 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 2)}
               onDragEnd={handleDragEnd}
               data-button-type="2"
-              style={fullColor ? { backgroundColor: getColorValue(fullColor) } : {}}
+              style={fullColor ? { 
+                backgroundColor: getColorValue(fullColor),
+                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              } : {}}
             ></button>
             <button
               type="button"
@@ -131,7 +141,10 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 4)}
               onDragEnd={handleDragEnd}
               data-button-type="4"
-              style={fullColor ? { backgroundColor: getColorValue(fullColor) } : {}}
+              style={fullColor ? { 
+                backgroundColor: getColorValue(fullColor),
+                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              } : {}}
             ></button>
           </div>
           <div className="flex flex-row gap-2 my-4">

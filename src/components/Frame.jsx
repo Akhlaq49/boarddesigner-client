@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 
 const GRID_CONFIGS = {
   '2x4': { columns: 2, rows: 4, visibleZones: 8 },
@@ -20,11 +20,13 @@ function Frame({
   frameColor,
   fullColor,
   getColorValue,
+  getTextureImage,
   setShowButtonColorPopup,
   setButtonColorTarget
 }) {
   const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['2x4'];
   const [highlightedZones, setHighlightedZones] = useState([]);
+  const frameRef = useRef(null);
 
   const allZones = useMemo(() => {
     const zones = [];
@@ -230,6 +232,152 @@ function Frame({
     setShowButtonColorPopup(true);
   };
 
+  const handleDownloadPDF = async () => {
+    try {
+      const frameElement = frameRef.current;
+      if (!frameElement) {
+        showFeedback('Frame not found', 'error');
+        return;
+      }
+
+      // Check if frame has dimensions and is visible
+      const rect = frameElement.getBoundingClientRect();
+      const computedStyle = window.getComputedStyle(frameElement);
+      
+      if (rect.width === 0 || rect.height === 0) {
+        showFeedback(`Frame has no dimensions (${rect.width}x${rect.height})`, 'error');
+        return;
+      }
+      
+      if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden' || computedStyle.opacity === '0') {
+        showFeedback('Frame is not visible', 'error');
+        return;
+      }
+
+      showFeedback('Generating PDF...', 'info');
+
+      // Clone the frame element and hide buttons
+      const clonedFrame = frameElement.cloneNode(true);
+      
+      // Remove buttons completely from the clone
+      const removeButtons = clonedFrame.querySelectorAll('.remove-button');
+      removeButtons.forEach(btn => btn.remove());
+      
+      const colorButtons = clonedFrame.querySelectorAll('.button-color-btn');
+      colorButtons.forEach(btn => btn.remove());
+      
+      // Convert relative image URLs to absolute URLs for the Python server
+      const convertImageUrls = (element) => {
+        // Convert img src attributes
+        const images = element.querySelectorAll('img');
+        images.forEach(img => {
+          const src = img.getAttribute('src');
+          if (src && (src.startsWith('/images/') || src.startsWith('/ican/images/'))) {
+            img.setAttribute('src', `${window.location.origin}${src}`);
+          }
+        });
+        
+        // Convert background-image URLs in inline styles
+        const allElements = element.querySelectorAll('*');
+        allElements.forEach(el => {
+          const bgImage = el.style.backgroundImage;
+          if (bgImage && bgImage.includes('url(')) {
+            const urlMatch = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
+            if (urlMatch && urlMatch[1]) {
+              let imgUrl = urlMatch[1];
+              if (imgUrl.startsWith('/images/') || imgUrl.startsWith('/ican/images/')) {
+                el.style.backgroundImage = bgImage.replace(imgUrl, `${window.location.origin}${imgUrl}`);
+              }
+            }
+          }
+        });
+      };
+      
+      convertImageUrls(clonedFrame);
+      
+      // Apply computed styles as inline styles for better rendering in PDF
+      const applyComputedStyles = (element) => {
+        const computed = window.getComputedStyle(element);
+        
+        // Apply all important visual styles
+        const stylesToApply = {
+          backgroundColor: computed.backgroundColor,
+          color: computed.color,
+          border: computed.border,
+          borderColor: computed.borderColor,
+          borderWidth: computed.borderWidth,
+          borderStyle: computed.borderStyle,
+          borderRadius: computed.borderRadius,
+          padding: computed.padding,
+          margin: computed.margin,
+          width: computed.width,
+          height: computed.height,
+          display: computed.display,
+          gridColumn: computed.gridColumn,
+          gridRow: computed.gridRow,
+          backgroundImage: computed.backgroundImage,
+          backgroundSize: computed.backgroundSize,
+          backgroundPosition: computed.backgroundPosition,
+          backgroundRepeat: computed.backgroundRepeat,
+          fontSize: computed.fontSize,
+          fontWeight: computed.fontWeight,
+          textAlign: computed.textAlign
+        };
+        
+        Object.entries(stylesToApply).forEach(([prop, value]) => {
+          if (value && value !== 'none' && value !== 'rgba(0, 0, 0, 0)' && value !== 'transparent') {
+            element.style.setProperty(prop, value);
+          }
+        });
+        
+        // Recursively apply to children
+        Array.from(element.children).forEach(child => {
+          applyComputedStyles(child);
+        });
+      };
+      
+      applyComputedStyles(clonedFrame);
+      
+      // Get the HTML content of the cloned frame
+      const frameHTML = clonedFrame.outerHTML;
+      
+      // Send to Python server for PDF generation
+      const response = await fetch('http://localhost:5000/api/generate-pdf', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          html: frameHTML,
+          width: rect.width,
+          height: rect.height,
+          gridType: gridType
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to generate PDF');
+      }
+
+      // Download the PDF
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `board-design-${gridType}-${Date.now()}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+      
+      showFeedback('PDF downloaded successfully!', 'success');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
+    }
+  };
+
   const renderZoneContent = (zoneId) => {
     const zone = dropZones[zoneId];
     if (!zone || !zone.isPrimary) return null; // Only render in primary zone
@@ -242,18 +390,33 @@ function Frame({
       buttonStyle.gridRow = `span ${zone.dimensions.rowSpan}`;
     }
 
-    // Apply colors to button
-    if (zone.color) {
-      // Individual button color takes precedence
-      buttonStyle.backgroundColor = getColorValue(zone.color);
-      buttonStyle.borderColor = getColorValue(zone.color);
-    } else if (fullColor) {
-      // Full color applied to all
-      buttonStyle.backgroundColor = getColorValue(fullColor);
-      buttonStyle.borderColor = getColorValue(fullColor);
-    } else if (frameColor) {
-      // Frame color only affects border
-      buttonStyle.borderColor = getColorValue(frameColor);
+    // Apply colors and textures to button
+    const textureImage = zone.color 
+      ? getTextureImage(zone.color)
+      : fullColor 
+        ? getTextureImage(fullColor)
+        : null;
+    
+    if (textureImage) {
+      buttonStyle.backgroundImage = `url(${textureImage})`;
+      buttonStyle.backgroundColor = zone.color 
+        ? getColorValue(zone.color)
+        : fullColor 
+          ? getColorValue(fullColor)
+          : '#ffffff';
+    } else {
+      if (zone.color) {
+        // Individual button color takes precedence
+        buttonStyle.backgroundColor = getColorValue(zone.color);
+        buttonStyle.borderColor = getColorValue(zone.color);
+      } else if (fullColor) {
+        // Full color applied to all
+        buttonStyle.backgroundColor = getColorValue(fullColor);
+        buttonStyle.borderColor = getColorValue(fullColor);
+      } else if (frameColor) {
+        // Frame color only affects border
+        buttonStyle.borderColor = getColorValue(frameColor);
+      }
     }
 
     return (
@@ -322,31 +485,47 @@ function Frame({
 
   return (
     <div className="w-100 d-flex flex-column align-items-center">
-      {/* Grid Type Selector */}
-      <div className="grid-type-selector d-flex flex-row align-items-center justify-content-center gap-4 mb-4">
-        {['2x4', '1x8', '2x6'].map(type => (
-          <button
-            key={type}
-            type="button"
-            className={`grid-type-btn ${gridType === type ? 'active' : ''}`}
-            onClick={() => setGridType(type)}
-            title={`${type === '2x4' ? '2 Columns × 4 Rows' : type === '1x8' ? '1 Column × 8 Rows' : '2 Columns × 6 Rows'}`}
-          >
-            {/* SVG icons would go here - simplified for now */}
-            <span>{type}</span>
-          </button>
-        ))}
+      {/* Grid Type Selector and Download Button */}
+      <div className="d-flex flex-row align-items-center justify-content-center gap-4 mb-4" style={{ width: '100%', flexWrap: 'wrap' }}>
+        <div className="grid-type-selector d-flex flex-row align-items-center justify-content-center gap-4">
+          {['2x4', '1x8', '2x6'].map(type => (
+            <button
+              key={type}
+              type="button"
+              className={`grid-type-btn ${gridType === type ? 'active' : ''}`}
+              onClick={() => setGridType(type)}
+              title={`${type === '2x4' ? '2 Columns × 4 Rows' : type === '1x8' ? '1 Column × 8 Rows' : '2 Columns × 6 Rows'}`}
+            >
+              {/* SVG icons would go here - simplified for now */}
+              <span>{type}</span>
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          className="x-button raised"
+          onClick={handleDownloadPDF}
+          title="Download Frame as PDF"
+          style={{ marginLeft: 'auto' }}
+        >
+          <i className="fas fa-download" style={{ marginRight: '8px' }}></i>
+          Download PDF
+        </button>
       </div>
 
       {/* Device Layout - Drop Zone */}
       <div
+        ref={frameRef}
         id="key"
         className={`layout polar-white custom basic layout-${gridType}`}
         data-place="frame"
         data-grid-type={gridType}
         style={{
           borderColor: frameColor ? getColorValue(frameColor) : undefined,
-          backgroundColor: fullColor ? getColorValue(fullColor) : undefined
+          backgroundColor: fullColor ? getColorValue(fullColor) : undefined,
+          backgroundImage: fullColor && getTextureImage(fullColor) 
+            ? `url(${getTextureImage(fullColor)})` 
+            : undefined
         }}
       >
         {allZones.map(zone => {
