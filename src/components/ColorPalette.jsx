@@ -262,8 +262,6 @@ function ColorPalette({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount
 
-  // Get current color in various formats (use state values)
-  const currentRgb = rgbColor;
 
   return (
     <div className="h-full color-palette-container" style={{ width: '240px' }}>
