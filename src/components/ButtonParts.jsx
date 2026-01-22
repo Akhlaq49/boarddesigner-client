@@ -10,6 +10,7 @@ function ButtonParts({
   applyTextToButton,
   showFeedback,
   fullColor,
+  selectedColor,
   getColorValue,
   getTextureImage
 }) {
@@ -47,7 +48,8 @@ function ButtonParts({
     const data = {
       buttonType,
       colSpan: dimensions.colSpan,
-      rowSpan: dimensions.rowSpan
+      rowSpan: dimensions.rowSpan,
+      color: selectedColor || fullColor || null // Include selected color in drag data
     };
 
     e.dataTransfer.setData('text/plain', JSON.stringify(data));
@@ -96,8 +98,8 @@ function ButtonParts({
 
       {/* Button Parts Tab Panel */}
       {activeTab === 'parts' && (
-        <div role="tabpanel" className="py-2">
-          <div className="grid grid-cols-2 grid-rows-5 gap-2">
+        <div role="tabpanel" className="py-2 animate-fade-in">
+          <div className="grid grid-cols-2 grid-rows-5 gap-3">
             <button
               type="button"
               className="custom-button-1 polar-white draggable-btn"
@@ -105,9 +107,9 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 1)}
               onDragEnd={handleDragEnd}
               data-button-type="1"
-              style={fullColor ? { 
-                backgroundColor: getColorValue(fullColor),
-                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
               } : {}}
             ></button>
             <button
@@ -117,9 +119,9 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 3)}
               onDragEnd={handleDragEnd}
               data-button-type="3"
-              style={fullColor ? { 
-                backgroundColor: getColorValue(fullColor),
-                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
               } : {}}
             ></button>
             <button
@@ -129,9 +131,9 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 2)}
               onDragEnd={handleDragEnd}
               data-button-type="2"
-              style={fullColor ? { 
-                backgroundColor: getColorValue(fullColor),
-                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
               } : {}}
             ></button>
             <button
@@ -141,27 +143,27 @@ function ButtonParts({
               onDragStart={(e) => handleDragStart(e, 4)}
               onDragEnd={handleDragEnd}
               data-button-type="4"
-              style={fullColor ? { 
-                backgroundColor: getColorValue(fullColor),
-                backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
               } : {}}
             ></button>
           </div>
-          <div className="flex flex-row gap-2 my-4">
-            <div><i className="fas fa-info-circle text-blue-600"></i></div>
-            <div className="text-xs">Drag and drop parts over the device.</div>
+          <div className="flex flex-row gap-2 my-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div><i className="fas fa-info-circle text-blue-600 dark:text-blue-400"></i></div>
+            <div className="text-xs text-blue-700 dark:text-blue-300">Drag and drop parts over the device.</div>
           </div>
         </div>
       )}
 
       {/* Icon & Text Tab Panel */}
       {activeTab === 'label' && (
-        <div role="tabpanel" className="py-2">
+        <div role="tabpanel" className="py-2 animate-fade-in">
           <div className="relative flex flex-col icon-text-config">
             {/* Right / Top Position */}
-            <fieldset className="mb-4">
-              <legend className="text-sm font-medium mb-2">Right / Top</legend>
-              <div className="flex flex-row items-center gap-5">
+            <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Right / Top</legend>
+              <div className="flex flex-row items-center gap-4">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
                     <div className="flex items-center">
@@ -183,17 +185,18 @@ function ButtonParts({
                 {positionTypes.s0 === 'icon' && (
                   <button
                     type="button"
-                    className="open-icon-popup-btn x-button px-3 py-1 text-sm"
+                    className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
                     onClick={() => handleOpenIconPopup('s0')}
                   >
+                    <i className="fas fa-image mr-2"></i>
                     <span>Select Icon</span>
                   </button>
                 )}
                 {positionTypes.s0 === 'text' && (
                   <input
                     type="text"
-                    placeholder="Enter text"
-                    className="w-full px-2 py-1 text-sm border rounded"
+                    placeholder="Enter text here..."
+                    className="w-full px-3 py-2 text-sm border-2 rounded-lg transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={textValues.s0}
                     onChange={(e) => handleTextChange('s0', e.target.value)}
                   />
@@ -202,9 +205,9 @@ function ButtonParts({
             </fieldset>
 
             {/* Center Position */}
-            <fieldset className="mb-4">
-              <legend className="text-sm font-medium mb-2">Center</legend>
-              <div className="flex flex-row items-center gap-5">
+            <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Center</legend>
+              <div className="flex flex-row items-center gap-4">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
                     <div className="flex items-center">
@@ -226,17 +229,18 @@ function ButtonParts({
                 {positionTypes.s1 === 'icon' && (
                   <button
                     type="button"
-                    className="open-icon-popup-btn x-button px-3 py-1 text-sm"
+                    className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
                     onClick={() => handleOpenIconPopup('s1')}
                   >
+                    <i className="fas fa-image mr-2"></i>
                     <span>Select Icon</span>
                   </button>
                 )}
                 {positionTypes.s1 === 'text' && (
                   <input
                     type="text"
-                    placeholder="Enter text"
-                    className="w-full px-2 py-1 text-sm border rounded"
+                    placeholder="Enter text here..."
+                    className="w-full px-3 py-2 text-sm border-2 rounded-lg transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={textValues.s1}
                     onChange={(e) => handleTextChange('s1', e.target.value)}
                   />
@@ -245,9 +249,9 @@ function ButtonParts({
             </fieldset>
 
             {/* Left / Bottom Position */}
-            <fieldset className="mb-4">
-              <legend className="text-sm font-medium mb-2">Left / Bottom</legend>
-              <div className="flex flex-row items-center gap-5">
+            <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Left / Bottom</legend>
+              <div className="flex flex-row items-center gap-4">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
                     <div className="flex items-center">
@@ -269,17 +273,18 @@ function ButtonParts({
                 {positionTypes.s2 === 'icon' && (
                   <button
                     type="button"
-                    className="open-icon-popup-btn x-button px-3 py-1 text-sm"
+                    className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
                     onClick={() => handleOpenIconPopup('s2')}
                   >
+                    <i className="fas fa-image mr-2"></i>
                     <span>Select Icon</span>
                   </button>
                 )}
                 {positionTypes.s2 === 'text' && (
                   <input
                     type="text"
-                    placeholder="Enter text"
-                    className="w-full px-2 py-1 text-sm border rounded"
+                    placeholder="Enter text here..."
+                    className="w-full px-3 py-2 text-sm border-2 rounded-lg transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     value={textValues.s2}
                     onChange={(e) => handleTextChange('s2', e.target.value)}
                   />

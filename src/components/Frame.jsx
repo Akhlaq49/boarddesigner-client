@@ -2,7 +2,7 @@ import React, { useMemo, useState, useCallback, useRef } from 'react';
 
 const GRID_CONFIGS = {
   '2x4': { columns: 2, rows: 4, visibleZones: 8 },
-  '1x8': { columns: 1, rows: 8, visibleZones: 8 },
+  '2x8': { columns: 2, rows: 8, visibleZones: 16 },
   '2x6': { columns: 2, rows: 6, visibleZones: 12 }
 };
 
@@ -197,7 +197,8 @@ function Frame({
     const buttonDataWithMerge = {
       type: buttonData.buttonType,
       dimensions,
-      zones: zonesToMerge
+      zones: zonesToMerge,
+      color: buttonData.color || null // Include color from drag data
     };
 
     placeButtonInZones(zonesToMerge, buttonDataWithMerge);
@@ -256,122 +257,533 @@ function Frame({
 
       showFeedback('Generating PDF...', 'info');
 
-      // Clone the frame element and hide buttons
-      const clonedFrame = frameElement.cloneNode(true);
-      
-      // Remove buttons completely from the clone
-      const removeButtons = clonedFrame.querySelectorAll('.remove-button');
-      removeButtons.forEach(btn => btn.remove());
-      
-      const colorButtons = clonedFrame.querySelectorAll('.button-color-btn');
-      colorButtons.forEach(btn => btn.remove());
-      
-      // Convert relative image URLs to absolute URLs for the Python server
-      const convertImageUrls = (element) => {
-        // Convert img src attributes
-        const images = element.querySelectorAll('img');
-        images.forEach(img => {
-          const src = img.getAttribute('src');
-          if (src && (src.startsWith('/images/') || src.startsWith('/ican/images/'))) {
-            img.setAttribute('src', `${window.location.origin}${src}`);
+      // Dynamically import html2canvas and jsPDF
+      const html2canvas = (await import('html2canvas')).default;
+      const jsPDFModule = await import('jspdf');
+      const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
+
+      // Scroll frame into view and wait for rendering
+      frameElement.scrollIntoView({ behavior: 'instant', block: 'center' });
+      await new Promise(resolve => setTimeout(resolve, 300));
+
+      // Hide action buttons before capture
+      const removeButtons = frameElement.querySelectorAll('.remove-button');
+      const colorButtons = frameElement.querySelectorAll('.button-color-btn');
+      const originalDisplay = new Map();
+      removeButtons.forEach(btn => {
+        originalDisplay.set(btn, btn.style.display);
+        btn.style.display = 'none';
+      });
+      colorButtons.forEach(btn => {
+        originalDisplay.set(btn, btn.style.display);
+        btn.style.display = 'none';
+      });
+
+      try {
+        // Wait a bit more for any animations/transitions to complete
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Helper function to convert image URL to data URL (handles SVG and other formats)
+        const imageUrlToDataUrl = async (url) => {
+          try {
+            // Handle relative URLs
+            let absoluteUrl = url;
+            if (!url.startsWith('http') && !url.startsWith('data:') && !url.startsWith('blob:')) {
+              absoluteUrl = url.startsWith('/') 
+                ? `${window.location.origin}${url}`
+                : `${window.location.origin}/${url}`;
+            }
+            
+            // For SVG files, fetch as text and convert to data URL
+            if (absoluteUrl.toLowerCase().endsWith('.svg') || absoluteUrl.includes('.svg')) {
+              try {
+                const response = await fetch(absoluteUrl, { mode: 'cors' });
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                const svgText = await response.text();
+                // Encode SVG as data URL
+                const encodedSvg = encodeURIComponent(svgText);
+                return `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
+              } catch (svgError) {
+                console.warn('Failed to fetch SVG:', absoluteUrl, svgError);
+                // Fallback to regular fetch
+              }
+            }
+            
+            // For other image types, fetch as blob
+            const response = await fetch(absoluteUrl, { mode: 'cors' });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const blob = await response.blob();
+            return new Promise((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onloadend = () => resolve(reader.result);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+          } catch (error) {
+            console.warn('Failed to convert image to data URL:', url, error);
+            return null;
           }
-        });
+        };
+
+        // Store original src/backgroundImage values to restore later
+        const originalValues = new Map();
         
-        // Convert background-image URLs in inline styles
-        const allElements = element.querySelectorAll('*');
-        allElements.forEach(el => {
-          const bgImage = el.style.backgroundImage;
-          if (bgImage && bgImage.includes('url(')) {
-            const urlMatch = bgImage.match(/url\(["']?([^"')]+)["']?\)/);
+        // Process icon images - convert to data URLs directly on elements
+        // First, find all images including those in button content areas
+        const images = frameElement.querySelectorAll('img');
+        const imagePromises = [];
+        
+        for (const img of images) {
+          // Ensure image is visible
+          img.style.display = '';
+          img.style.visibility = 'visible';
+          img.style.opacity = '1';
+          
+          // Wait for image to load
+          const loadPromise = new Promise(async (resolve) => {
+            if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+              resolve();
+              return;
+            }
+            
+            // Set up load handlers
+            const onLoad = () => {
+              img.removeEventListener('load', onLoad);
+              img.removeEventListener('error', onError);
+              resolve();
+            };
+            const onError = () => {
+              img.removeEventListener('load', onLoad);
+              img.removeEventListener('error', onError);
+              console.warn('Image failed to load:', img.src);
+              resolve(); // Continue even if fails
+            };
+            
+            img.addEventListener('load', onLoad);
+            img.addEventListener('error', onError);
+            
+            // Timeout after 8 seconds
+            setTimeout(() => {
+              img.removeEventListener('load', onLoad);
+              img.removeEventListener('error', onError);
+              resolve();
+            }, 8000);
+            
+            // If image already has src, trigger load check
+            if (img.src) {
+              // Force reload check
+              const currentSrc = img.src;
+              if (!currentSrc.startsWith('data:')) {
+                img.src = '';
+                setTimeout(() => {
+                  img.src = currentSrc;
+                }, 100);
+              }
+            }
+          });
+          
+          imagePromises.push(loadPromise.then(async () => {
+            // Wait a bit more for rendering
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            if (img.src && !img.src.startsWith('data:') && !img.src.startsWith('blob:')) {
+              // Store original
+              originalValues.set(img, { type: 'src', value: img.src });
+              
+              // Convert to data URL and apply directly
+              try {
+                const dataUrl = await imageUrlToDataUrl(img.src);
+                if (dataUrl) {
+                  // Create new image to verify data URL works
+                  const testImg = new Image();
+                  await new Promise((resolve, reject) => {
+                    testImg.onload = () => {
+                      img.src = dataUrl;
+                      // Force reflow and reload
+                      img.style.display = 'none';
+                      setTimeout(() => {
+                        img.style.display = '';
+                        resolve();
+                      }, 50);
+                    };
+                    testImg.onerror = () => {
+                      console.warn('Data URL failed for image:', img.src);
+                      resolve(); // Continue anyway
+                    };
+                    testImg.src = dataUrl;
+                    setTimeout(() => resolve(), 2000); // Timeout
+                  });
+                }
+              } catch (error) {
+                console.warn('Failed to convert image:', img.src, error);
+              }
+            }
+          }));
+        }
+        
+        // Wait for all images to be processed
+        await Promise.all(imagePromises);
+
+        // Process background images (textures) - convert to data URLs directly
+        const allElements = frameElement.querySelectorAll('*');
+        for (const el of allElements) {
+          const style = window.getComputedStyle(el);
+          if (style.backgroundImage && style.backgroundImage !== 'none') {
+            const urlMatch = style.backgroundImage.match(/url\(['"]?([^'")]+)['"]?\)/);
             if (urlMatch && urlMatch[1]) {
-              let imgUrl = urlMatch[1];
-              if (imgUrl.startsWith('/images/') || imgUrl.startsWith('/ican/images/')) {
-                el.style.backgroundImage = bgImage.replace(imgUrl, `${window.location.origin}${imgUrl}`);
+              const bgUrl = urlMatch[1];
+              if (!bgUrl.startsWith('data:') && !bgUrl.startsWith('blob:')) {
+                // Store original
+                originalValues.set(el, { 
+                  type: 'backgroundImage', 
+                  value: style.backgroundImage,
+                  backgroundSize: style.backgroundSize,
+                  backgroundPosition: style.backgroundPosition,
+                  backgroundRepeat: style.backgroundRepeat
+                });
+                
+                // Convert to data URL and apply directly
+                const dataUrl = await imageUrlToDataUrl(bgUrl);
+                if (dataUrl) {
+                  el.style.backgroundImage = `url(${dataUrl})`;
+                  el.style.backgroundSize = style.backgroundSize || 'cover';
+                  el.style.backgroundPosition = style.backgroundPosition || 'center';
+                  el.style.backgroundRepeat = style.backgroundRepeat || 'no-repeat';
+                }
               }
             }
           }
-        });
-      };
-      
-      convertImageUrls(clonedFrame);
-      
-      // Apply computed styles as inline styles for better rendering in PDF
-      const applyComputedStyles = (element) => {
-        const computed = window.getComputedStyle(element);
+        }
+
+        // Wait for all images to be fully loaded and rendered
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
-        // Apply all important visual styles
-        const stylesToApply = {
-          backgroundColor: computed.backgroundColor,
-          color: computed.color,
-          border: computed.border,
-          borderColor: computed.borderColor,
-          borderWidth: computed.borderWidth,
-          borderStyle: computed.borderStyle,
-          borderRadius: computed.borderRadius,
-          padding: computed.padding,
-          margin: computed.margin,
-          width: computed.width,
-          height: computed.height,
-          display: computed.display,
-          gridColumn: computed.gridColumn,
-          gridRow: computed.gridRow,
-          backgroundImage: computed.backgroundImage,
-          backgroundSize: computed.backgroundSize,
-          backgroundPosition: computed.backgroundPosition,
-          backgroundRepeat: computed.backgroundRepeat,
-          fontSize: computed.fontSize,
-          fontWeight: computed.fontWeight,
-          textAlign: computed.textAlign
-        };
+        // Final verification - ensure all images are loaded and visible
+        const allImages = frameElement.querySelectorAll('img');
+        for (const img of allImages) {
+          // Ensure visibility
+          img.style.display = '';
+          img.style.visibility = 'visible';
+          img.style.opacity = '1';
+          
+          // Check parent visibility
+          let parent = img.parentElement;
+          while (parent && parent !== frameElement) {
+            const parentStyle = window.getComputedStyle(parent);
+            if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') {
+              parent.style.display = '';
+              parent.style.visibility = 'visible';
+            }
+            parent = parent.parentElement;
+          }
+          
+          // Verify image is loaded
+          if (!img.complete || img.naturalWidth === 0) {
+            await new Promise((resolve) => {
+              const checkComplete = () => {
+                if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
+                  resolve();
+                } else {
+                  setTimeout(checkComplete, 200);
+                }
+              };
+              img.onload = () => resolve();
+              img.onerror = () => resolve();
+              setTimeout(() => resolve(), 5000);
+              checkComplete();
+            });
+          }
+        }
         
-        Object.entries(stylesToApply).forEach(([prop, value]) => {
-          if (value && value !== 'none' && value !== 'rgba(0, 0, 0, 0)' && value !== 'transparent') {
-            element.style.setProperty(prop, value);
+        // Additional wait for all rendering to complete
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        // Capture the frame as canvas with high quality settings
+        const canvas = await html2canvas(frameElement, {
+          scale: 3, // Higher scale for better quality
+          useCORS: true,
+          allowTaint: true, // Allow tainted canvas for better image rendering
+          backgroundColor: '#ffffff',
+          logging: false,
+          removeContainer: false,
+          imageTimeout: 30000, // Increased timeout
+          foreignObjectRendering: false, // Better compatibility
+          onclone: (clonedDoc, element) => {
+            // Ensure all images and styles are properly captured
+            const clonedFrame = clonedDoc.querySelector(`#${frameElement.id || 'key'}`) || 
+                               clonedDoc.querySelector('.frame-container-2x4, .frame-container-2x8, .frame-container-2x6') ||
+                               element;
+            
+            if (clonedFrame) {
+              // Hide action buttons in cloned document
+              const clonedRemoveButtons = clonedFrame.querySelectorAll('.remove-button');
+              const clonedColorButtons = clonedFrame.querySelectorAll('.button-color-btn');
+              clonedRemoveButtons.forEach(btn => {
+                btn.style.display = 'none';
+                btn.style.visibility = 'hidden';
+                btn.style.opacity = '0';
+                btn.style.width = '0';
+                btn.style.height = '0';
+                btn.style.padding = '0';
+                btn.style.margin = '0';
+              });
+              clonedColorButtons.forEach(btn => {
+                btn.style.display = 'none';
+                btn.style.visibility = 'hidden';
+                btn.style.opacity = '0';
+                btn.style.width = '0';
+                btn.style.height = '0';
+                btn.style.padding = '0';
+                btn.style.margin = '0';
+              });
+              
+              // Process all images in the cloned document
+              const clonedImages = clonedFrame.querySelectorAll('img');
+              clonedImages.forEach(img => {
+                // Ensure image is visible and properly styled
+                img.style.display = '';
+                img.style.visibility = 'visible';
+                img.style.opacity = '1';
+                img.style.maxWidth = '100%';
+                img.style.height = 'auto';
+                
+                // If it's a data URL, ensure it's loaded
+                if (img.src && img.src.startsWith('data:')) {
+                  // Force browser to recognize the data URL
+                  const currentSrc = img.src;
+                  img.removeAttribute('src');
+                  img.setAttribute('src', currentSrc);
+                }
+                
+                // Ensure parent containers are visible
+                let parent = img.parentElement;
+                while (parent && parent !== clonedFrame) {
+                  const parentStyle = window.getComputedStyle(parent);
+                  if (parentStyle.display === 'none') {
+                    parent.style.display = '';
+                  }
+                  if (parentStyle.visibility === 'hidden') {
+                    parent.style.visibility = 'visible';
+                  }
+                  if (parentStyle.opacity === '0') {
+                    parent.style.opacity = '1';
+                  }
+                  parent = parent.parentElement;
+                }
+              });
+
+              // Ensure all background images are preserved
+              const allElements = clonedFrame.querySelectorAll('*');
+              allElements.forEach(el => {
+                // Skip action buttons
+                if (el.classList.contains('remove-button') || el.classList.contains('button-color-btn')) {
+                  return;
+                }
+                
+                const style = window.getComputedStyle(el);
+                
+                // Preserve background images
+                if (style.backgroundImage && style.backgroundImage !== 'none') {
+                  el.style.backgroundImage = style.backgroundImage;
+                  el.style.backgroundSize = style.backgroundSize || 'cover';
+                  el.style.backgroundPosition = style.backgroundPosition || 'center';
+                  el.style.backgroundRepeat = style.backgroundRepeat || 'no-repeat';
+                }
+                
+                // Ensure visibility - especially for button content areas (s0, s1, s2)
+                if (el.classList.contains('s0') || el.classList.contains('s1') || el.classList.contains('s2') || 
+                    el.classList.contains('button-content') || el.classList.contains('dropped-button')) {
+                  el.style.display = '';
+                  el.style.visibility = 'visible';
+                  el.style.opacity = '1';
+                }
+                
+                if (style.display === 'none' && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
+                  el.style.display = '';
+                }
+                
+                if (style.visibility === 'hidden') {
+                  el.style.visibility = 'visible';
+                }
+                
+                if (style.opacity === '0') {
+                  el.style.opacity = '1';
+                }
+              });
+            }
           }
         });
-        
-        // Recursively apply to children
-        Array.from(element.children).forEach(child => {
-          applyComputedStyles(child);
+
+        // Restore original image sources and background images
+        originalValues.forEach((original, element) => {
+          if (original.type === 'src' && element.tagName === 'IMG') {
+            element.src = original.value;
+          } else if (original.type === 'backgroundImage') {
+            element.style.backgroundImage = original.value;
+            if (original.backgroundSize) element.style.backgroundSize = original.backgroundSize;
+            if (original.backgroundPosition) element.style.backgroundPosition = original.backgroundPosition;
+            if (original.backgroundRepeat) element.style.backgroundRepeat = original.backgroundRepeat;
+          }
         });
-      };
-      
-      applyComputedStyles(clonedFrame);
-      
-      // Get the HTML content of the cloned frame
-      const frameHTML = clonedFrame.outerHTML;
-      
-      // Send to Python server for PDF generation
-      const response = await fetch('http://localhost:5000/api/generate-pdf', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          html: frameHTML,
-          width: rect.width,
-          height: rect.height,
-          gridType: gridType
-        })
-      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate PDF');
+        // Restore buttons
+        removeButtons.forEach(btn => {
+          const original = originalDisplay.get(btn);
+          btn.style.display = original !== undefined ? original : '';
+        });
+        colorButtons.forEach(btn => {
+          const original = originalDisplay.get(btn);
+          btn.style.display = original !== undefined ? original : '';
+        });
+
+        // Calculate dimensions - canvas is scaled, so divide by scale to get actual size
+        const scale = 3;
+        const actualWidth = canvas.width / scale;
+        const actualHeight = canvas.height / scale;
+        
+        // Convert pixels to mm (assuming 96 DPI: 1px = 0.264583mm)
+        const widthMM = actualWidth * 0.264583;
+        const heightMM = actualHeight * 0.264583;
+
+        // Collect configuration information
+        const configInfo = {
+          gridType: gridType,
+          gridConfig: config,
+          frameColor: frameColor || 'None',
+          fullColor: fullColor || 'None',
+          buttons: []
+        };
+
+        // Collect button information
+        Object.keys(dropZones).forEach(zoneId => {
+          const zone = dropZones[zoneId];
+          if (zone && zone.isPrimary) {
+            const buttonInfo = {
+              zone: zoneId,
+              size: zone.dimensions ? `${zone.dimensions.colSpan}×${zone.dimensions.rowSpan}` : '1×1',
+              color: zone.color || 'Default',
+              iconS0: zone.s0?.type === 'icon' ? zone.s0.value : null,
+              textS0: zone.s0?.type === 'text' ? zone.s0.value : null,
+              iconS1: zone.s1?.type === 'icon' ? zone.s1.value : null,
+              textS1: zone.s1?.type === 'text' ? zone.s1.value : null,
+              iconS2: zone.s2?.type === 'icon' ? zone.s2.value : null,
+              textS2: zone.s2?.type === 'text' ? zone.s2.value : null
+            };
+            configInfo.buttons.push(buttonInfo);
+          }
+        });
+
+        // Calculate PDF page size (A4 landscape or portrait with space for info)
+        const infoHeightMM = 60; // Space for information section
+        const totalHeightMM = heightMM + infoHeightMM;
+        const pageWidthMM = Math.max(widthMM, 210); // A4 width or frame width, whichever is larger
+        const pageHeightMM = Math.max(totalHeightMM, 297); // A4 height or total height
+
+        // Create PDF with proper dimensions
+        const pdf = new jsPDF({
+          orientation: pageWidthMM > pageHeightMM ? 'landscape' : 'portrait',
+          unit: 'mm',
+          format: [pageWidthMM, pageHeightMM],
+          compress: true
+        });
+
+        // Add frame image to PDF
+        const imgData = canvas.toDataURL('image/png', 1.0);
+        pdf.addImage(imgData, 'PNG', (pageWidthMM - widthMM) / 2, 10, widthMM, heightMM, undefined, 'FAST');
+
+        // Add information section below the frame
+        let yPos = heightMM + 15;
+        const leftMargin = 10;
+        const lineHeight = 6;
+        const fontSize = 10;
+        const smallFontSize = 8;
+
+        // Title
+        pdf.setFontSize(14);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Board Design Configuration', leftMargin, yPos);
+        yPos += lineHeight + 2;
+
+        // Grid Type
+        pdf.setFontSize(fontSize);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(`Grid Type: ${gridType} (${config.columns} columns × ${config.rows} rows)`, leftMargin, yPos);
+        yPos += lineHeight;
+
+        // Colors
+        pdf.text(`Frame Color: ${configInfo.frameColor}`, leftMargin, yPos);
+        yPos += lineHeight;
+        pdf.text(`Full Color: ${configInfo.fullColor}`, leftMargin, yPos);
+        yPos += lineHeight + 2;
+
+        // Buttons section
+        if (configInfo.buttons.length > 0) {
+          pdf.setFontSize(fontSize);
+          pdf.setFont(undefined, 'bold');
+          pdf.text('Button Configuration:', leftMargin, yPos);
+          yPos += lineHeight;
+
+          pdf.setFontSize(smallFontSize);
+          pdf.setFont(undefined, 'normal');
+          configInfo.buttons.forEach((btn, index) => {
+            if (yPos > pageHeightMM - 20) {
+              pdf.addPage();
+              yPos = 10;
+            }
+            
+            let btnText = `${btn.zone}: Size ${btn.size}, Color: ${btn.color}`;
+            const details = [];
+            if (btn.iconS0) details.push(`S0 Icon: ${btn.iconS0}`);
+            if (btn.textS0) details.push(`S0 Text: ${btn.textS0}`);
+            if (btn.iconS1) details.push(`S1 Icon: ${btn.iconS1}`);
+            if (btn.textS1) details.push(`S1 Text: ${btn.textS1}`);
+            if (btn.iconS2) details.push(`S2 Icon: ${btn.iconS2}`);
+            if (btn.textS2) details.push(`S2 Text: ${btn.textS2}`);
+            
+            pdf.text(btnText, leftMargin, yPos);
+            yPos += lineHeight - 1;
+            if (details.length > 0) {
+              pdf.text(details.join(', '), leftMargin + 5, yPos);
+              yPos += lineHeight;
+            }
+            yPos += 1;
+          });
+        } else {
+          pdf.setFontSize(smallFontSize);
+          pdf.text('No buttons configured', leftMargin, yPos);
+          yPos += lineHeight;
+        }
+
+        // Date/Time
+        yPos += lineHeight;
+        const now = new Date();
+        const dateStr = now.toLocaleString('en-US', { 
+          year: 'numeric', 
+          month: 'long', 
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+        pdf.setFontSize(smallFontSize);
+        pdf.setFont(undefined, 'italic');
+        pdf.text(`Generated: ${dateStr}`, leftMargin, yPos);
+
+        // Download PDF
+        pdf.save(`board-design-${gridType}-${Date.now()}.pdf`);
+        
+        showFeedback('PDF downloaded successfully!', 'success');
+      } catch (error) {
+        // Restore buttons on error
+        removeButtons.forEach(btn => {
+          const original = originalDisplay.get(btn);
+          btn.style.display = original !== undefined ? original : '';
+        });
+        colorButtons.forEach(btn => {
+          const original = originalDisplay.get(btn);
+          btn.style.display = original !== undefined ? original : '';
+        });
+        throw error;
       }
-
-      // Download the PDF
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `board-design-${gridType}-${Date.now()}.pdf`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      window.URL.revokeObjectURL(url);
-      
-      showFeedback('PDF downloaded successfully!', 'success');
     } catch (error) {
       console.error('Error generating PDF:', error);
       showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
@@ -488,13 +900,13 @@ function Frame({
       {/* Grid Type Selector and Download Button */}
       <div className="d-flex flex-row align-items-center justify-content-center gap-4 mb-4" style={{ width: '100%', flexWrap: 'wrap' }}>
         <div className="grid-type-selector d-flex flex-row align-items-center justify-content-center gap-4">
-          {['2x4', '1x8', '2x6'].map(type => (
+          {['2x4', '2x8', '2x6'].map(type => (
             <button
               key={type}
               type="button"
               className={`grid-type-btn ${gridType === type ? 'active' : ''}`}
               onClick={() => setGridType(type)}
-              title={`${type === '2x4' ? '2 Columns × 4 Rows' : type === '1x8' ? '1 Column × 8 Rows' : '2 Columns × 6 Rows'}`}
+              title={`${type === '2x4' ? '2 Columns × 4 Rows' : type === '2x8' ? '2 Columns × 8 Rows' : '2 Columns × 6 Rows'}`}
             >
               {/* SVG icons would go here - simplified for now */}
               <span>{type}</span>
@@ -513,11 +925,47 @@ function Frame({
         </button>
       </div>
 
-      {/* Device Layout - Drop Zone */}
+      {/* Frame Container with Digital Interface and Grid */}
       <div
         ref={frameRef}
         id="key"
-        className={`layout polar-white custom basic layout-${gridType}`}
+        className={`frame-container-${gridType} ${gridType === '2x6' ? 'with-digital-interface' : ''}`}
+        style={{ display: 'flex', flexDirection: 'column', width: '320px' }}
+      >
+        {/* Digital Interface for 2x6 layout */}
+        {gridType === '2x6' && (
+          <div className="digital-interface">
+            <div className="digital-interface-row digital-interface-top">
+              <div className="digital-icon power-icon">○</div>
+              <div className="digital-icon home-icon">⌂</div>
+              <div className="digital-temp-target">24°C</div>
+              <div className="digital-button plus-button">+</div>
+            </div>
+            <div className="digital-interface-row digital-interface-middle">
+              <div className="digital-icon mode-icon">M</div>
+              <div className="digital-temp-display">18.2°C</div>
+              <div className="digital-button minus-button">−</div>
+            </div>
+            <div className="digital-interface-row digital-interface-bottom">
+              <div className="digital-icon fan-icon">⚙</div>
+              <div className="digital-fan-speed">
+                <div className="fan-bar filled"></div>
+                <div className="fan-bar filled"></div>
+                <div className="fan-bar filled"></div>
+                <div className="fan-bar"></div>
+                <div className="fan-bar"></div>
+              </div>
+              <div className="digital-heating">
+                <span className="heating-waves">〰</span>
+              </div>
+              <div className="digital-checkmark">✓</div>
+            </div>
+          </div>
+        )}
+
+        {/* Device Layout - Drop Zone */}
+        <div
+          className={`layout polar-white custom basic layout-${gridType} ${gridType === '2x6' ? 'with-digital-interface' : ''}`}
         data-place="frame"
         data-grid-type={gridType}
         style={{
@@ -574,6 +1022,7 @@ function Frame({
             </div>
           );
         })}
+        </div>
       </div>
     </div>
   );

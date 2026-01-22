@@ -268,7 +268,7 @@ function ColorPalette({
   const currentRgba = `rgba(${currentRgb.r}, ${currentRgb.g}, ${currentRgb.b}, ${alpha})`;
 
   return (
-    <div className="h-full">
+    <div className="h-full color-palette-container" style={{ width: '240px' }}>
       <div className="relative x-tab-group">
         <div className="flex relative overflow-hidden max-w-full max-h-full">
           <div className="relative overflow-auto w-full">
@@ -303,7 +303,7 @@ function ColorPalette({
               >
                 <button
                   type="button"
-                  className={`btn pattern h-9 ${color.name} color-btn`}
+                  className={`btn pattern h-9 ${color.name} color-btn ${activeColor === color.name ? 'selected' : ''}`}
                   style={{ 
                     backgroundColor: color.value,
                     backgroundImage: TEXTURE_IMAGES[color.name] ? `url(${TEXTURE_IMAGES[color.name]})` : undefined,
@@ -314,27 +314,31 @@ function ColorPalette({
                   onClick={() => handleColorClick(color.name)}
                   title={color.label}
                   data-color-name={color.name}
-                ></button>
-                <div className="color-actions">
-                  <button
-                    type="button"
-                    className="x-button frame-color-btn"
-                    onClick={() => handleFrameClick(color.name)}
-                    data-place="frame"
-                    data-color={color.name}
-                  >
-                    <span>FRAME</span>
-                  </button>
-                  <button
-                    type="button"
-                    className="x-button all-color-btn"
-                    onClick={() => handleAllClick(color.name)}
-                    data-place="full"
-                    data-color={color.name}
-                  >
-                    <span>ALL</span>
-                  </button>
-                </div>
+                >
+                  <span className="color-label">{color.label}</span>
+                </button>
+                {activeColor === color.name && (
+                  <div className="color-actions animate-slide-in">
+                    <button
+                      type="button"
+                      className="frame-color-btn"
+                      onClick={() => handleFrameClick(color.name)}
+                      data-place="frame"
+                      data-color={color.name}
+                    >
+                      <span>FRAME</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="all-color-btn"
+                      onClick={() => handleAllClick(color.name)}
+                      data-place="full"
+                      data-color={color.name}
+                    >
+                      <span>ALL</span>
+                    </button>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -343,14 +347,14 @@ function ColorPalette({
 
       {activeTab === 'wall' && (
         <div role="tabpanel" className="py-2">
-          <div className="flex flex-col gap-3" style={{ maxHeight: 'calc(85vh - 120px)', overflowY: 'auto' }}>
+          <div className="flex flex-col gap-2" style={{ maxHeight: 'calc(85vh - 120px)', overflowY: 'auto' }}>
             {/* Gradient Color Picker */}
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-1">
               <div
                 ref={gradientRef}
                 style={{
                   width: '100%',
-                  height: '200px',
+                  height: '120px',
                   background: `linear-gradient(to bottom, 
                     hsl(${hue}, 100%, 100%) 0%,
                     hsl(${hue}, 100%, 50%) 50%,
@@ -375,8 +379,8 @@ function ColorPalette({
                     position: 'absolute',
                     left: `${saturation}%`,
                     top: `${100 - brightness}%`,
-                    width: '12px',
-                    height: '12px',
+                    width: '10px',
+                    height: '10px',
                     borderRadius: '50%',
                     border: '2px solid white',
                     boxShadow: '0 0 0 1px rgba(0,0,0,0.3)',
@@ -387,13 +391,13 @@ function ColorPalette({
               </div>
 
               {/* Hue Slider */}
-              <div className="flex flex-col gap-1">
-                <label className="text-xs font-medium">Hue</label>
+              <div className="flex flex-col gap-0.5">
+                <label className="text-xs font-medium" style={{ fontSize: '10px' }}>Hue</label>
                 <div
                   ref={hueRef}
                   style={{
                     width: '100%',
-                    height: '20px',
+                    height: '16px',
                     background: 'linear-gradient(to right, #ff0000 0%, #ffff00 17%, #00ff00 33%, #00ffff 50%, #0000ff 67%, #ff00ff 83%, #ff0000 100%)',
                     borderRadius: '4px',
                     position: 'relative',
@@ -410,7 +414,7 @@ function ColorPalette({
                       position: 'absolute',
                       left: `${(hue / 360) * 100}%`,
                       top: '50%',
-                      width: '4px',
+                      width: '3px',
                       height: '100%',
                       background: 'white',
                       border: '1px solid rgba(0,0,0,0.3)',
@@ -449,7 +453,7 @@ function ColorPalette({
                       position: 'absolute',
                       left: `${alpha * 100}%`,
                       top: '50%',
-                      width: '4px',
+                      width: '3px',
                       height: '100%',
                       background: 'white',
                       border: '1px solid rgba(0,0,0,0.3)',
@@ -461,27 +465,27 @@ function ColorPalette({
               </div>
 
               {/* Current Color Preview */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <div
                   style={{
-                    width: '40px',
-                    height: '40px',
+                    width: '32px',
+                    height: '32px',
                     backgroundColor: `rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha})`,
                     border: '1px solid rgba(0, 0, 0, 0.12)',
                     borderRadius: '4px',
                     flexShrink: 0
                   }}
                 />
-                <div className="flex-1 text-xs">
+                <div className="flex-1" style={{ fontSize: '10px' }}>
                   <div className="font-medium">Current Color</div>
-                  <div className="text-secondary-600">{`rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha})`}</div>
+                  <div className="text-secondary-600" style={{ fontSize: '9px', wordBreak: 'break-all' }}>{`rgba(${rgbColor.r}, ${rgbColor.g}, ${rgbColor.b}, ${alpha})`}</div>
                 </div>
               </div>
 
               {/* Color Value Inputs */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '8px' }}>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium">Hex</label>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '4px' }}>
+                <div className="flex flex-col gap-0.5">
+                  <label className="text-xs font-medium" style={{ fontSize: '10px' }}>Hex</label>
                   <input
                     type="text"
                     value={hexColor.toUpperCase()}
@@ -493,12 +497,12 @@ function ColorPalette({
                         setHexColor(hex);
                       }
                     }}
-                    className="px-2 py-1 text-xs border rounded"
-                    style={{ fontFamily: 'monospace' }}
+                    className="px-1.5 py-0.5 text-xs border rounded"
+                    style={{ fontFamily: 'monospace', fontSize: '10px', padding: '4px 6px' }}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium">R</label>
+                <div className="flex flex-col gap-0.5">
+                  <label className="text-xs font-medium" style={{ fontSize: '10px' }}>R</label>
                   <input
                     type="number"
                     min="0"
@@ -508,11 +512,12 @@ function ColorPalette({
                       const r = parseInt(e.target.value) || 0;
                       updateColorFromRgb(r, rgbColor.g, rgbColor.b, alpha);
                     }}
-                    className="px-2 py-1 text-xs border rounded"
+                    className="px-1.5 py-0.5 text-xs border rounded"
+                    style={{ fontSize: '10px', padding: '4px 6px' }}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium">G</label>
+                <div className="flex flex-col gap-0.5">
+                  <label className="text-xs font-medium" style={{ fontSize: '10px' }}>G</label>
                   <input
                     type="number"
                     min="0"
@@ -522,11 +527,12 @@ function ColorPalette({
                       const g = parseInt(e.target.value) || 0;
                       updateColorFromRgb(rgbColor.r, g, rgbColor.b, alpha);
                     }}
-                    className="px-2 py-1 text-xs border rounded"
+                    className="px-1.5 py-0.5 text-xs border rounded"
+                    style={{ fontSize: '10px', padding: '4px 6px' }}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium">B</label>
+                <div className="flex flex-col gap-0.5">
+                  <label className="text-xs font-medium" style={{ fontSize: '10px' }}>B</label>
                   <input
                     type="number"
                     min="0"
@@ -536,11 +542,12 @@ function ColorPalette({
                       const b = parseInt(e.target.value) || 0;
                       updateColorFromRgb(rgbColor.r, rgbColor.g, b, alpha);
                     }}
-                    className="px-2 py-1 text-xs border rounded"
+                    className="px-1.5 py-0.5 text-xs border rounded"
+                    style={{ fontSize: '10px', padding: '4px 6px' }}
                   />
                 </div>
-                <div className="flex flex-col gap-1">
-                  <label className="text-xs font-medium">A</label>
+                <div className="flex flex-col gap-0.5">
+                  <label className="text-xs font-medium" style={{ fontSize: '10px' }}>A</label>
                   <input
                     type="number"
                     min="0"
@@ -552,7 +559,8 @@ function ColorPalette({
                       setAlpha(a);
                       updateColorFromRgb(rgbColor.r, rgbColor.g, rgbColor.b, a);
                     }}
-                    className="px-2 py-1 text-xs border rounded"
+                    className="px-1.5 py-0.5 text-xs border rounded"
+                    style={{ fontSize: '10px', padding: '4px 6px' }}
                   />
                 </div>
               </div>

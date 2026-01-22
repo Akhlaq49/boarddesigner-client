@@ -50,7 +50,7 @@ function App() {
   } = useDragDrop();
 
   return (
-    <section className="fixed w-full h-full overflow-hidden">
+    <section className="fixed w-full h-full" style={{ overflowX: 'auto', overflowY: 'auto' }}>
       <div className="wrapper flex flex-col align-middle justify-center transition-colors duration-300 select-none">
         <Header 
           boardWidth={boardWidth}
@@ -59,15 +59,18 @@ function App() {
           setColorPaletteWidth={setColorPaletteWidth}
         />
         
-        <div className="container-fluid h-100" style={{ paddingTop: '80px' }}>
-          <div className="row h-100 g-3" style={{ display: 'flex', margin: 0 }}>
+        <div className="container-fluid h-100" style={{ paddingTop: '80px', overflowX: 'auto' }}>
+          <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
             {/* Left Column - Button Parts */}
             <div className="h-100 overflow-auto" style={{ 
               width: '25%',
               minWidth: '200px',
               maxWidth: '300px',
               flexShrink: 0,
-              padding: '0 8px'
+              flexGrow: 0,
+              padding: '0 8px',
+              position: 'relative',
+              zIndex: 1
             }}>
               <div className="h-100">
                 <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
@@ -81,6 +84,7 @@ function App() {
                     applyTextToButton={applyTextToButton}
                     showFeedback={showFeedback}
                     fullColor={fullColor}
+                    selectedColor={selectedColor}
                     getColorValue={getColorValue}
                     getTextureImage={getTextureImage}
                   />
@@ -92,8 +96,11 @@ function App() {
             <div className="h-100 d-flex align-items-center justify-content-center" style={{ 
               width: `${boardWidth}%`,
               minWidth: '300px',
+              maxWidth: 'calc(100% - 500px)', // Ensure space for left (300px) + right (240px) columns
               flex: '1 1 auto',
-              padding: '0 8px'
+              flexShrink: 1,
+              padding: '0 8px',
+              overflow: 'visible'
             }}>
               <Frame
                 gridType={gridType}
@@ -119,11 +126,14 @@ function App() {
 
             {/* Right Column - Color Palette */}
             <div className="h-100 overflow-auto" style={{ 
-              width: `${colorPaletteWidth}%`,
-              minWidth: '200px',
-              maxWidth: '350px',
+              width: '240px',
+              minWidth: '240px',
+              maxWidth: '240px',
               flexShrink: 0,
-              padding: '0 8px'
+              flexGrow: 0,
+              padding: '0 8px',
+              position: 'relative',
+              zIndex: 1
             }}>
               <div className="h-100">
                 <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
