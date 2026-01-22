@@ -264,8 +264,6 @@ function ColorPalette({
 
   // Get current color in various formats (use state values)
   const currentRgb = rgbColor;
-  const currentHex = hexColor;
-  const currentRgba = `rgba(${currentRgb.r}, ${currentRgb.g}, ${currentRgb.b}, ${alpha})`;
 
   return (
     <div className="h-full color-palette-container" style={{ width: '240px' }}>

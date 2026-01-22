@@ -293,9 +293,7 @@ export function useDragDrop() {
     
     // Create very subtle darker flecks for organic texture (like the image)
     // Very low contrast, tiny random-looking imperfections - fine-grained texture
-    const fleckDark = `rgba(${Math.max(0, r - 3)}, ${Math.max(0, g - 3)}, ${Math.max(0, b - 3)}, 0.05)`;
-    const fleckDarker = `rgba(${Math.max(0, r - 5)}, ${Math.max(0, g - 5)}, ${Math.max(0, b - 5)}, 0.04)`;
-    const fleckDarkest = `rgba(${Math.max(0, r - 7)}, ${Math.max(0, g - 7)}, ${Math.max(0, b - 7)}, 0.03)`;
+    // Note: Fleck color variables are calculated inline in generateFleckLayer function
     
     // Create organic, fine-grained texture using a noise-like pattern
     // Multiple layers of tiny radial gradients at various positions create organic flecks
