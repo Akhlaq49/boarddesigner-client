@@ -115,6 +115,7 @@ export function useDragDrop() {
   const [boardWidth, setBoardWidth] = useState(50); // Percentage of available width
   const [colorPaletteWidth, setColorPaletteWidth] = useState(25); // Percentage of available width
   const [wallColor, setWallColor] = useState('#e8e8e8'); // Default background color
+  const [selectedButtonPart, setSelectedButtonPart] = useState(null); // For click-to-apply functionality
 
   const showFeedback = useCallback((message, type = 'info') => {
     setFeedback({ message, type, show: true });
@@ -394,7 +395,9 @@ export function useDragDrop() {
     colorPaletteWidth,
     setColorPaletteWidth,
     wallColor,
-    applyWallColor
+    applyWallColor,
+    selectedButtonPart,
+    setSelectedButtonPart
   };
 }
 

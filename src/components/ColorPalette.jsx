@@ -263,7 +263,7 @@ function ColorPalette({
 
 
   return (
-    <div className="h-full color-palette-container" style={{ width: '240px' }}>
+    <div className="h-full color-palette-container" style={{  }}>
       <div className="relative x-tab-group">
         <div className="flex relative overflow-hidden max-w-full max-h-full">
           <div className="relative overflow-auto w-full">
@@ -288,7 +288,7 @@ function ColorPalette({
       </div>
 
       {activeTab === 'textures' && (
-        <div role="tabpanel" className="py-2">
+        <div role="tabpanel" className="py-2" style={{ maxHeight: 'calc(85vh - 200px)', overflowY: 'auto', overflowX: 'visible' }}>
           <div className="flex flex-col gap-2 color-palette-list">
             {COLORS.map(color => (
               <div
@@ -342,7 +342,7 @@ function ColorPalette({
 
       {activeTab === 'wall' && (
         <div role="tabpanel" className="py-2">
-          <div className="flex flex-col gap-2" style={{ maxHeight: 'calc(85vh - 120px)', overflowY: 'auto' }}>
+          <div className="flex flex-col gap-2" style={{ maxHeight: 'calc(85vh - 200px)', overflowY: 'auto', overflowX: 'visible' }}>
             {/* Gradient Color Picker */}
             <div className="flex flex-col gap-1">
               <div

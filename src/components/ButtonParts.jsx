@@ -13,7 +13,9 @@ function ButtonParts({
   selectedColor,
   getColorValue,
   getTextureImage,
-  dropZones
+  dropZones,
+  selectedButtonPart,
+  setSelectedButtonPart
 }) {
   const [activeTab, setActiveTab] = useState('parts');
   const [positionTypes, setPositionTypes] = useState({
@@ -119,6 +121,12 @@ function ButtonParts({
     setShowIconPopup(true);
   };
 
+  const handleButtonPartClick = (buttonType) => {
+    // Click-to-apply: select button part, then user can click on a zone to place it
+    setSelectedButtonPart(buttonType);
+    showFeedback(`Button ${buttonType} selected. Click on a zone to place it.`, 'info');
+  };
+
   return (
     <div className="h-full">
       <div className="relative x-tab-group">
@@ -150,10 +158,11 @@ function ButtonParts({
           <div className="grid grid-cols-2 grid-rows-5 gap-3">
             <button
               type="button"
-              className="custom-button-1 polar-white draggable-btn"
+              className={`custom-button-1 polar-white draggable-btn ${selectedButtonPart === 1 ? 'selected-part' : ''}`}
               draggable
               onDragStart={(e) => handleDragStart(e, 1)}
               onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(1)}
               data-button-type="1"
               style={(fullColor || selectedColor) ? { 
                 backgroundColor: getColorValue(fullColor || selectedColor),
@@ -162,10 +171,11 @@ function ButtonParts({
             ></button>
             <button
               type="button"
-              className="custom-button-3 row-span-2 polar-white ring-2 ring-secondary-700 dark:ring-secondary-200 draggable-btn"
+              className={`custom-button-3 row-span-2 polar-white ring-2 ring-secondary-700 dark:ring-secondary-200 draggable-btn ${selectedButtonPart === 3 ? 'selected-part' : ''}`}
               draggable
               onDragStart={(e) => handleDragStart(e, 3)}
               onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(3)}
               data-button-type="3"
               style={(fullColor || selectedColor) ? { 
                 backgroundColor: getColorValue(fullColor || selectedColor),
@@ -174,10 +184,11 @@ function ButtonParts({
             ></button>
             <button
               type="button"
-              className="custom-button-2 col-span-2 polar-white draggable-btn"
+              className={`custom-button-2 col-span-2 polar-white draggable-btn ${selectedButtonPart === 2 ? 'selected-part' : ''}`}
               draggable
               onDragStart={(e) => handleDragStart(e, 2)}
               onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(2)}
               data-button-type="2"
               style={(fullColor || selectedColor) ? { 
                 backgroundColor: getColorValue(fullColor || selectedColor),
@@ -186,10 +197,11 @@ function ButtonParts({
             ></button>
             <button
               type="button"
-              className="custom-button-4 col-span-2 row-span-2 polar-white draggable-btn"
+              className={`custom-button-4 col-span-2 row-span-2 polar-white draggable-btn ${selectedButtonPart === 4 ? 'selected-part' : ''}`}
               draggable
               onDragStart={(e) => handleDragStart(e, 4)}
               onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(4)}
               data-button-type="4"
               style={(fullColor || selectedColor) ? { 
                 backgroundColor: getColorValue(fullColor || selectedColor),

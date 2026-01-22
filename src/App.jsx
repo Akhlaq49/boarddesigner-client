@@ -46,7 +46,9 @@ function App() {
     colorPaletteWidth,
     setColorPaletteWidth,
     wallColor,
-    applyWallColor
+    applyWallColor,
+    selectedButtonPart,
+    setSelectedButtonPart
   } = useDragDrop();
 
   return (
@@ -65,7 +67,7 @@ function App() {
             <div className="h-100 overflow-auto" style={{ 
               width: '25%',
               minWidth: '200px',
-              maxWidth: '300px',
+              
               flexShrink: 0,
               flexGrow: 0,
               padding: '0 8px',
@@ -88,6 +90,8 @@ function App() {
                     getColorValue={getColorValue}
                     getTextureImage={getTextureImage}
                     dropZones={dropZones}
+                    selectedButtonPart={selectedButtonPart}
+                    setSelectedButtonPart={setSelectedButtonPart}
                   />
                 </div>
               </div>
@@ -122,19 +126,25 @@ function App() {
                 getTextureImage={getTextureImage}
                 setShowButtonColorPopup={setShowButtonColorPopup}
                 setButtonColorTarget={setButtonColorTarget}
+                selectedButtonPart={selectedButtonPart}
+                setSelectedButtonPart={setSelectedButtonPart}
+                selectedColor={selectedColor}
               />
             </div>
 
             {/* Right Column - Color Palette */}
             <div className="h-100 overflow-auto" style={{ 
-              width: '240px',
+             
               minWidth: '240px',
-              maxWidth: '240px',
+              maxWidth: '300px',
               flexShrink: 0,
               flexGrow: 0,
-              padding: '0 8px',
+              padding: '0 8px 0 8px',
+              marginRight: '0',
               position: 'relative',
-              zIndex: 1
+              zIndex: 10,
+              overflowX: 'visible',
+              overflowY: 'auto'
             }}>
               <div className="h-100">
                 <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">

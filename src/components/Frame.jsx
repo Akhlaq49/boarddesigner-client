@@ -22,11 +22,17 @@ function Frame({
   getColorValue,
   getTextureImage,
   setShowButtonColorPopup,
-  setButtonColorTarget
+  setButtonColorTarget,
+  selectedButtonPart,
+  setSelectedButtonPart,
+  selectedColor
 }) {
   const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['2x4'];
   const [highlightedZones, setHighlightedZones] = useState([]);
   const frameRef = useRef(null);
+  
+  // Get selectedColor and fullColor from props or context if needed
+  // For now, we'll get it from the button data when placing
 
   const allZones = useMemo(() => {
     const zones = [];
@@ -207,7 +213,64 @@ function Frame({
   };
 
   const handleZoneClick = (zoneId) => {
-    if (dropZones[zoneId]) {
+    // If a button part is selected (click-to-apply mode), place it
+    if (selectedButtonPart) {
+      const buttonType = selectedButtonPart;
+      const dimensions = getButtonDimensions(buttonType);
+      
+      const zone = allZones.find(z => z.id === zoneId);
+      if (!zone) return;
+      
+      // Check if button fits
+      if (zone.col + dimensions.colSpan - 1 > config.columns || 
+          zone.row + dimensions.rowSpan - 1 > config.rows) {
+        showFeedback(`Button doesn't fit here (needs ${dimensions.colSpan}×${dimensions.rowSpan}, only ${config.columns}×${config.rows} available)`, 'error');
+        return;
+      }
+      
+      // Get zones to merge
+      const zonesToMerge = getZonesToMerge(zone, dimensions);
+      if (!zonesToMerge) {
+        showFeedback('Cannot merge zones', 'error');
+        return;
+      }
+      
+      // Check if zones are available (allow replacing)
+      const occupiedZones = zonesToMerge.filter(zId => {
+        const existing = dropZones[zId];
+        return existing && !existing.isMerged;
+      });
+      
+      // Clear occupied zones first
+      occupiedZones.forEach(zId => {
+        const existing = dropZones[zId];
+        if (existing && existing.zones) {
+          existing.zones.forEach(z => clearDropZone(z));
+        } else {
+          clearDropZone(zId);
+        }
+      });
+      
+      // Place button with merge info
+      const buttonDataWithMerge = {
+        type: buttonType,
+        dimensions,
+        zones: zonesToMerge,
+        color: selectedColor || fullColor || null // Include selected color in click-to-apply
+      };
+      
+      placeButtonInZones(zonesToMerge, buttonDataWithMerge);
+      setSelectedButton(zoneId);
+      setSelectedButtonPart(null); // Clear selection after placement
+      showFeedback('Button placed successfully!', 'success');
+      return; // Exit early to prevent normal selection
+      
+      placeButtonInZones(zonesToMerge, buttonDataWithMerge);
+      setSelectedButton(zoneId);
+      setSelectedButtonPart(null); // Clear selection after placement
+      showFeedback('Button placed successfully!', 'success');
+    } else if (dropZones[zoneId]) {
+      // Normal selection mode
       setSelectedButton(zoneId);
     }
   };
@@ -900,7 +963,7 @@ function Frame({
         // Add company name header at the top
         pdf.setFontSize(18);
         pdf.setFont(undefined, 'bold');
-        const companyName = 'Your Company Name'; // Company name - can be customized
+        const companyName = 'KNX Switch Designer'; // Company name - can be customized
         const centerX = pageWidthMM / 2;
         pdf.text(companyName, centerX, 5, { align: 'center' });
         
@@ -1125,7 +1188,7 @@ function Frame({
   return (
     <div className="w-100 d-flex flex-column align-items-center">
       {/* Grid Type Selector and Download Button */}
-      <div className="d-flex flex-row align-items-center justify-content-center gap-4 mb-4" style={{ width: '100%', flexWrap: 'wrap' }}>
+      <div className="d-flex flex-row align-items-center justify-content-center gap-4 mb-4" style={{ flexWrap: 'wrap' }}>
         <div className="grid-type-selector d-flex flex-row align-items-center justify-content-center gap-4">
           {['2x4', '2x8', '2x6'].map(type => (
             <button
@@ -1159,34 +1222,14 @@ function Frame({
         className={`frame-container-${gridType} ${gridType === '2x6' ? 'with-digital-interface' : ''}`}
         style={{ display: 'flex', flexDirection: 'column', width: '320px' }}
       >
-        {/* Digital Interface for 2x6 layout */}
+        {/* Digital Interface for 2x6 layout - Thermostat */}
         {gridType === '2x6' && (
           <div className="digital-interface">
-            <div className="digital-interface-row digital-interface-top">
-              <div className="digital-icon power-icon">○</div>
-              <div className="digital-icon home-icon">⌂</div>
-              <div className="digital-temp-target">24°C</div>
-              <div className="digital-button plus-button">+</div>
-            </div>
-            <div className="digital-interface-row digital-interface-middle">
-              <div className="digital-icon mode-icon">M</div>
-              <div className="digital-temp-display">18.2°C</div>
-              <div className="digital-button minus-button">−</div>
-            </div>
-            <div className="digital-interface-row digital-interface-bottom">
-              <div className="digital-icon fan-icon">⚙</div>
-              <div className="digital-fan-speed">
-                <div className="fan-bar filled"></div>
-                <div className="fan-bar filled"></div>
-                <div className="fan-bar filled"></div>
-                <div className="fan-bar"></div>
-                <div className="fan-bar"></div>
-              </div>
-              <div className="digital-heating">
-                <span className="heating-waves">〰</span>
-              </div>
-              <div className="digital-checkmark">✓</div>
-            </div>
+            <img 
+              src="/images/thermostat-interface.png" 
+              alt="Thermostat Digital Interface" 
+              className="digital-interface-image"
+            />
           </div>
         )}
 
