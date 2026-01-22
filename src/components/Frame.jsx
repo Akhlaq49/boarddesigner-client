@@ -264,11 +264,6 @@ function Frame({
       setSelectedButtonPart(null); // Clear selection after placement
       showFeedback('Button placed successfully!', 'success');
       return; // Exit early to prevent normal selection
-      
-      placeButtonInZones(zonesToMerge, buttonDataWithMerge);
-      setSelectedButton(zoneId);
-      setSelectedButtonPart(null); // Clear selection after placement
-      showFeedback('Button placed successfully!', 'success');
     } else if (dropZones[zoneId]) {
       // Normal selection mode
       setSelectedButton(zoneId);
