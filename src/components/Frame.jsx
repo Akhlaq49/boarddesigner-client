@@ -839,42 +839,51 @@ function Frame({
               <img 
                 src={`/ican/images/${zone.s0.value}`} 
                 alt="icon" 
-                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                className="button-icon"
+                style={{ width: '36px', height: '36px', objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s0.value);
                   e.target.style.display = 'none';
                 }}
               />
             )}
-            {zone.s0?.type === 'text' && zone.s0?.value && <span>{zone.s0.value}</span>}
+            {zone.s0?.type === 'text' && zone.s0?.value && (
+              <span style={{ color: zone.s0?.color || '#ffffff' }}>{zone.s0.value}</span>
+            )}
           </span>
           <span className="s1">
             {zone.s1?.type === 'icon' && zone.s1?.value && (
               <img 
                 src={`/ican/images/${zone.s1.value}`} 
                 alt="icon" 
-                style={{ width: '32px', height: '32px', objectFit: 'contain' }}
+                className="button-icon"
+                style={{ width: '48px', height: '48px', objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s1.value);
                   e.target.style.display = 'none';
                 }}
               />
             )}
-            {zone.s1?.type === 'text' && zone.s1?.value && <span>{zone.s1.value}</span>}
+            {zone.s1?.type === 'text' && zone.s1?.value && (
+              <span style={{ color: zone.s1?.color || '#ffffff' }}>{zone.s1.value}</span>
+            )}
           </span>
           <span className="s2">
             {zone.s2?.type === 'icon' && zone.s2?.value && (
               <img 
                 src={`/ican/images/${zone.s2.value}`} 
                 alt="icon" 
-                style={{ width: '24px', height: '24px', objectFit: 'contain' }}
+                className="button-icon"
+                style={{ width: '36px', height: '36px', objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s2.value);
                   e.target.style.display = 'none';
                 }}
               />
             )}
-            {zone.s2?.type === 'text' && zone.s2?.value && <span>{zone.s2.value}</span>}
+            {zone.s2?.type === 'text' && zone.s2?.value && (
+              <span style={{ color: zone.s2?.color || '#ffffff' }}>{zone.s2.value}</span>
+            )}
           </span>
         </div>
         <button

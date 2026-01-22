@@ -214,7 +214,7 @@ export function useDragDrop() {
     showFeedback(`Icon applied to ${position}`, 'success');
   }, [dropZones, updateDropZone, showFeedback]);
 
-  const applyTextToButton = useCallback((buttonId, position, text) => {
+  const applyTextToButton = useCallback((buttonId, position, text, color = '#ffffff') => {
     if (!buttonId) {
       showFeedback('Please select a button first', 'info');
       return;
@@ -229,10 +229,10 @@ export function useDragDrop() {
     const primaryZoneId = zone.isPrimary ? buttonId : (zone.mergedInto || buttonId);
     const primaryZone = dropZones[primaryZoneId] || zone;
     
-    // Create updated zone data - clear icon if it exists, set text
+    // Create updated zone data - clear icon if it exists, set text with color
     const updatedZone = { ...primaryZone };
     if (text) {
-      updatedZone[position] = { type: 'text', value: text };
+      updatedZone[position] = { type: 'text', value: text, color: color };
     } else {
       // Clear the position if text is empty
       delete updatedZone[position];

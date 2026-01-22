@@ -1636,6 +1636,19 @@ legend {
     grid-row: 3;
 }
 
+/* Button icon styling - white color and proper sizing */
+.button-content .button-icon,
+.dropped-button .button-icon {
+    filter: brightness(0) invert(1);
+    -webkit-filter: brightness(0) invert(1);
+}
+
+.button-content img.button-icon,
+.dropped-button img.button-icon {
+    filter: brightness(0) invert(1);
+    -webkit-filter: brightness(0) invert(1);
+}
+
 .button-content i {
     font-size: 1.5rem;
     color: #1976d2; /* Material Design primary */

@@ -87,6 +87,7 @@ function App() {
                     selectedColor={selectedColor}
                     getColorValue={getColorValue}
                     getTextureImage={getTextureImage}
+                    dropZones={dropZones}
                   />
                 </div>
               </div>
