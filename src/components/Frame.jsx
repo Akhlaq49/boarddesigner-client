@@ -283,7 +283,152 @@ function Frame({
         // Wait a bit more for any animations/transitions to complete
         await new Promise(resolve => setTimeout(resolve, 200));
 
-        // Helper function to convert image URL to data URL (handles SVG and other formats)
+        // Helper function to convert SVG icon to PNG canvas element (most reliable for Chrome)
+        const convertSvgIconToCanvas = async (imgElement) => {
+          try {
+            const svgUrl = imgElement.src;
+            if (!svgUrl || svgUrl.startsWith('data:image/png')) return null; // Already converted
+            
+            const response = await fetch(svgUrl, { 
+              mode: 'cors',
+              cache: 'no-cache'
+            });
+            if (!response.ok) throw new Error(`HTTP ${response.status}`);
+            const svgText = await response.text();
+            
+            // Clean SVG
+            let cleanedSvg = svgText.trim();
+            if (!cleanedSvg.includes('xmlns=')) {
+              cleanedSvg = cleanedSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+            }
+            cleanedSvg = cleanedSvg.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
+            
+            // Create SVG data URL
+            const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cleanedSvg)}`;
+            
+            // Convert to canvas/PNG
+            return new Promise((resolve) => {
+              const svgImg = new Image();
+              svgImg.crossOrigin = 'anonymous';
+              svgImg.onload = () => {
+                try {
+                  const canvas = document.createElement('canvas');
+                  const ctx = canvas.getContext('2d', { alpha: true });
+                  
+                  // Enable high-quality rendering
+                  ctx.imageSmoothingEnabled = true;
+                  ctx.imageSmoothingQuality = 'high';
+                  
+                  // Get exact displayed size from computed styles
+                  const computedStyle = window.getComputedStyle(imgElement);
+                  const displayWidth = parseFloat(computedStyle.width) || imgElement.offsetWidth || imgElement.naturalWidth || 100;
+                  const displayHeight = parseFloat(computedStyle.height) || imgElement.offsetHeight || imgElement.naturalHeight || 100;
+                  
+                  // Use 3x resolution for better quality
+                  const scale = 3;
+                  canvas.width = displayWidth * scale;
+                  canvas.height = displayHeight * scale;
+                  
+                  // Scale context for high DPI
+                  ctx.scale(scale, scale);
+                  
+                  // Don't draw white background - keep transparent or use filter for white icons
+                  // Apply white filter to SVG (icons should be white)
+                  ctx.filter = 'brightness(0) invert(1)';
+                  
+                  // Draw SVG at original size (context is already scaled)
+                  ctx.drawImage(svgImg, 0, 0, displayWidth, displayHeight);
+                  
+                  // Reset filter
+                  ctx.filter = 'none';
+                  
+                  // Replace img element with canvas - maintain exact position and alignment
+                  const parent = imgElement.parentElement;
+                  
+                  // Copy all attributes from original image
+                  Array.from(imgElement.attributes).forEach(attr => {
+                    if (attr.name !== 'src') {
+                      canvas.setAttribute(attr.name, attr.value);
+                    }
+                  });
+                  
+                  // Match ALL computed styling from original image exactly
+                  canvas.style.width = computedStyle.width || `${displayWidth}px`;
+                  canvas.style.height = computedStyle.height || `${displayHeight}px`;
+                  canvas.style.minWidth = computedStyle.minWidth || '';
+                  canvas.style.minHeight = computedStyle.minHeight || '';
+                  canvas.style.maxWidth = computedStyle.maxWidth || '';
+                  canvas.style.maxHeight = computedStyle.maxHeight || '';
+                  canvas.style.display = computedStyle.display || '';
+                  canvas.style.visibility = computedStyle.visibility || 'visible';
+                  canvas.style.opacity = computedStyle.opacity || '1';
+                  canvas.style.objectFit = computedStyle.objectFit || 'contain';
+                  canvas.style.objectPosition = computedStyle.objectPosition || 'center';
+                  canvas.style.margin = computedStyle.margin || '0';
+                  canvas.style.padding = computedStyle.padding || '0';
+                  canvas.style.verticalAlign = computedStyle.verticalAlign || 'middle';
+                  canvas.style.textAlign = computedStyle.textAlign || '';
+                  canvas.style.position = computedStyle.position || 'static';
+                  canvas.style.left = computedStyle.left || '';
+                  canvas.style.top = computedStyle.top || '';
+                  canvas.style.right = computedStyle.right || '';
+                  canvas.style.bottom = computedStyle.bottom || '';
+                  canvas.style.float = computedStyle.float || '';
+                  canvas.style.clear = computedStyle.clear || '';
+                  canvas.style.marginTop = computedStyle.marginTop || '';
+                  canvas.style.marginRight = computedStyle.marginRight || '';
+                  canvas.style.marginBottom = computedStyle.marginBottom || '';
+                  canvas.style.marginLeft = computedStyle.marginLeft || '';
+                  canvas.style.paddingTop = computedStyle.paddingTop || '';
+                  canvas.style.paddingRight = computedStyle.paddingRight || '';
+                  canvas.style.paddingBottom = computedStyle.paddingBottom || '';
+                  canvas.style.paddingLeft = computedStyle.paddingLeft || '';
+                  canvas.style.transform = computedStyle.transform || '';
+                  canvas.style.transformOrigin = computedStyle.transformOrigin || '';
+                  canvas.style.boxSizing = computedStyle.boxSizing || 'content-box';
+                  
+                  // Copy inline styles from original
+                  if (imgElement.style.cssText) {
+                    const inlineStyles = imgElement.style.cssText.split(';').filter(s => s.trim() && !s.includes('width') && !s.includes('height'));
+                    inlineStyles.forEach(style => {
+                      if (style.trim()) {
+                        const [prop, value] = style.split(':').map(s => s.trim());
+                        if (prop && value) {
+                          canvas.style.setProperty(prop, value);
+                        }
+                      }
+                    });
+                  }
+                  
+                  canvas.className = imgElement.className;
+                  canvas.setAttribute('data-original-src', svgUrl);
+                  canvas.setAttribute('alt', imgElement.alt || 'icon');
+                  
+                  // Replace image with canvas at exact same position using replaceChild
+                  // This maintains exact DOM position and alignment
+                  parent.replaceChild(canvas, imgElement);
+                  
+                  resolve(canvas);
+                } catch (error) {
+                  console.warn('Failed to convert SVG to canvas:', error);
+                  resolve(null);
+                }
+              };
+              svgImg.onerror = () => {
+                console.warn('Failed to load SVG for canvas conversion');
+                resolve(null);
+              };
+              svgImg.src = svgDataUrl;
+              setTimeout(() => resolve(null), 3000); // Timeout
+            });
+          } catch (error) {
+            console.warn('Failed to convert SVG icon:', error);
+            return null;
+          }
+        };
+
+        // Helper function to convert image URL to data URL (for non-SVG images)
+        // SVG icons are handled separately via canvas conversion
         const imageUrlToDataUrl = async (url) => {
           try {
             // Handle relative URLs
@@ -294,23 +439,33 @@ function Frame({
                 : `${window.location.origin}/${url}`;
             }
             
-            // For SVG files, fetch as text and convert to data URL
-            if (absoluteUrl.toLowerCase().endsWith('.svg') || absoluteUrl.includes('.svg')) {
+            // Skip SVG files - they're handled via canvas conversion
+            if (absoluteUrl.toLowerCase().endsWith('.svg') || absoluteUrl.includes('/ican/images/')) {
+              // For SVG, return as SVG data URL (fallback for background images)
               try {
-                const response = await fetch(absoluteUrl, { mode: 'cors' });
+                const response = await fetch(absoluteUrl, { 
+                  mode: 'cors',
+                  cache: 'no-cache'
+                });
                 if (!response.ok) throw new Error(`HTTP ${response.status}`);
                 const svgText = await response.text();
-                // Encode SVG as data URL
-                const encodedSvg = encodeURIComponent(svgText);
-                return `data:image/svg+xml;charset=utf-8,${encodedSvg}`;
-              } catch (svgError) {
-                console.warn('Failed to fetch SVG:', absoluteUrl, svgError);
-                // Fallback to regular fetch
+                let cleanedSvg = svgText.trim();
+                if (!cleanedSvg.includes('xmlns=')) {
+                  cleanedSvg = cleanedSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+                }
+                return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cleanedSvg)}`;
+              } catch (error) {
+                console.warn('Failed to convert SVG to data URL:', error);
+                return null;
               }
             }
             
             // For other image types, fetch as blob
-            const response = await fetch(absoluteUrl, { mode: 'cors' });
+            const response = await fetch(absoluteUrl, { 
+              mode: 'cors',
+              cache: 'no-cache',
+              credentials: 'same-origin'
+            });
             if (!response.ok) throw new Error(`HTTP ${response.status}`);
             const blob = await response.blob();
             return new Promise((resolve, reject) => {
@@ -383,39 +538,41 @@ function Frame({
           });
           
           imagePromises.push(loadPromise.then(async () => {
-            // Wait a bit more for rendering
-            await new Promise(resolve => setTimeout(resolve, 200));
+            // Wait a bit more for rendering, especially for SVG
+            await new Promise(resolve => setTimeout(resolve, 300));
             
             if (img.src && !img.src.startsWith('data:') && !img.src.startsWith('blob:')) {
-              // Store original
-              originalValues.set(img, { type: 'src', value: img.src });
+              // Check if it's an SVG icon
+              const isSvg = img.src.toLowerCase().includes('.svg') || img.src.includes('/ican/images/');
               
-              // Convert to data URL and apply directly
-              try {
+              if (isSvg) {
+                // For SVG icons, convert directly to canvas element (most reliable for Chrome)
+                const canvas = await convertSvgIconToCanvas(img);
+                if (canvas) {
+                  // Store canvas for restoration
+                  originalValues.set(canvas, { type: 'canvas', originalImg: img });
+                  // Wait a bit for canvas to render
+                  await new Promise(resolve => setTimeout(resolve, 200));
+                } else {
+                  // Fallback: try data URL conversion
+                  originalValues.set(img, { type: 'src', value: img.src });
+                  const dataUrl = await imageUrlToDataUrl(img.src);
+                  if (dataUrl) {
+                    img.src = dataUrl;
+                    await new Promise(resolve => setTimeout(resolve, 200));
+                  }
+                }
+              } else {
+                // For non-SVG images, convert to data URL
+                originalValues.set(img, { type: 'src', value: img.src });
                 const dataUrl = await imageUrlToDataUrl(img.src);
                 if (dataUrl) {
-                  // Create new image to verify data URL works
-                  const testImg = new Image();
-                  await new Promise((resolve, reject) => {
-                    testImg.onload = () => {
-                      img.src = dataUrl;
-                      // Force reflow and reload
-                      img.style.display = 'none';
-                      setTimeout(() => {
-                        img.style.display = '';
-                        resolve();
-                      }, 50);
-                    };
-                    testImg.onerror = () => {
-                      console.warn('Data URL failed for image:', img.src);
-                      resolve(); // Continue anyway
-                    };
-                    testImg.src = dataUrl;
-                    setTimeout(() => resolve(), 2000); // Timeout
-                  });
+                  img.src = dataUrl;
+                  // Force reflow
+                  img.style.display = 'none';
+                  await new Promise(resolve => setTimeout(resolve, 50));
+                  img.style.display = '';
                 }
-              } catch (error) {
-                console.warn('Failed to convert image:', img.src, error);
               }
             }
           }));
@@ -498,6 +655,9 @@ function Frame({
         // Additional wait for all rendering to complete
         await new Promise(resolve => setTimeout(resolve, 1000));
 
+        // Final wait to ensure all SVG icons are rendered in Chrome
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        
         // Capture the frame as canvas with high quality settings
         const canvas = await html2canvas(frameElement, {
           scale: 3, // Higher scale for better quality
@@ -508,6 +668,10 @@ function Frame({
           removeContainer: false,
           imageTimeout: 30000, // Increased timeout
           foreignObjectRendering: false, // Better compatibility
+          ignoreElements: (element) => {
+            // Don't ignore images, but ensure they're visible
+            return false;
+          },
           onclone: (clonedDoc, element) => {
             // Ensure all images and styles are properly captured
             const clonedFrame = clonedDoc.querySelector(`#${frameElement.id || 'key'}`) || 
@@ -547,16 +711,49 @@ function Frame({
                 img.style.maxWidth = '100%';
                 img.style.height = 'auto';
                 
+                // Special handling for SVG icons
+                const isSvgIcon = img.src && (img.src.includes('.svg') || img.src.includes('/ican/images/') || img.src.includes('svg+xml'));
+                
                 // If it's a data URL, ensure it's loaded
                 if (img.src && img.src.startsWith('data:')) {
-                  // Force browser to recognize the data URL
-                  const currentSrc = img.src;
-                  img.removeAttribute('src');
-                  img.setAttribute('src', currentSrc);
+                  // For SVG data URLs in Chrome, force reload by cloning
+                  if (isSvgIcon) {
+                    const currentSrc = img.src;
+                    const parent = img.parentElement;
+                    const nextSibling = img.nextSibling;
+                    
+                    // Create new image element with data URL
+                    const newImg = document.createElement('img');
+                    newImg.src = currentSrc;
+                    newImg.alt = img.alt || 'icon';
+                    newImg.className = img.className;
+                    newImg.style.cssText = img.style.cssText;
+                    newImg.style.display = '';
+                    newImg.style.visibility = 'visible';
+                    newImg.style.opacity = '1';
+                    
+                    // Replace old image
+                    if (nextSibling) {
+                      parent.insertBefore(newImg, nextSibling);
+                    } else {
+                      parent.appendChild(newImg);
+                    }
+                    img.remove();
+                  } else {
+                    // Force browser to recognize the data URL
+                    const currentSrc = img.src;
+                    img.removeAttribute('src');
+                    img.setAttribute('src', currentSrc);
+                  }
+                } else if (isSvgIcon && img.src) {
+                  // If SVG icon doesn't have data URL yet, try to get it from original
+                  // This shouldn't happen if conversion worked, but as fallback
+                  console.warn('SVG icon without data URL in clone:', img.src);
                 }
                 
                 // Ensure parent containers are visible
-                let parent = img.parentElement;
+                const targetImg = isSvgIcon && img.parentElement ? img.parentElement.querySelector('img') : img;
+                let parent = targetImg ? targetImg.parentElement : img.parentElement;
                 while (parent && parent !== clonedFrame) {
                   const parentStyle = window.getComputedStyle(parent);
                   if (parentStyle.display === 'none') {
@@ -616,7 +813,20 @@ function Frame({
 
         // Restore original image sources and background images
         originalValues.forEach((original, element) => {
-          if (original.type === 'src' && element.tagName === 'IMG') {
+          if (original.type === 'canvas' && original.originalImg) {
+            // Restore canvas back to image
+            const canvas = element;
+            const img = original.originalImg;
+            const parent = canvas.parentElement;
+            const nextSibling = canvas.nextSibling;
+            canvas.remove();
+            img.style.display = '';
+            if (nextSibling) {
+              parent.insertBefore(img, nextSibling);
+            } else {
+              parent.appendChild(img);
+            }
+          } else if (original.type === 'src' && element.tagName === 'IMG') {
             element.src = original.value;
           } else if (original.type === 'backgroundImage') {
             element.style.backgroundImage = original.value;
@@ -687,12 +897,20 @@ function Frame({
           compress: true
         });
 
-        // Add frame image to PDF
+        // Add company name header at the top
+        pdf.setFontSize(18);
+        pdf.setFont(undefined, 'bold');
+        const companyName = 'Your Company Name'; // Company name - can be customized
+        const centerX = pageWidthMM / 2;
+        pdf.text(companyName, centerX, 5, { align: 'center' });
+        
+        // Add frame image to PDF (below company name)
         const imgData = canvas.toDataURL('image/png', 1.0);
-        pdf.addImage(imgData, 'PNG', (pageWidthMM - widthMM) / 2, 10, widthMM, heightMM, undefined, 'FAST');
+        const frameTopMargin = 12; // Space for company name
+        pdf.addImage(imgData, 'PNG', (pageWidthMM - widthMM) / 2, frameTopMargin, widthMM, heightMM, undefined, 'FAST');
 
         // Add information section below the frame
-        let yPos = heightMM + 15;
+        let yPos = heightMM + frameTopMargin + 15;
         const leftMargin = 10;
         const lineHeight = 6;
         const fontSize = 10;
