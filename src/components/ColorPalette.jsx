@@ -49,7 +49,6 @@ function ColorPalette({
   const gradientRef = useRef(null);
   const hueRef = useRef(null);
   const alphaRef = useRef(null);
-  const isDragging = useRef({ gradient: false, hue: false, alpha: false });
 
   const handleColorClick = (colorName) => {
     setSelectedColor(colorName);
