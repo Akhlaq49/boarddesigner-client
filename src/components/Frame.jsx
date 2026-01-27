@@ -1,9 +1,30 @@
-import React, { useMemo, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 
+// Product categories with proper configurations
 const GRID_CONFIGS = {
-  '2x4': { columns: 2, rows: 4, visibleZones: 8 },
-  '2x8': { columns: 2, rows: 8, visibleZones: 16 },
-  '2x6': { columns: 2, rows: 6, visibleZones: 12 }
+  // 2-4 Buttons Switch
+  'dora-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'Dora 2×2', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-2x4': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Keypad 2×4', category: '2-4 Buttons Switch', hasDisplay: false },
+  
+  // 3-12 Button Switch
+  'dora-1x3': { columns: 1, rows: 3, visibleZones: 3, label: 'Dora 1×3', category: '3-12 Button Switch', hasDisplay: false },
+  'pblock-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Pblock 2×6 (Thermostat)', category: '3-12 Button Switch', hasDisplay: true },
+  
+  // 2-8 Room Controller
+  'dora-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora 2×6', category: '2-8 Room Controller', hasDisplay: false },
+  'dora-2x8': { columns: 2, rows: 8, visibleZones: 16, label: 'Dora XLarge 2×8', category: '2-8 Room Controller', hasDisplay: false },
+  
+  // Design Your Self
+  'dora-thermostat': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Thermostat 4+4', category: 'Design Your Self', hasDisplay: true },
+  'pblock-2x4': { columns: 2, rows: 4, visibleZones: 8, label: 'Pblock 2×4', category: 'Design Your Self', hasDisplay: false },
+  
+  // Focus Mode
+  'focus-mode': { columns: 1, rows: 1, visibleZones: 1, label: 'Focus Mode', category: 'Focus Mode', hasDisplay: false },
+  
+  // Legacy support (will be deprecated)
+  '2x4': { columns: 2, rows: 4, visibleZones: 8, label: '2×4', category: 'Legacy', hasDisplay: false },
+  '2x8': { columns: 2, rows: 8, visibleZones: 16, label: '2×8', category: 'Legacy', hasDisplay: false },
+  '2x6': { columns: 2, rows: 6, visibleZones: 12, label: '2×6 (Old Thermostat)', category: 'Legacy', hasDisplay: true }
 };
 
 function Frame({
@@ -25,20 +46,77 @@ function Frame({
   setButtonColorTarget,
   selectedButtonPart,
   setSelectedButtonPart,
-  selectedColor
+  selectedColor,
+  selectedCategory,
+  setSelectedCategory,
+  setDownloadPDFHandler
 }) {
-  const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['2x4'];
+  const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['dora-2x4'];
   const [highlightedZones, setHighlightedZones] = useState([]);
   const frameRef = useRef(null);
   
+  // Register PDF download handler with parent
+  useEffect(() => {
+    if (setDownloadPDFHandler) {
+      setDownloadPDFHandler(() => handleDownloadPDF);
+    }
+  }, [setDownloadPDFHandler]);  
+  // Product code generation logic
+  const generateProductCode = useCallback(() => {
+    const hasDisplay = config.hasDisplay;
+    const rows = config.rows;
+    const columns = config.columns;
+    let rowCodes = [];
+    
+    // Iterate through each row to count buttons
+    for (let row = 1; row <= rows; row++) {
+      let buttonCount = 0;
+      for (let col = 1; col <= columns; col++) {
+        // Handle both single and double column layouts
+        const zoneId = columns === 1 
+          ? `button${row}`
+          : `button${(row - 1) * 2 + col}`;
+        const zone = dropZones[zoneId];
+        if (zone && zone.isPrimary) {
+          buttonCount++;
+        }
+      }
+      // 0 = no buttons, 1 = 1 button, 2 = 2 buttons
+      rowCodes.push(buttonCount.toString());
+    }
+    
+    // Build the code string
+    const buttonConfig = rowCodes.join('');
+    const displayPrefix = hasDisplay ? 'D' : '';
+    const baseCode = displayPrefix + buttonConfig;
+    
+    // Material prefix (MM1 = metal, MM2 = plastic) - default to MM2 for now
+    const materialCode = 'MM2';
+    
+    // Product series code
+    let seriesCode = 'PB'; // Pblock
+    if (gridType.includes('dora')) {
+      seriesCode = 'DR'; // Dora
+    }
+    
+    // Full product code format: MM2-DR/PB-D221-114-1RS
+    // For now, return simplified version, can be extended with color codes
+    return { materialCode, seriesCode, baseCode, buttonConfig, hasDisplay };
+  }, [config, dropZones, gridType]);  
   // Get selectedColor and fullColor from props or context if needed
   // For now, we'll get it from the button data when placing
 
   const allZones = useMemo(() => {
     const zones = [];
-    for (let row = 1; row <= 8; row++) {
-      for (let col = 1; col <= 2; col++) {
-        const zoneId = `button${(row - 1) * 2 + col}`;
+    const maxRows = Math.max(8, config.rows); // Support up to 8 rows
+    const maxCols = Math.max(2, config.columns); // Support 1 or 2 columns
+    
+    for (let row = 1; row <= maxRows; row++) {
+      for (let col = 1; col <= maxCols; col++) {
+        // For single column layouts (1x3, focus-mode), use simpler ID
+        const zoneId = config.columns === 1 
+          ? `button${row}`
+          : `button${(row - 1) * 2 + col}`;
         zones.push({
           id: zoneId,
           row,
@@ -299,20 +377,6 @@ function Frame({
         return;
       }
 
-      // Check if frame has dimensions and is visible
-      const rect = frameElement.getBoundingClientRect();
-      const computedStyle = window.getComputedStyle(frameElement);
-      
-      if (rect.width === 0 || rect.height === 0) {
-        showFeedback(`Frame has no dimensions (${rect.width}x${rect.height})`, 'error');
-        return;
-      }
-      
-      if (computedStyle.display === 'none' || computedStyle.visibility === 'hidden' || computedStyle.opacity === '0') {
-        showFeedback('Frame is not visible', 'error');
-        return;
-      }
-
       showFeedback('Generating PDF...', 'info');
 
       // Dynamically import html2canvas and jsPDF
@@ -320,743 +384,289 @@ function Frame({
       const jsPDFModule = await import('jspdf');
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-      // Scroll frame into view and wait for rendering
-      frameElement.scrollIntoView({ behavior: 'instant', block: 'center' });
-      await new Promise(resolve => setTimeout(resolve, 300));
-
       // Hide action buttons before capture
       const removeButtons = frameElement.querySelectorAll('.remove-button');
       const colorButtons = frameElement.querySelectorAll('.button-color-btn');
-      const originalDisplay = new Map();
       removeButtons.forEach(btn => {
-        originalDisplay.set(btn, btn.style.display);
         btn.style.display = 'none';
       });
       colorButtons.forEach(btn => {
-        originalDisplay.set(btn, btn.style.display);
         btn.style.display = 'none';
       });
 
       try {
-        // Wait a bit more for any animations/transitions to complete
-        await new Promise(resolve => setTimeout(resolve, 200));
+        // Temporarily remove gaps and add texture to buttons for PDF
+        const layout = frameElement.querySelector('.layout');
+        const originalLayoutGap = layout?.style.gap;
+        if (layout) {
+          layout.style.gap = '0px'; // Remove spacing for PDF
+        }
 
-        // Helper function to convert SVG icon to PNG canvas element (most reliable for Chrome)
-        const convertSvgIconToCanvas = async (imgElement) => {
-          try {
-            const svgUrl = imgElement.src;
-            if (!svgUrl || svgUrl.startsWith('data:image/png')) return null; // Already converted
-            
-            const response = await fetch(svgUrl, { 
-              mode: 'cors',
-              cache: 'no-cache'
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const svgText = await response.text();
-            
-            // Clean SVG
-            let cleanedSvg = svgText.trim();
-            if (!cleanedSvg.includes('xmlns=')) {
-              cleanedSvg = cleanedSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
-            }
-            cleanedSvg = cleanedSvg.replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '');
-            
-            // Create SVG data URL
-            const svgDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cleanedSvg)}`;
-            
-            // Convert to canvas/PNG
-            return new Promise((resolve) => {
-              const svgImg = new Image();
-              svgImg.crossOrigin = 'anonymous';
-              svgImg.onload = () => {
-                try {
-                  const canvas = document.createElement('canvas');
-                  const ctx = canvas.getContext('2d', { alpha: true });
-                  
-                  // Enable high-quality rendering
-                  ctx.imageSmoothingEnabled = true;
-                  ctx.imageSmoothingQuality = 'high';
-                  
-                  // Get exact displayed size from computed styles
-                  const computedStyle = window.getComputedStyle(imgElement);
-                  const displayWidth = parseFloat(computedStyle.width) || imgElement.offsetWidth || imgElement.naturalWidth || 100;
-                  const displayHeight = parseFloat(computedStyle.height) || imgElement.offsetHeight || imgElement.naturalHeight || 100;
-                  
-                  // Use 3x resolution for better quality
-                  const scale = 3;
-                  canvas.width = displayWidth * scale;
-                  canvas.height = displayHeight * scale;
-                  
-                  // Scale context for high DPI
-                  ctx.scale(scale, scale);
-                  
-                  // Don't draw white background - keep transparent or use filter for white icons
-                  // Apply white filter to SVG (icons should be white)
-                  ctx.filter = 'brightness(0) invert(1)';
-                  
-                  // Draw SVG at original size (context is already scaled)
-                  ctx.drawImage(svgImg, 0, 0, displayWidth, displayHeight);
-                  
-                  // Reset filter
-                  ctx.filter = 'none';
-                  
-                  // Replace img element with canvas - maintain exact position and alignment
-                  const parent = imgElement.parentElement;
-                  
-                  // Copy all attributes from original image
-                  Array.from(imgElement.attributes).forEach(attr => {
-                    if (attr.name !== 'src') {
-                      canvas.setAttribute(attr.name, attr.value);
-                    }
-                  });
-                  
-                  // Match ALL computed styling from original image exactly
-                  canvas.style.width = computedStyle.width || `${displayWidth}px`;
-                  canvas.style.height = computedStyle.height || `${displayHeight}px`;
-                  canvas.style.minWidth = computedStyle.minWidth || '';
-                  canvas.style.minHeight = computedStyle.minHeight || '';
-                  canvas.style.maxWidth = computedStyle.maxWidth || '';
-                  canvas.style.maxHeight = computedStyle.maxHeight || '';
-                  canvas.style.display = computedStyle.display || '';
-                  canvas.style.visibility = computedStyle.visibility || 'visible';
-                  canvas.style.opacity = computedStyle.opacity || '1';
-                  canvas.style.objectFit = computedStyle.objectFit || 'contain';
-                  canvas.style.objectPosition = computedStyle.objectPosition || 'center';
-                  canvas.style.margin = computedStyle.margin || '0';
-                  canvas.style.padding = computedStyle.padding || '0';
-                  canvas.style.verticalAlign = computedStyle.verticalAlign || 'middle';
-                  canvas.style.textAlign = computedStyle.textAlign || '';
-                  canvas.style.position = computedStyle.position || 'static';
-                  canvas.style.left = computedStyle.left || '';
-                  canvas.style.top = computedStyle.top || '';
-                  canvas.style.right = computedStyle.right || '';
-                  canvas.style.bottom = computedStyle.bottom || '';
-                  canvas.style.float = computedStyle.float || '';
-                  canvas.style.clear = computedStyle.clear || '';
-                  canvas.style.marginTop = computedStyle.marginTop || '';
-                  canvas.style.marginRight = computedStyle.marginRight || '';
-                  canvas.style.marginBottom = computedStyle.marginBottom || '';
-                  canvas.style.marginLeft = computedStyle.marginLeft || '';
-                  canvas.style.paddingTop = computedStyle.paddingTop || '';
-                  canvas.style.paddingRight = computedStyle.paddingRight || '';
-                  canvas.style.paddingBottom = computedStyle.paddingBottom || '';
-                  canvas.style.paddingLeft = computedStyle.paddingLeft || '';
-                  canvas.style.transform = computedStyle.transform || '';
-                  canvas.style.transformOrigin = computedStyle.transformOrigin || '';
-                  canvas.style.boxSizing = computedStyle.boxSizing || 'content-box';
-                  
-                  // Copy inline styles from original
-                  if (imgElement.style.cssText) {
-                    const inlineStyles = imgElement.style.cssText.split(';').filter(s => s.trim() && !s.includes('width') && !s.includes('height'));
-                    inlineStyles.forEach(style => {
-                      if (style.trim()) {
-                        const [prop, value] = style.split(':').map(s => s.trim());
-                        if (prop && value) {
-                          canvas.style.setProperty(prop, value);
-                        }
-                      }
-                    });
-                  }
-                  
-                  canvas.className = imgElement.className;
-                  canvas.setAttribute('data-original-src', svgUrl);
-                  canvas.setAttribute('alt', imgElement.alt || 'icon');
-                  
-                  // Replace image with canvas at exact same position using replaceChild
-                  // This maintains exact DOM position and alignment
-                  parent.replaceChild(canvas, imgElement);
-                  
-                  resolve(canvas);
-                } catch (error) {
-                  console.warn('Failed to convert SVG to canvas:', error);
-                  resolve(null);
-                }
-              };
-              svgImg.onerror = () => {
-                console.warn('Failed to load SVG for canvas conversion');
-                resolve(null);
-              };
-              svgImg.src = svgDataUrl;
-              setTimeout(() => resolve(null), 3000); // Timeout
-            });
-          } catch (error) {
-            console.warn('Failed to convert SVG icon:', error);
-            return null;
-          }
-        };
+        // Add box-shadow to simulate metallic texture on buttons
+        const droppedButtons = frameElement.querySelectorAll('.dropped-button');
+        const originalBoxShadows = new Map();
+        droppedButtons.forEach(btn => {
+          originalBoxShadows.set(btn, btn.style.boxShadow);
+          // Enhanced metallic appearance for PDF
+          btn.style.boxShadow = `
+            inset 0 1px 2px rgba(0, 0, 0, 0.1),
+            inset 0 -1px 2px rgba(255, 255, 255, 0.3),
+            inset 0 0 0 1px rgba(0, 0, 0, 0.05)
+          `;
+        });
 
-        // Helper function to convert image URL to data URL (for non-SVG images)
-        // SVG icons are handled separately via canvas conversion
-        const imageUrlToDataUrl = async (url) => {
-          try {
-            // Handle relative URLs
-            let absoluteUrl = url;
-            if (!url.startsWith('http') && !url.startsWith('data:') && !url.startsWith('blob:')) {
-              absoluteUrl = url.startsWith('/') 
-                ? `${window.location.origin}${url}`
-                : `${window.location.origin}/${url}`;
-            }
-            
-            // Skip SVG files - they're handled via canvas conversion
-            if (absoluteUrl.toLowerCase().endsWith('.svg') || absoluteUrl.includes('/ican/images/')) {
-              // For SVG, return as SVG data URL (fallback for background images)
-              try {
-                const response = await fetch(absoluteUrl, { 
-                  mode: 'cors',
-                  cache: 'no-cache'
-                });
-                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        // Wait for any rendering to complete
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Convert SVG icons to data URLs so they render in html2canvas
+        const images = frameElement.querySelectorAll('img');
+        const originalSrcs = new Map();
+
+        for (const img of images) {
+          const src = img.src;
+          if (src && (src.includes('/ican/images/') || src.includes('.svg'))) {
+            try {
+              // Store original src for restoration
+              originalSrcs.set(img, src);
+              
+              // Fetch and convert SVG to data URL
+              const response = await fetch(src, { mode: 'cors', cache: 'no-cache' });
+              if (response.ok) {
                 const svgText = await response.text();
                 let cleanedSvg = svgText.trim();
                 if (!cleanedSvg.includes('xmlns=')) {
                   cleanedSvg = cleanedSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
                 }
-                return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cleanedSvg)}`;
-              } catch (error) {
-                console.warn('Failed to convert SVG to data URL:', error);
-                return null;
-              }
-            }
-            
-            // For other image types, fetch as blob
-            const response = await fetch(absoluteUrl, { 
-              mode: 'cors',
-              cache: 'no-cache',
-              credentials: 'same-origin'
-            });
-            if (!response.ok) throw new Error(`HTTP ${response.status}`);
-            const blob = await response.blob();
-            return new Promise((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onloadend = () => resolve(reader.result);
-              reader.onerror = reject;
-              reader.readAsDataURL(blob);
-            });
-          } catch (error) {
-            console.warn('Failed to convert image to data URL:', url, error);
-            return null;
-          }
-        };
-
-        // Store original src/backgroundImage values to restore later
-        const originalValues = new Map();
-        
-        // Process icon images - convert to data URLs directly on elements
-        // First, find all images including those in button content areas
-        const images = frameElement.querySelectorAll('img');
-        const imagePromises = [];
-        
-        for (const img of images) {
-          // Ensure image is visible
-          img.style.display = '';
-          img.style.visibility = 'visible';
-          img.style.opacity = '1';
-          
-          // Wait for image to load
-          const loadPromise = new Promise(async (resolve) => {
-            if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-              resolve();
-              return;
-            }
-            
-            // Set up load handlers
-            const onLoad = () => {
-              img.removeEventListener('load', onLoad);
-              img.removeEventListener('error', onError);
-              resolve();
-            };
-            const onError = () => {
-              img.removeEventListener('load', onLoad);
-              img.removeEventListener('error', onError);
-              console.warn('Image failed to load:', img.src);
-              resolve(); // Continue even if fails
-            };
-            
-            img.addEventListener('load', onLoad);
-            img.addEventListener('error', onError);
-            
-            // Timeout after 8 seconds
-            setTimeout(() => {
-              img.removeEventListener('load', onLoad);
-              img.removeEventListener('error', onError);
-              resolve();
-            }, 8000);
-            
-            // If image already has src, trigger load check
-            if (img.src) {
-              // Force reload check
-              const currentSrc = img.src;
-              if (!currentSrc.startsWith('data:')) {
-                img.src = '';
-                setTimeout(() => {
-                  img.src = currentSrc;
-                }, 100);
-              }
-            }
-          });
-          
-          imagePromises.push(loadPromise.then(async () => {
-            // Wait a bit more for rendering, especially for SVG
-            await new Promise(resolve => setTimeout(resolve, 300));
-            
-            if (img.src && !img.src.startsWith('data:') && !img.src.startsWith('blob:')) {
-              // Check if it's an SVG icon
-              const isSvg = img.src.toLowerCase().includes('.svg') || img.src.includes('/ican/images/');
-              
-              if (isSvg) {
-                // For SVG icons, convert directly to canvas element (most reliable for Chrome)
-                const canvas = await convertSvgIconToCanvas(img);
-                if (canvas) {
-                  // Store canvas for restoration
-                  originalValues.set(canvas, { type: 'canvas', originalImg: img });
-                  // Wait a bit for canvas to render
-                  await new Promise(resolve => setTimeout(resolve, 200));
-                } else {
-                  // Fallback: try data URL conversion
-                  originalValues.set(img, { type: 'src', value: img.src });
-                  const dataUrl = await imageUrlToDataUrl(img.src);
-                  if (dataUrl) {
-                    img.src = dataUrl;
-                    await new Promise(resolve => setTimeout(resolve, 200));
-                  }
-                }
-              } else {
-                // For non-SVG images, convert to data URL
-                originalValues.set(img, { type: 'src', value: img.src });
-                const dataUrl = await imageUrlToDataUrl(img.src);
-                if (dataUrl) {
-                  img.src = dataUrl;
-                  // Force reflow
-                  img.style.display = 'none';
-                  await new Promise(resolve => setTimeout(resolve, 50));
-                  img.style.display = '';
-                }
-              }
-            }
-          }));
-        }
-        
-        // Wait for all images to be processed
-        await Promise.all(imagePromises);
-
-        // Process background images (textures) - convert to data URLs directly
-        const allElements = frameElement.querySelectorAll('*');
-        for (const el of allElements) {
-          const style = window.getComputedStyle(el);
-          if (style.backgroundImage && style.backgroundImage !== 'none') {
-            const urlMatch = style.backgroundImage.match(/url\(['"]?([^'")]+)['"]?\)/);
-            if (urlMatch && urlMatch[1]) {
-              const bgUrl = urlMatch[1];
-              if (!bgUrl.startsWith('data:') && !bgUrl.startsWith('blob:')) {
-                // Store original
-                originalValues.set(el, { 
-                  type: 'backgroundImage', 
-                  value: style.backgroundImage,
-                  backgroundSize: style.backgroundSize,
-                  backgroundPosition: style.backgroundPosition,
-                  backgroundRepeat: style.backgroundRepeat
-                });
-                
-                // Convert to data URL and apply directly
-                const dataUrl = await imageUrlToDataUrl(bgUrl);
-                if (dataUrl) {
-                  el.style.backgroundImage = `url(${dataUrl})`;
-                  el.style.backgroundSize = style.backgroundSize || 'cover';
-                  el.style.backgroundPosition = style.backgroundPosition || 'center';
-                  el.style.backgroundRepeat = style.backgroundRepeat || 'no-repeat';
-                }
-              }
-            }
-          }
-        }
-
-        // Wait for all images to be fully loaded and rendered
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        
-        // Final verification - ensure all images are loaded and visible
-        const allImages = frameElement.querySelectorAll('img');
-        for (const img of allImages) {
-          // Ensure visibility
-          img.style.display = '';
-          img.style.visibility = 'visible';
-          img.style.opacity = '1';
-          
-          // Check parent visibility
-          let parent = img.parentElement;
-          while (parent && parent !== frameElement) {
-            const parentStyle = window.getComputedStyle(parent);
-            if (parentStyle.display === 'none' || parentStyle.visibility === 'hidden') {
-              parent.style.display = '';
-              parent.style.visibility = 'visible';
-            }
-            parent = parent.parentElement;
-          }
-          
-          // Verify image is loaded
-          if (!img.complete || img.naturalWidth === 0) {
-            await new Promise((resolve) => {
-              const checkComplete = () => {
-                if (img.complete && img.naturalWidth > 0 && img.naturalHeight > 0) {
-                  resolve();
-                } else {
-                  setTimeout(checkComplete, 200);
-                }
-              };
-              img.onload = () => resolve();
-              img.onerror = () => resolve();
-              setTimeout(() => resolve(), 5000);
-              checkComplete();
-            });
-          }
-        }
-        
-        // Additional wait for all rendering to complete
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        // Final wait to ensure all SVG icons are rendered in Chrome
-        await new Promise(resolve => setTimeout(resolve, 1000));
-        
-        // Capture the frame as canvas with high quality settings
-        const canvas = await html2canvas(frameElement, {
-          scale: 3, // Higher scale for better quality
-          useCORS: true,
-          allowTaint: true, // Allow tainted canvas for better image rendering
-          backgroundColor: '#ffffff',
-          logging: false,
-          removeContainer: false,
-          imageTimeout: 30000, // Increased timeout
-          foreignObjectRendering: false, // Better compatibility
-          ignoreElements: (element) => {
-            // Don't ignore images, but ensure they're visible
-            return false;
-          },
-          onclone: (clonedDoc, element) => {
-            // Ensure all images and styles are properly captured
-            const clonedFrame = clonedDoc.querySelector(`#${frameElement.id || 'key'}`) || 
-                               clonedDoc.querySelector('.frame-container-2x4, .frame-container-2x8, .frame-container-2x6') ||
-                               element;
-            
-            if (clonedFrame) {
-              // Hide action buttons in cloned document
-              const clonedRemoveButtons = clonedFrame.querySelectorAll('.remove-button');
-              const clonedColorButtons = clonedFrame.querySelectorAll('.button-color-btn');
-              clonedRemoveButtons.forEach(btn => {
-                btn.style.display = 'none';
-                btn.style.visibility = 'hidden';
-                btn.style.opacity = '0';
-                btn.style.width = '0';
-                btn.style.height = '0';
-                btn.style.padding = '0';
-                btn.style.margin = '0';
-              });
-              clonedColorButtons.forEach(btn => {
-                btn.style.display = 'none';
-                btn.style.visibility = 'hidden';
-                btn.style.opacity = '0';
-                btn.style.width = '0';
-                btn.style.height = '0';
-                btn.style.padding = '0';
-                btn.style.margin = '0';
-              });
-              
-              // Process all images in the cloned document
-              const clonedImages = clonedFrame.querySelectorAll('img');
-              clonedImages.forEach(img => {
-                // Ensure image is visible and properly styled
+                const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cleanedSvg)}`;
+                img.src = dataUrl;
                 img.style.display = '';
                 img.style.visibility = 'visible';
                 img.style.opacity = '1';
-                img.style.maxWidth = '100%';
-                img.style.height = 'auto';
-                
-                // Special handling for SVG icons
-                const isSvgIcon = img.src && (img.src.includes('.svg') || img.src.includes('/ican/images/') || img.src.includes('svg+xml'));
-                
-                // If it's a data URL, ensure it's loaded
-                if (img.src && img.src.startsWith('data:')) {
-                  // For SVG data URLs in Chrome, force reload by cloning
-                  if (isSvgIcon) {
-                    const currentSrc = img.src;
-                    const parent = img.parentElement;
-                    const nextSibling = img.nextSibling;
-                    
-                    // Create new image element with data URL
-                    const newImg = document.createElement('img');
-                    newImg.src = currentSrc;
-                    newImg.alt = img.alt || 'icon';
-                    newImg.className = img.className;
-                    newImg.style.cssText = img.style.cssText;
-                    newImg.style.display = '';
-                    newImg.style.visibility = 'visible';
-                    newImg.style.opacity = '1';
-                    
-                    // Replace old image
-                    if (nextSibling) {
-                      parent.insertBefore(newImg, nextSibling);
-                    } else {
-                      parent.appendChild(newImg);
-                    }
-                    img.remove();
-                  } else {
-                    // Force browser to recognize the data URL
-                    const currentSrc = img.src;
-                    img.removeAttribute('src');
-                    img.setAttribute('src', currentSrc);
-                  }
-                } else if (isSvgIcon && img.src) {
-                  // If SVG icon doesn't have data URL yet, try to get it from original
-                  // This shouldn't happen if conversion worked, but as fallback
-                  console.warn('SVG icon without data URL in clone:', img.src);
-                }
-                
-                // Ensure parent containers are visible
-                const targetImg = isSvgIcon && img.parentElement ? img.parentElement.querySelector('img') : img;
-                let parent = targetImg ? targetImg.parentElement : img.parentElement;
-                while (parent && parent !== clonedFrame) {
-                  const parentStyle = window.getComputedStyle(parent);
-                  if (parentStyle.display === 'none') {
-                    parent.style.display = '';
-                  }
-                  if (parentStyle.visibility === 'hidden') {
-                    parent.style.visibility = 'visible';
-                  }
-                  if (parentStyle.opacity === '0') {
-                    parent.style.opacity = '1';
-                  }
-                  parent = parent.parentElement;
-                }
-              });
-
-              // Ensure all background images are preserved
-              const allElements = clonedFrame.querySelectorAll('*');
-              allElements.forEach(el => {
-                // Skip action buttons
-                if (el.classList.contains('remove-button') || el.classList.contains('button-color-btn')) {
-                  return;
-                }
-                
-                const style = window.getComputedStyle(el);
-                
-                // Preserve background images
-                if (style.backgroundImage && style.backgroundImage !== 'none') {
-                  el.style.backgroundImage = style.backgroundImage;
-                  el.style.backgroundSize = style.backgroundSize || 'cover';
-                  el.style.backgroundPosition = style.backgroundPosition || 'center';
-                  el.style.backgroundRepeat = style.backgroundRepeat || 'no-repeat';
-                }
-                
-                // Ensure visibility - especially for button content areas (s0, s1, s2)
-                if (el.classList.contains('s0') || el.classList.contains('s1') || el.classList.contains('s2') || 
-                    el.classList.contains('button-content') || el.classList.contains('dropped-button')) {
-                  el.style.display = '';
-                  el.style.visibility = 'visible';
-                  el.style.opacity = '1';
-                }
-                
-                if (style.display === 'none' && el.tagName !== 'SCRIPT' && el.tagName !== 'STYLE') {
-                  el.style.display = '';
-                }
-                
-                if (style.visibility === 'hidden') {
-                  el.style.visibility = 'visible';
-                }
-                
-                if (style.opacity === '0') {
-                  el.style.opacity = '1';
-                }
-              });
+              }
+            } catch (err) {
+              console.warn('Failed to convert SVG:', src, err);
             }
+          }
+        }
+
+        // Wait for images to load
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Simple screenshot approach - capture frame as rendered
+        const canvas = await html2canvas(frameElement, {
+          scale: 2, // 2x resolution for quality
+          useCORS: true,
+          allowTaint: true,
+          backgroundColor: null,
+          logging: false,
+          removeContainer: false,
+          imageTimeout: 10000,
+          windowWidth: frameElement.scrollWidth,
+          windowHeight: frameElement.scrollHeight,
+          letterRendering: true,
+          filter: (node) => {
+            // Exclude elements with specific classes
+            if (node.classList?.contains('remove-button') || 
+                node.classList?.contains('button-color-btn')) {
+              return false;
+            }
+            return true;
           }
         });
 
-        // Restore original image sources and background images
-        originalValues.forEach((original, element) => {
-          if (original.type === 'canvas' && original.originalImg) {
-            // Restore canvas back to image
-            const canvas = element;
-            const img = original.originalImg;
-            const parent = canvas.parentElement;
-            const nextSibling = canvas.nextSibling;
-            canvas.remove();
-            img.style.display = '';
-            if (nextSibling) {
-              parent.insertBefore(img, nextSibling);
-            } else {
-              parent.appendChild(img);
-            }
-          } else if (original.type === 'src' && element.tagName === 'IMG') {
-            element.src = original.value;
-          } else if (original.type === 'backgroundImage') {
-            element.style.backgroundImage = original.value;
-            if (original.backgroundSize) element.style.backgroundSize = original.backgroundSize;
-            if (original.backgroundPosition) element.style.backgroundPosition = original.backgroundPosition;
-            if (original.backgroundRepeat) element.style.backgroundRepeat = original.backgroundRepeat;
-          }
+        // Restore original SVG src attributes
+        originalSrcs.forEach((originalSrc, img) => {
+          img.src = originalSrc;
         });
 
-        // Restore buttons
+        // Restore buttons after capture
         removeButtons.forEach(btn => {
-          const original = originalDisplay.get(btn);
-          btn.style.display = original !== undefined ? original : '';
+          btn.style.display = '';
         });
         colorButtons.forEach(btn => {
-          const original = originalDisplay.get(btn);
-          btn.style.display = original !== undefined ? original : '';
+          btn.style.display = '';
         });
 
-        // Calculate dimensions - canvas is scaled, so divide by scale to get actual size
-        const scale = 3;
-        const actualWidth = canvas.width / scale;
-        const actualHeight = canvas.height / scale;
+        // Calculate PDF dimensions from canvas
+        // Canvas is at 2x scale, so divide by 2 to get screen size
+        const screenWidth = canvas.width / 2;
+        const screenHeight = canvas.height / 2;
         
-        // Convert pixels to mm (assuming 96 DPI: 1px = 0.264583mm)
-        const widthMM = actualWidth * 0.264583;
-        const heightMM = actualHeight * 0.264583;
+        // Convert pixels to mm (96 DPI = 25.4 mm/inch)
+        const pxToMM = 25.4 / 96;
+        let widthMM = screenWidth * pxToMM;
+        let heightMM = screenHeight * pxToMM;
+        
+        // Keep natural size - no aggressive scaling
+        const scaleDown = 1;
+        widthMM = widthMM * scaleDown;
+        heightMM = heightMM * scaleDown;
 
-        // Collect configuration information
-        const configInfo = {
-          gridType: gridType,
-          gridConfig: config,
-          frameColor: frameColor || 'None',
-          fullColor: fullColor || 'None',
-          buttons: []
-        };
+        // Calculate PDF page size with proper margins
+        const pageMarginMM = 15;
+        const infoHeightMM = 50; // Space for information section
+        const totalHeightMM = heightMM + infoHeightMM + pageMarginMM * 2;
+        const pageWidthMM = Math.max(widthMM + pageMarginMM * 2, 210); // A4 width
+        const pageHeightMM = Math.max(totalHeightMM, 297); // A4 height
 
-        // Collect button information
-        Object.keys(dropZones).forEach(zoneId => {
-          const zone = dropZones[zoneId];
-          if (zone && zone.isPrimary) {
-            const buttonInfo = {
-              zone: zoneId,
-              size: zone.dimensions ? `${zone.dimensions.colSpan}×${zone.dimensions.rowSpan}` : '1×1',
-              color: zone.color || 'Default',
-              iconS0: zone.s0?.type === 'icon' ? zone.s0.value : null,
-              textS0: zone.s0?.type === 'text' ? zone.s0.value : null,
-              iconS1: zone.s1?.type === 'icon' ? zone.s1.value : null,
-              textS1: zone.s1?.type === 'text' ? zone.s1.value : null,
-              iconS2: zone.s2?.type === 'icon' ? zone.s2.value : null,
-              textS2: zone.s2?.type === 'text' ? zone.s2.value : null
-            };
-            configInfo.buttons.push(buttonInfo);
-          }
-        });
-
-        // Calculate PDF page size (A4 landscape or portrait with space for info)
-        const infoHeightMM = 60; // Space for information section
-        const totalHeightMM = heightMM + infoHeightMM;
-        const pageWidthMM = Math.max(widthMM, 210); // A4 width or frame width, whichever is larger
-        const pageHeightMM = Math.max(totalHeightMM, 297); // A4 height or total height
-
-        // Create PDF with proper dimensions
+        // Create PDF
         const pdf = new jsPDF({
           orientation: pageWidthMM > pageHeightMM ? 'landscape' : 'portrait',
           unit: 'mm',
           format: [pageWidthMM, pageHeightMM],
-          compress: true
+          compress: true,
+          precision: 16
         });
 
-        // Add company name header at the top
-        pdf.setFontSize(18);
+        // Add background color for header section
+        pdf.setFillColor(245, 245, 245);
+        pdf.rect(0, 0, pageWidthMM, 15, 'F');
+
+        // Add header with smooth styling
+        pdf.setFontSize(20);
         pdf.setFont(undefined, 'bold');
-        const companyName = 'KNX Switch Designer'; // Company name - can be customized
-        const centerX = pageWidthMM / 2;
-        pdf.text(companyName, centerX, 5, { align: 'center' });
+        pdf.setTextColor(40, 40, 40);
+        pdf.text('KNX Switch Designer', pageWidthMM / 2, 9.5, { align: 'center' });
+
+        // Add top border line
+        pdf.setDrawColor(150, 120, 90);
+        pdf.setLineWidth(0.5);
+        pdf.line(pageMarginMM, 15, pageWidthMM - pageMarginMM, 15);
+
+        // Add design screenshot
+        const imgData = canvas.toDataURL('image/png');
+        const topMargin = pageMarginMM;
+        const leftMargin = (pageWidthMM - widthMM) / 2;
         
-        // Add frame image to PDF (below company name)
-        const imgData = canvas.toDataURL('image/png', 1.0);
-        const frameTopMargin = 12; // Space for company name
-        pdf.addImage(imgData, 'PNG', (pageWidthMM - widthMM) / 2, frameTopMargin, widthMM, heightMM, undefined, 'FAST');
+        pdf.addImage(imgData, 'PNG', leftMargin, topMargin + 15, widthMM, heightMM);
 
-        // Add information section below the frame
-        let yPos = heightMM + frameTopMargin + 15;
-        const leftMargin = 10;
-        const lineHeight = 6;
-        const fontSize = 10;
-        const smallFontSize = 8;
+        // Add design info section
+        const infoPosY = topMargin + heightMM + 20;
 
-        // Title
-        pdf.setFontSize(14);
-        pdf.setFont(undefined, 'bold');
-        pdf.text('Board Design Configuration', leftMargin, yPos);
-        yPos += lineHeight + 2;
-
-        // Grid Type
-        pdf.setFontSize(fontSize);
+        // Add design info details
+        pdf.setFontSize(9);
         pdf.setFont(undefined, 'normal');
-        pdf.text(`Grid Type: ${gridType} (${config.columns} columns × ${config.rows} rows)`, leftMargin, yPos);
-        yPos += lineHeight;
-
-        // Colors
-        pdf.text(`Frame Color: ${configInfo.frameColor}`, leftMargin, yPos);
-        yPos += lineHeight;
-        pdf.text(`Full Color: ${configInfo.fullColor}`, leftMargin, yPos);
-        yPos += lineHeight + 2;
-
-        // Buttons section
-        if (configInfo.buttons.length > 0) {
-          pdf.setFontSize(fontSize);
+        pdf.setTextColor(40, 40, 40);
+        let currentY = infoPosY + 10;
+        
+        // Product Code Generation
+        const productCodeData = generateProductCode();
+        const fullProductCode = `${productCodeData.materialCode}-${productCodeData.seriesCode}-${productCodeData.baseCode}`;
+        
+        pdf.setFontSize(11);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Product Code', pageMarginMM + 3, currentY);
+        pdf.setFontSize(10);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(': ' + fullProductCode, pageMarginMM + 35, currentY);
+        currentY += 6;
+        
+        // Product Category
+        pdf.setFontSize(9);
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Product Type', pageMarginMM + 3, currentY);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(': ' + (config.label || gridType), pageMarginMM + 35, currentY);
+        currentY += 5;
+        
+        // Display Status
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Display', pageMarginMM + 3, currentY);
+        pdf.setFont(undefined, 'normal');
+        pdf.text(': ' + (productCodeData.hasDisplay ? 'Yes' : 'No'), pageMarginMM + 35, currentY);
+        currentY += 5;
+        
+        // Frame Color with explicit code
+        pdf.setFont(undefined, 'bold');
+        pdf.text('Frame Color', pageMarginMM + 3, currentY);
+        pdf.setFont(undefined, 'normal');
+        const frameColorCode = frameColor ? `${frameColor} (${getColorValue(frameColor)})` : 'Default';
+        pdf.text(': ' + frameColorCode, pageMarginMM + 35, currentY);
+        currentY += 5;
+        
+        // Full Color
+        if (fullColor) {
           pdf.setFont(undefined, 'bold');
-          pdf.text('Button Configuration:', leftMargin, yPos);
-          yPos += lineHeight;
-
-          pdf.setFontSize(smallFontSize);
+          pdf.text('Full Color', pageMarginMM + 3, currentY);
           pdf.setFont(undefined, 'normal');
-          configInfo.buttons.forEach((btn, index) => {
-            if (yPos > pageHeightMM - 20) {
-              pdf.addPage();
-              yPos = 10;
-            }
-            
-            let btnText = `${btn.zone}: Size ${btn.size}, Color: ${btn.color}`;
-            const details = [];
-            if (btn.iconS0) details.push(`S0 Icon: ${btn.iconS0}`);
-            if (btn.textS0) details.push(`S0 Text: ${btn.textS0}`);
-            if (btn.iconS1) details.push(`S1 Icon: ${btn.iconS1}`);
-            if (btn.textS1) details.push(`S1 Text: ${btn.textS1}`);
-            if (btn.iconS2) details.push(`S2 Icon: ${btn.iconS2}`);
-            if (btn.textS2) details.push(`S2 Text: ${btn.textS2}`);
-            
-            pdf.text(btnText, leftMargin, yPos);
-            yPos += lineHeight - 1;
-            if (details.length > 0) {
-              pdf.text(details.join(', '), leftMargin + 5, yPos);
-              yPos += lineHeight;
-            }
-            yPos += 1;
-          });
-        } else {
-          pdf.setFontSize(smallFontSize);
-          pdf.text('No buttons configured', leftMargin, yPos);
-          yPos += lineHeight;
+          const fullColorCode = `${fullColor} (${getColorValue(fullColor)})`;
+          pdf.text(': ' + fullColorCode, pageMarginMM + 35, currentY);
+          currentY += 5;
         }
+        
+        currentY += 2;
 
-        // Date/Time
-        yPos += lineHeight;
+        // Collect button details for display
+        const buttonDetails = [];
+        Object.keys(dropZones).forEach((zoneId, index) => {
+          const zone = dropZones[zoneId];
+          if (zone && zone.isPrimary) {
+            const s1Center = zone.s1?.type === 'icon' ? zone.s1.value : (zone.s1?.type === 'text' ? zone.s1.value : '');
+            const buttonColor = zone.color || fullColor || 'Default';
+            buttonDetails.push({
+              number: index + 1,
+              color: buttonColor,
+              center: s1Center
+            });
+          }
+        });
+
+        // Display buttons
+        buttonDetails.forEach((btn) => {
+          if (currentY > pageHeightMM - pageMarginMM - 5) {
+            pdf.addPage();
+            currentY = pageMarginMM;
+          }
+          
+          // Button number and color with color code
+          pdf.setFont(undefined, 'bold');
+          pdf.text(`Button ${btn.number}`, pageMarginMM + 3, currentY);
+          
+          pdf.setFont(undefined, 'normal');
+          const colorCode = btn.color !== 'Default' ? `${btn.color} (${getColorValue(btn.color)})` : btn.color;
+          pdf.text(`: ${colorCode}`, pageMarginMM + 24, currentY);
+          currentY += 4;
+          
+          // Center/Icon details
+          if (btn.center) {
+            pdf.setFont(undefined, 'normal');
+            pdf.text(`— Center`, pageMarginMM + 5, currentY);
+            pdf.text(`: ${btn.center}`, pageMarginMM + 24, currentY);
+            currentY += 4;
+          }
+          
+          currentY += 1;
+        });
+
+        // Generated timestamp
+        if (currentY > pageHeightMM - pageMarginMM - 10) {
+          pdf.addPage();
+          currentY = pageMarginMM;
+        }
+        
+        pdf.setFontSize(8);
+        pdf.setFont(undefined, 'italic');
+        pdf.setTextColor(100, 100, 100);
         const now = new Date();
-        const dateStr = now.toLocaleString('en-US', { 
+        const dateStr = now.toLocaleDateString('en-US', { 
           year: 'numeric', 
           month: 'long', 
           day: 'numeric',
           hour: '2-digit',
           minute: '2-digit'
         });
-        pdf.setFontSize(smallFontSize);
-        pdf.setFont(undefined, 'italic');
-        pdf.text(`Generated: ${dateStr}`, leftMargin, yPos);
+        pdf.text(`Generated: ${dateStr}`, pageMarginMM + 3, currentY + 2);
 
-        // Download PDF
+        // Save PDF
         pdf.save(`board-design-${gridType}-${Date.now()}.pdf`);
-        
         showFeedback('PDF downloaded successfully!', 'success');
       } catch (error) {
         // Restore buttons on error
         removeButtons.forEach(btn => {
-          const original = originalDisplay.get(btn);
-          btn.style.display = original !== undefined ? original : '';
+          btn.style.display = '';
         });
         colorButtons.forEach(btn => {
-          const original = originalDisplay.get(btn);
-          btn.style.display = original !== undefined ? original : '';
+          btn.style.display = '';
         });
         throw error;
       }
@@ -1182,43 +792,242 @@ function Frame({
 
   return (
     <div className="w-100 d-flex flex-column align-items-center">
-      {/* Grid Type Selector and Download Button */}
-      <div className="d-flex flex-row align-items-center justify-content-center gap-4 mb-4" style={{ flexWrap: 'wrap' }}>
-        <div className="grid-type-selector d-flex flex-row align-items-center justify-content-center gap-4">
-          {['2x4', '2x8', '2x6'].map(type => (
-            <button
-              key={type}
-              type="button"
-              className={`grid-type-btn ${gridType === type ? 'active' : ''}`}
-              onClick={() => setGridType(type)}
-              title={`${type === '2x4' ? '2 Columns × 4 Rows' : type === '2x8' ? '2 Columns × 8 Rows' : '2 Columns × 6 Rows'}`}
-            >
-              {/* SVG icons would go here - simplified for now */}
-              <span>{type}</span>
-            </button>
-          ))}
+      {/* Product Selector with Visual Icons - Matching Reference Design */}
+      <div className="d-flex flex-column align-items-center justify-content-center gap-3 mb-4" style={{ flexWrap: 'wrap' }}>
+        {/* Product Configuration Selector */}
+        <div className="product-selector-container w-100" style={{ maxWidth: '900px' }}>
+          <div className="product-selector-grid">
+            {/* 2-8 Buttons Switch */}
+            {selectedCategory === '2-8 Buttons Switch' && (
+            <div className="product-category-section">
+              <h6 className="category-title">2-4 Buttons Switch</h6>
+              <div className="config-options-row">
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'dora-2x2' ? 'active' : ''}`}
+                  onClick={() => setGridType('dora-2x2')}
+                  title="2×2 Grid"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'dora-2x4' ? 'active' : ''}`}
+                  onClick={() => setGridType('dora-2x4')}
+                  title="2×4 Grid"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(4, 1fr)' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            )}
+
+            {/* 3-12 Button Switch */}
+            {selectedCategory === '3-12 Button Switch' && (
+            <div className="product-category-section">
+              <h6 className="category-title">3-12 Button Switch</h6>
+              <div className="config-options-row">
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'dora-1x3' ? 'active' : ''}`}
+                  onClick={() => setGridType('dora-1x3')}
+                  title="1×3 Grid"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr', gridTemplateRows: '1fr 1fr 1fr' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'pblock-2x6' ? 'active' : ''}`}
+                  onClick={() => setGridType('pblock-2x6')}
+                  title="2×6 Grid (Pblock Thermostat)"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(6, 1fr)' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            )}
+
+            {/* 2-8 Room Controller */}
+            {selectedCategory === '2-8 Room Controller' && (
+            <div className="product-category-section">
+              <h6 className="category-title">2-8 Room Controller</h6>
+              <div className="config-options-row">
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'dora-2x6' ? 'active' : ''}`}
+                  onClick={() => setGridType('dora-2x6')}
+                  title="2×6 Grid"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(6, 1fr)' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'dora-2x8' ? 'active' : ''}`}
+                  onClick={() => setGridType('dora-2x8')}
+                  title="2×8 Grid (XLarge)"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(8, 1fr)' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            )}
+
+            {/* Design Your Self - Thermostat */}
+            {selectedCategory === 'Design Your Self' && (
+            <div className="product-category-section">
+              <h6 className="category-title">Design Your Self</h6>
+              <div className="config-options-row">
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'dora-thermostat' ? 'active' : ''}`}
+                  onClick={() => setGridType('dora-thermostat')}
+                  title="Dora Thermostat (4+4 buttons)"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(4, 1fr)' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'pblock-2x4' ? 'active' : ''}`}
+                  onClick={() => setGridType('pblock-2x4')}
+                  title="Pblock 2×4"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(4, 1fr)' }}>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            )}
+
+            {/* Focus Mode */}
+            {selectedCategory === 'Focus Mode' && (
+            <div className="product-category-section">
+              <h6 className="category-title">Focus Mode</h6>
+              <div className="config-options-row">
+                <button
+                  type="button"
+                  className={`config-icon-btn ${gridType === 'focus-mode' ? 'active' : ''}`}
+                  onClick={() => setGridType('focus-mode')}
+                  title="Focus Mode"
+                >
+                  <div className="grid-icon">
+                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr', gridTemplateRows: '1fr' }}>
+                      <div className="grid-cell"></div>
+                    </div>
+                  </div>
+                </button>
+              </div>
+            </div>
+            )}
+          </div>
         </div>
-        <button
-          type="button"
-          className="x-button raised"
-          onClick={handleDownloadPDF}
-          title="Download Frame as PDF"
-          style={{ marginLeft: 'auto' }}
-        >
-          <i className="fas fa-download" style={{ marginRight: '8px' }}></i>
-          Download PDF
-        </button>
+        
       </div>
 
       {/* Frame Container with Digital Interface and Grid */}
       <div
         ref={frameRef}
         id="key"
-        className={`frame-container-${gridType} ${gridType === '2x6' ? 'with-digital-interface' : ''}`}
-        style={{ display: 'flex', flexDirection: 'column', width: '320px' }}
+        className={`frame-container-${gridType} ${config.hasDisplay ? 'with-digital-interface' : ''}`}
+        style={{ 
+          
+        }}
       >
-        {/* Digital Interface for 2x6 layout - Thermostat */}
-        {gridType === '2x6' && (
+        {/* Digital Interface for Thermostat models */}
+        {config.hasDisplay && (
           <div className="digital-interface">
             <img 
               src="/images/thermostat-interface.png" 
@@ -1230,7 +1039,7 @@ function Frame({
 
         {/* Device Layout - Drop Zone */}
         <div
-          className={`layout polar-white custom basic layout-${gridType} ${gridType === '2x6' ? 'with-digital-interface' : ''}`}
+          className={`layout polar-white custom basic layout-${gridType} ${config.hasDisplay ? 'with-digital-interface' : ''}`}
         data-place="frame"
         data-grid-type={gridType}
         style={{

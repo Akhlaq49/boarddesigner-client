@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Header from './components/Header';
 import ButtonParts from './components/ButtonParts';
 import Frame from './components/Frame';
@@ -9,6 +9,9 @@ import FeedbackMessage from './components/FeedbackMessage';
 import { useDragDrop } from './hooks/useDragDrop';
 
 function App() {
+  const [selectedCategory, setSelectedCategory] = useState('2-8 Room Controller');
+  const [frameDownloadPDF, setFrameDownloadPDF] = useState(null);
+  
   const {
     gridType,
     setGridType,
@@ -59,9 +62,13 @@ function App() {
           setBoardWidth={setBoardWidth}
           colorPaletteWidth={colorPaletteWidth}
           setColorPaletteWidth={setColorPaletteWidth}
+          onNavigateHome={() => window.location.reload()}
+          selectedCategory={selectedCategory}
+          setSelectedCategory={setSelectedCategory}
+          onDownloadPDF={() => frameDownloadPDF && frameDownloadPDF()}
         />
         
-        <div className="container-fluid h-100" style={{ paddingTop: '80px', overflowX: 'auto' }}>
+        <div className="container-fluid h-100" style={{ paddingTop: '90px',zIndex: 100, overflowX: 'auto' }}>
           <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
             {/* Left Column - Button Parts */}
             <div className="h-100 overflow-auto" style={{ 
@@ -129,6 +136,9 @@ function App() {
                 selectedButtonPart={selectedButtonPart}
                 setSelectedButtonPart={setSelectedButtonPart}
                 selectedColor={selectedColor}
+                selectedCategory={selectedCategory}
+                setSelectedCategory={setSelectedCategory}
+                setDownloadPDFHandler={setFrameDownloadPDF}
               />
             </div>
 

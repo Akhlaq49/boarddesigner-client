@@ -288,7 +288,7 @@ function ColorPalette({
       </div>
 
       {activeTab === 'textures' && (
-        <div role="tabpanel" className="py-2" style={{ maxHeight: 'calc(85vh - 200px)', overflowY: 'auto', overflowX: 'visible' }}>
+        <div role="tabpanel" className="py-2" style={{ overflowX: 'visible' }}>
           <div className="flex flex-col gap-2 color-palette-list">
             {COLORS.map(color => (
               <div
