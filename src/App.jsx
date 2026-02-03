@@ -71,8 +71,8 @@ function App() {
         
         <div className="container-fluid h-100" style={{ paddingTop: '160px',zIndex: 100, overflowX: 'auto' }}>
           <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
-            {/* Left Column - Button Parts (only for Design Your Self) */}
-            {gridType && !gridType.includes('dora') && !gridType.includes('pblock') && (
+            {/* Left Column - Button Parts (show for Design Your Self and Thermostat) */}
+            {gridType && (!gridType.includes('dora') || gridType === 'dora-thermostat') && !gridType.includes('pblock') && (
               <div className="h-100 overflow-auto" style={{ 
                 width: '25%',
                 minWidth: '200px',

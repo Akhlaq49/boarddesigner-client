@@ -32,6 +32,7 @@ const PRODUCT_CATEGORIES = [
     id: 'design-self',
     name: 'Design Your Self',
     products: [
+      { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat' },
       { id: '2x4', columns: 2, rows: 4, label: '2×4 Grid' },
       { id: '2x6', columns: 2, rows: 6, label: '2×6 Grid' },
       { id: '2x8', columns: 2, rows: 8, label: '2×8 Grid' }

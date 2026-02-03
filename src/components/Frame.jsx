@@ -8,7 +8,7 @@ const GRID_CONFIGS = {
   
   // 3-12 Button Switch
   'dora-1x3': { columns: 1, rows: 3, visibleZones: 3, label: 'Dora 1×3', category: '3-12 Button Switch', hasDisplay: false },
-  'pblock-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Pblock 2×6 (Thermostat)', category: '3-12 Button Switch', hasDisplay: true },
+  'pblock-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Pblock 2×6', category: '3-12 Button Switch', hasDisplay: false },
   
   // 2-8 Room Controller
   'dora-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora 2×6', category: '2-8 Room Controller', hasDisplay: false },
@@ -24,7 +24,7 @@ const GRID_CONFIGS = {
   // Legacy support (will be deprecated)
   '2x4': { columns: 2, rows: 4, visibleZones: 8, label: '2×4', category: 'Legacy', hasDisplay: false },
   '2x8': { columns: 2, rows: 8, visibleZones: 16, label: '2×8', category: 'Legacy', hasDisplay: false },
-  '2x6': { columns: 2, rows: 6, visibleZones: 12, label: '2×6 (Old Thermostat)', category: 'Legacy', hasDisplay: true }
+  '2x6': { columns: 2, rows: 6, visibleZones: 12, label: '2×6', category: 'Legacy', hasDisplay: false }
 };
 
 function Frame({
@@ -756,7 +756,7 @@ function Frame({
       console.error('Error generating PDF:', error);
       showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
     }
-  }, [config, dropZones, frameColor, fullColor, getColorValue, getTextureImage, gridType, showFeedback]);
+  }, [config, dropZones, frameColor, fullColor, getColorValue, getTextureImage, gridType, showFeedback, generateProductCode]);
 
   // Register PDF download handler with parent
   useEffect(() => {
