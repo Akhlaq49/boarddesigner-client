@@ -136,14 +136,22 @@ function ButtonParts({
               <button
                 type="button"
                 className={`x-tab ${activeTab === 'parts' ? 'active' : ''}`}
-                onClick={() => setActiveTab('parts')}
+                onClick={() => {
+                  setActiveTab('parts');
+                  setSelectedButton(null);
+                  setSelectedButtonPart(null);
+                }}
               >
                 <div className="font-medium">Button Parts</div>
               </button>
               <button
                 type="button"
                 className={`x-tab ${activeTab === 'label' ? 'active' : ''}`}
-                onClick={() => setActiveTab('label')}
+                onClick={() => {
+                  setActiveTab('label');
+                  setSelectedButton(null);
+                  setSelectedButtonPart(null);
+                }}
               >
                 <div className="font-medium">Icon & Text</div>
               </button>

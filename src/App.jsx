@@ -9,7 +9,6 @@ import FeedbackMessage from './components/FeedbackMessage';
 import { useDragDrop } from './hooks/useDragDrop';
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState('2-8 Room Controller');
   const [frameDownloadPDF, setFrameDownloadPDF] = useState(null);
   
   const {
@@ -63,46 +62,50 @@ function App() {
           colorPaletteWidth={colorPaletteWidth}
           setColorPaletteWidth={setColorPaletteWidth}
           onNavigateHome={() => window.location.reload()}
-          selectedCategory={selectedCategory}
-          setSelectedCategory={setSelectedCategory}
+          gridType={gridType}
+          setGridType={setGridType}
           onDownloadPDF={() => frameDownloadPDF && frameDownloadPDF()}
+          setSelectedButton={setSelectedButton}
+          setSelectedButtonPart={setSelectedButtonPart}
         />
         
-        <div className="container-fluid h-100" style={{ paddingTop: '90px',zIndex: 100, overflowX: 'auto' }}>
+        <div className="container-fluid h-100" style={{ paddingTop: '160px',zIndex: 100, overflowX: 'auto' }}>
           <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
-            {/* Left Column - Button Parts */}
-            <div className="h-100 overflow-auto" style={{ 
-              width: '25%',
-              minWidth: '200px',
-              
-              flexShrink: 0,
-              flexGrow: 0,
-              padding: '0 8px',
-              position: 'relative',
-              zIndex: 1
-            }}>
-              <div className="h-100">
-                <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
-                  <ButtonParts
-                    selectedButton={selectedButton}
-                    setSelectedButton={setSelectedButton}
-                    showIconPopup={showIconPopup}
-                    setShowIconPopup={setShowIconPopup}
-                    setCurrentIconPosition={setCurrentIconPosition}
-                    applyIconToButton={applyIconToButton}
-                    applyTextToButton={applyTextToButton}
-                    showFeedback={showFeedback}
-                    fullColor={fullColor}
-                    selectedColor={selectedColor}
-                    getColorValue={getColorValue}
-                    getTextureImage={getTextureImage}
-                    dropZones={dropZones}
-                    selectedButtonPart={selectedButtonPart}
-                    setSelectedButtonPart={setSelectedButtonPart}
-                  />
+            {/* Left Column - Button Parts (only for Design Your Self) */}
+            {gridType && !gridType.includes('dora') && !gridType.includes('pblock') && (
+              <div className="h-100 overflow-auto" style={{ 
+                width: '25%',
+                minWidth: '200px',
+                
+                flexShrink: 0,
+                flexGrow: 0,
+                padding: '0 8px',
+                position: 'relative',
+                zIndex: 1
+              }}>
+                <div className="h-100">
+                  <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
+                    <ButtonParts
+                      selectedButton={selectedButton}
+                      setSelectedButton={setSelectedButton}
+                      showIconPopup={showIconPopup}
+                      setShowIconPopup={setShowIconPopup}
+                      setCurrentIconPosition={setCurrentIconPosition}
+                      applyIconToButton={applyIconToButton}
+                      applyTextToButton={applyTextToButton}
+                      showFeedback={showFeedback}
+                      fullColor={fullColor}
+                      selectedColor={selectedColor}
+                      getColorValue={getColorValue}
+                      getTextureImage={getTextureImage}
+                      dropZones={dropZones}
+                      selectedButtonPart={selectedButtonPart}
+                      setSelectedButtonPart={setSelectedButtonPart}
+                    />
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Center Column - Frame */}
             <div className="h-100 d-flex align-items-center justify-content-center" style={{ 
@@ -136,9 +139,8 @@ function App() {
                 selectedButtonPart={selectedButtonPart}
                 setSelectedButtonPart={setSelectedButtonPart}
                 selectedColor={selectedColor}
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
                 setDownloadPDFHandler={setFrameDownloadPDF}
+                wallColor={wallColor}
               />
             </div>
 

@@ -1032,7 +1032,6 @@ legend {
     width: 100%;
     height: 100%;
     position: relative;
-    padding: 0.25rem;
 }
 
 .button-content .s0,
@@ -1047,8 +1046,6 @@ legend {
 .button-content .s0 {
     justify-content: flex-end;
     align-items: flex-start;
-    padding-right: 0.25rem;
-    padding-top: 0.25rem;
     grid-row: 1;
 }
 
@@ -1062,8 +1059,6 @@ legend {
 .button-content .s2 {
     justify-content: flex-start;
     align-items: flex-end;
-    padding-left: 0.25rem;
-    padding-bottom: 0.25rem;
     grid-row: 3;
 }
 

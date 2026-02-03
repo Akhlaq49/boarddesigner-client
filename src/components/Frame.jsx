@@ -53,14 +53,7 @@ function Frame({
 }) {
   const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['dora-2x4'];
   const [highlightedZones, setHighlightedZones] = useState([]);
-  const frameRef = useRef(null);
-  
-  // Register PDF download handler with parent
-  useEffect(() => {
-    if (setDownloadPDFHandler) {
-      setDownloadPDFHandler(() => handleDownloadPDF);
-    }
-  }, [setDownloadPDFHandler]);  
+  const frameRef = useRef(null);  
   // Product code generation logic
   const generateProductCode = useCallback(() => {
     const hasDisplay = config.hasDisplay;
@@ -339,8 +332,8 @@ function Frame({
       
       placeButtonInZones(zonesToMerge, buttonDataWithMerge);
       setSelectedButton(zoneId);
-      setSelectedButtonPart(null); // Clear selection after placement
-      showFeedback('Button placed successfully!', 'success');
+      // Keep selectedButtonPart active so user can place multiple buttons
+      showFeedback('Button placed successfully! Click another zone to place more.', 'success');
       return; // Exit early to prevent normal selection
     } else if (dropZones[zoneId]) {
       // Normal selection mode
@@ -369,7 +362,7 @@ function Frame({
     setShowButtonColorPopup(true);
   };
 
-  const handleDownloadPDF = async () => {
+  const handleDownloadPDF = useCallback(async () => {
     try {
       const frameElement = frameRef.current;
       if (!frameElement) {
@@ -395,25 +388,13 @@ function Frame({
       });
 
       try {
-        // Temporarily remove gaps and add texture to buttons for PDF
+        // Don't modify layout for PDF - keep as-is
         const layout = frameElement.querySelector('.layout');
-        const originalLayoutGap = layout?.style.gap;
-        if (layout) {
-          layout.style.gap = '0px'; // Remove spacing for PDF
-        }
+        const originalLayoutGap = layout?.style.gap || '';
 
-        // Add box-shadow to simulate metallic texture on buttons
+        // Don't modify box shadows - keep original appearance
         const droppedButtons = frameElement.querySelectorAll('.dropped-button');
         const originalBoxShadows = new Map();
-        droppedButtons.forEach(btn => {
-          originalBoxShadows.set(btn, btn.style.boxShadow);
-          // Enhanced metallic appearance for PDF
-          btn.style.boxShadow = `
-            inset 0 1px 2px rgba(0, 0, 0, 0.1),
-            inset 0 -1px 2px rgba(255, 255, 255, 0.3),
-            inset 0 0 0 1px rgba(0, 0, 0, 0.05)
-          `;
-        });
 
         // Wait for any rendering to complete
         await new Promise(resolve => setTimeout(resolve, 500));
@@ -668,13 +649,21 @@ function Frame({
         colorButtons.forEach(btn => {
           btn.style.display = '';
         });
-        throw error;
+        console.error('Error generating PDF:', error);
+        showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
       }
     } catch (error) {
       console.error('Error generating PDF:', error);
       showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
     }
-  };
+  }, [config, dropZones, frameColor, fullColor, getColorValue, getTextureImage, gridType, showFeedback]);
+
+  // Register PDF download handler with parent
+  useEffect(() => {
+    if (setDownloadPDFHandler) {
+      setDownloadPDFHandler(() => handleDownloadPDF);
+    }
+  }, [setDownloadPDFHandler, handleDownloadPDF]);
 
   const renderZoneContent = (zoneId) => {
     const zone = dropZones[zoneId];
@@ -726,7 +715,7 @@ function Frame({
                 src={`/ican/images/${zone.s0.value}`} 
                 alt="icon" 
                 className="button-icon"
-                style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+                style={{ objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s0.value);
                   e.target.style.display = 'none';
@@ -743,7 +732,7 @@ function Frame({
                 src={`/ican/images/${zone.s1.value}`} 
                 alt="icon" 
                 className="button-icon"
-                style={{ width: '48px', height: '48px', objectFit: 'contain' }}
+                style={{ objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s1.value);
                   e.target.style.display = 'none';
@@ -760,7 +749,7 @@ function Frame({
                 src={`/ican/images/${zone.s2.value}`} 
                 alt="icon" 
                 className="button-icon"
-                style={{ width: '36px', height: '36px', objectFit: 'contain' }}
+                style={{ objectFit: 'contain' }}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s2.value);
                   e.target.style.display = 'none';
@@ -795,225 +784,7 @@ function Frame({
       {/* Product Selector with Visual Icons - Matching Reference Design */}
       <div className="d-flex flex-column align-items-center justify-content-center gap-3 mb-4" style={{ flexWrap: 'wrap' }}>
         {/* Product Configuration Selector */}
-        <div className="product-selector-container w-100" style={{ maxWidth: '900px' }}>
-          <div className="product-selector-grid">
-            {/* 2-8 Buttons Switch */}
-            {selectedCategory === '2-8 Buttons Switch' && (
-            <div className="product-category-section">
-              <h6 className="category-title">2-4 Buttons Switch</h6>
-              <div className="config-options-row">
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'dora-2x2' ? 'active' : ''}`}
-                  onClick={() => setGridType('dora-2x2')}
-                  title="2×2 Grid"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'dora-2x4' ? 'active' : ''}`}
-                  onClick={() => setGridType('dora-2x4')}
-                  title="2×4 Grid"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(4, 1fr)' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-            )}
-
-            {/* 3-12 Button Switch */}
-            {selectedCategory === '3-12 Button Switch' && (
-            <div className="product-category-section">
-              <h6 className="category-title">3-12 Button Switch</h6>
-              <div className="config-options-row">
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'dora-1x3' ? 'active' : ''}`}
-                  onClick={() => setGridType('dora-1x3')}
-                  title="1×3 Grid"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr', gridTemplateRows: '1fr 1fr 1fr' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'pblock-2x6' ? 'active' : ''}`}
-                  onClick={() => setGridType('pblock-2x6')}
-                  title="2×6 Grid (Pblock Thermostat)"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(6, 1fr)' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-            )}
-
-            {/* 2-8 Room Controller */}
-            {selectedCategory === '2-8 Room Controller' && (
-            <div className="product-category-section">
-              <h6 className="category-title">2-8 Room Controller</h6>
-              <div className="config-options-row">
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'dora-2x6' ? 'active' : ''}`}
-                  onClick={() => setGridType('dora-2x6')}
-                  title="2×6 Grid"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(6, 1fr)' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'dora-2x8' ? 'active' : ''}`}
-                  onClick={() => setGridType('dora-2x8')}
-                  title="2×8 Grid (XLarge)"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(8, 1fr)' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-            )}
-
-            {/* Design Your Self - Thermostat */}
-            {selectedCategory === 'Design Your Self' && (
-            <div className="product-category-section">
-              <h6 className="category-title">Design Your Self</h6>
-              <div className="config-options-row">
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'dora-thermostat' ? 'active' : ''}`}
-                  onClick={() => setGridType('dora-thermostat')}
-                  title="Dora Thermostat (4+4 buttons)"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(4, 1fr)' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'pblock-2x4' ? 'active' : ''}`}
-                  onClick={() => setGridType('pblock-2x4')}
-                  title="Pblock 2×4"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr 1fr', gridTemplateRows: 'repeat(4, 1fr)' }}>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-            )}
-
-            {/* Focus Mode */}
-            {selectedCategory === 'Focus Mode' && (
-            <div className="product-category-section">
-              <h6 className="category-title">Focus Mode</h6>
-              <div className="config-options-row">
-                <button
-                  type="button"
-                  className={`config-icon-btn ${gridType === 'focus-mode' ? 'active' : ''}`}
-                  onClick={() => setGridType('focus-mode')}
-                  title="Focus Mode"
-                >
-                  <div className="grid-icon">
-                    <div className="grid-visual" style={{ gridTemplateColumns: '1fr', gridTemplateRows: '1fr' }}>
-                      <div className="grid-cell"></div>
-                    </div>
-                  </div>
-                </button>
-              </div>
-            </div>
-            )}
-          </div>
-        </div>
+        
         
       </div>
 
@@ -1023,7 +794,7 @@ function Frame({
         id="key"
         className={`frame-container-${gridType} ${config.hasDisplay ? 'with-digital-interface' : ''}`}
         style={{ 
-          
+          backgroundColor: frameColor ? getColorValue(frameColor) : '#000'
         }}
       >
         {/* Digital Interface for Thermostat models */}
@@ -1043,11 +814,7 @@ function Frame({
         data-place="frame"
         data-grid-type={gridType}
         style={{
-          borderColor: frameColor ? getColorValue(frameColor) : undefined,
-          backgroundColor: fullColor ? getColorValue(fullColor) : undefined,
-          backgroundImage: fullColor && getTextureImage(fullColor) 
-            ? `url(${getTextureImage(fullColor)})` 
-            : undefined
+          borderColor: (frameColor || fullColor) ? getColorValue(frameColor || fullColor) : undefined
         }}
       >
         {allZones.map(zone => {
@@ -1064,9 +831,10 @@ function Frame({
               gridColumn: zoneData.dimensions.colSpan > 1 ? `span ${zoneData.dimensions.colSpan}` : undefined,
               gridRow: zoneData.dimensions.rowSpan > 1 ? `span ${zoneData.dimensions.rowSpan}` : undefined
             } : {}),
-            ...(frameColor ? { borderColor: getColorValue(frameColor) } : {}),
-            ...(fullColor ? { 
+            // Apply fullColor to empty zones
+            ...(!isPrimary && fullColor ? {
               backgroundColor: getColorValue(fullColor),
+              backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined,
               borderColor: getColorValue(fullColor)
             } : {})
           };
