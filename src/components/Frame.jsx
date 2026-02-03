@@ -377,96 +377,171 @@ function Frame({
       const jsPDFModule = await import('jspdf');
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
-      // Hide action buttons before capture
-      const removeButtons = frameElement.querySelectorAll('.remove-button');
-      const colorButtons = frameElement.querySelectorAll('.button-color-btn');
-      removeButtons.forEach(btn => {
-        btn.style.display = 'none';
-      });
-      colorButtons.forEach(btn => {
-        btn.style.display = 'none';
-      });
-
       try {
-        // Don't modify layout for PDF - keep as-is
+        // Hide action buttons before capture
+        const removeButtons = frameElement.querySelectorAll('.remove-button');
+        const colorButtons = frameElement.querySelectorAll('.button-color-btn');
+        removeButtons.forEach(btn => btn.style.display = 'none');
+        colorButtons.forEach(btn => btn.style.display = 'none');
+
+        // Temporarily adjust layout for cleaner PDF
         const layout = frameElement.querySelector('.layout');
-        const originalLayoutGap = layout?.style.gap || '';
+        const originalGap = layout?.style.gap || '';
+        const originalBorderColor = layout?.style.borderColor || '';
+        if (layout) {
+          layout.style.gap = '1px';
+          layout.style.borderColor = 'transparent';
+        }
 
-        // Don't modify box shadows - keep original appearance
+        // Hide borders on drop zones and buttons
+        const dropZones = frameElement.querySelectorAll('.drop-zone');
+        const originalBorders = new Map();
+        dropZones.forEach(zone => {
+          originalBorders.set(zone, {
+            border: zone.style.border,
+            borderWidth: zone.style.borderWidth,
+            boxShadow: zone.style.boxShadow,
+            padding: zone.style.padding
+          });
+          zone.style.border = 'none';
+          zone.style.boxShadow = 'none';
+          zone.style.padding = '0';
+        });
+
         const droppedButtons = frameElement.querySelectorAll('.dropped-button');
-        const originalBoxShadows = new Map();
+        const originalButtonBorders = new Map();
+        droppedButtons.forEach(btn => {
+          originalButtonBorders.set(btn, {
+            border: btn.style.border,
+            boxShadow: btn.style.boxShadow
+          });
+          btn.style.border = 'none';
+          btn.style.boxShadow = 'none';
+        });
 
-        // Wait for any rendering to complete
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Remove button-content styling
+        const buttonContents = frameElement.querySelectorAll('.button-content');
+        const originalButtonContents = new Map();
+        buttonContents.forEach(content => {
+          originalButtonContents.set(content, {
+            padding: content.style.padding,
+            border: content.style.border,
+            boxShadow: content.style.boxShadow
+          });
+          content.style.padding = '0';
+          content.style.border = 'none';
+          content.style.boxShadow = 'none';
+        });
 
-        // Convert SVG icons to data URLs so they render in html2canvas
-        const images = frameElement.querySelectorAll('img');
-        const originalSrcs = new Map();
+        // Wait for layout changes to apply
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Convert SVG icons to high-quality canvas elements for PDF rendering
+        const images = frameElement.querySelectorAll('img.button-icon');
+        const originalElements = new Map();
 
         for (const img of images) {
-          const src = img.src;
-          if (src && (src.includes('/ican/images/') || src.includes('.svg'))) {
-            try {
-              // Store original src for restoration
-              originalSrcs.set(img, src);
+          try {
+            const src = img.src;
+            if (src && (src.includes('.svg') || src.includes('/ican/'))) {
+              // Get computed dimensions
+              const rect = img.getBoundingClientRect();
               
-              // Fetch and convert SVG to data URL
-              const response = await fetch(src, { mode: 'cors', cache: 'no-cache' });
-              if (response.ok) {
-                const svgText = await response.text();
-                let cleanedSvg = svgText.trim();
-                if (!cleanedSvg.includes('xmlns=')) {
-                  cleanedSvg = cleanedSvg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
-                }
-                const dataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(cleanedSvg)}`;
-                img.src = dataUrl;
-                img.style.display = '';
-                img.style.visibility = 'visible';
-                img.style.opacity = '1';
-              }
-            } catch (err) {
-              console.warn('Failed to convert SVG:', src, err);
+              // Create a high-resolution canvas to render the SVG
+              const scale = 4; // 4x for crisp quality
+              const tempCanvas = document.createElement('canvas');
+              tempCanvas.width = rect.width * scale;
+              tempCanvas.height = rect.height * scale;
+              const ctx = tempCanvas.getContext('2d');
+              
+              // Keep transparent background
+              ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
+              
+              // Create an image from the SVG
+              const svgImg = new Image();
+              svgImg.crossOrigin = 'anonymous';
+              
+              await new Promise((resolve, reject) => {
+                svgImg.onload = () => {
+                  // Draw the SVG image with high quality
+                  ctx.imageSmoothingEnabled = true;
+                  ctx.imageSmoothingQuality = 'high';
+                  ctx.drawImage(svgImg, 0, 0, tempCanvas.width, tempCanvas.height);
+                  
+                  // Replace img with high-quality PNG data URL (with transparency)
+                  const dataUrl = tempCanvas.toDataURL('image/png');
+                  originalElements.set(img, { src: img.src });
+                  img.src = dataUrl;
+                  resolve();
+                };
+                svgImg.onerror = () => resolve(); // Continue even if one fails
+                svgImg.src = src;
+              });
             }
+          } catch (err) {
+            console.warn('Failed to convert icon:', err);
           }
         }
 
-        // Wait for images to load
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // Wait for all conversions to complete
+        await new Promise(resolve => setTimeout(resolve, 300));
 
-        // Simple screenshot approach - capture frame as rendered
+        // Capture the frame with high quality
         const canvas = await html2canvas(frameElement, {
-          scale: 2, // 2x resolution for quality
+          scale: 2,
           useCORS: true,
           allowTaint: true,
           backgroundColor: null,
           logging: false,
+          foreignObjectRendering: false,
           removeContainer: false,
-          imageTimeout: 10000,
-          windowWidth: frameElement.scrollWidth,
-          windowHeight: frameElement.scrollHeight,
-          letterRendering: true,
-          filter: (node) => {
-            // Exclude elements with specific classes
-            if (node.classList?.contains('remove-button') || 
-                node.classList?.contains('button-color-btn')) {
-              return false;
-            }
-            return true;
-          }
+          imageTimeout: 0
         });
 
-        // Restore original SVG src attributes
-        originalSrcs.forEach((originalSrc, img) => {
-          img.src = originalSrc;
+        console.log('Canvas captured:', canvas.width, 'x', canvas.height);
+
+        // Restore original images
+        originalElements.forEach((data, img) => {
+          img.src = data.src;
+        });
+
+        // Restore gap
+        if (layout) {
+          layout.style.gap = originalGap;
+          layout.style.borderColor = originalBorderColor;
+        }
+
+        // Restore borders
+        dropZones.forEach(zone => {
+          const original = originalBorders.get(zone);
+          zone.style.border = original?.border || '';
+          zone.style.borderWidth = original?.borderWidth || '';
+          zone.style.boxShadow = original?.boxShadow || '';
+          zone.style.padding = original?.padding || '';
+        });
+
+        droppedButtons.forEach(btn => {
+          const original = originalButtonBorders.get(btn);
+          btn.style.border = original?.border || '';
+          btn.style.boxShadow = original?.boxShadow || '';
+        });
+
+        // Restore button-content styling
+        buttonContents.forEach(content => {
+          const original = originalButtonContents.get(content);
+          content.style.padding = original?.padding || '';
+          content.style.border = original?.border || '';
+          content.style.boxShadow = original?.boxShadow || '';
         });
 
         // Restore buttons after capture
-        removeButtons.forEach(btn => {
-          btn.style.display = '';
-        });
-        colorButtons.forEach(btn => {
-          btn.style.display = '';
-        });
+        removeButtons.forEach(btn => btn.style.display = '');
+        colorButtons.forEach(btn => btn.style.display = '');
+
+        // Check if canvas has content
+        if (!canvas || canvas.width === 0 || canvas.height === 0) {
+          throw new Error('Failed to capture frame - canvas is empty');
+        }
 
         // Calculate PDF dimensions from canvas
         // Canvas is at 2x scale, so divide by 2 to get screen size
@@ -478,10 +553,10 @@ function Frame({
         let widthMM = screenWidth * pxToMM;
         let heightMM = screenHeight * pxToMM;
         
-        // Keep natural size - no aggressive scaling
-        const scaleDown = 1;
-        widthMM = widthMM * scaleDown;
-        heightMM = heightMM * scaleDown;
+        // Scale to fit nicely on PDF
+        const scale = 0.9; // 90% of original size for good proportion
+        widthMM = widthMM * scale;
+        heightMM = heightMM * scale;
 
         // Calculate PDF page size with proper margins
         const pageMarginMM = 15;
@@ -607,10 +682,10 @@ function Frame({
           const colorCode = btn.color !== 'Default' ? `${btn.color} (${getColorValue(btn.color)})` : btn.color;
           pdf.text(`: ${colorCode}`, pageMarginMM + 24, currentY);
           currentY += 4;
-          
-          // Center/Icon details
+
+          // Center content
           if (btn.center) {
-            pdf.setFont(undefined, 'normal');
+            pdf.setFontSize(8);
             pdf.text(`— Center`, pageMarginMM + 5, currentY);
             pdf.text(`: ${btn.center}`, pageMarginMM + 24, currentY);
             currentY += 4;
@@ -642,13 +717,38 @@ function Frame({
         pdf.save(`board-design-${gridType}-${Date.now()}.pdf`);
         showFeedback('PDF downloaded successfully!', 'success');
       } catch (error) {
+        // Restore gap on error
+        const layout = frameElement?.querySelector('.layout');
+        if (layout) {
+          layout.style.gap = '';
+        }
+
+        // Restore borders on error
+        const dropZonesError = frameElement?.querySelectorAll('.drop-zone');
+        dropZonesError?.forEach(zone => {
+          zone.style.border = '';
+          zone.style.boxShadow = '';
+          zone.style.padding = '';
+        });
+
+        const droppedButtonsError = frameElement?.querySelectorAll('.dropped-button');
+        droppedButtonsError?.forEach(btn => {
+          btn.style.border = '';
+          btn.style.boxShadow = '';
+        });
+
+        const buttonContentsError = frameElement?.querySelectorAll('.button-content');
+        buttonContentsError?.forEach(content => {
+          content.style.padding = '';
+          content.style.border = '';
+          content.style.boxShadow = '';
+        });
+        
         // Restore buttons on error
-        removeButtons.forEach(btn => {
-          btn.style.display = '';
-        });
-        colorButtons.forEach(btn => {
-          btn.style.display = '';
-        });
+        const removeButtons = frameElement?.querySelectorAll('.remove-button');
+        const colorButtons = frameElement?.querySelectorAll('.button-color-btn');
+        removeButtons?.forEach(btn => btn.style.display = '');
+        colorButtons?.forEach(btn => btn.style.display = '');
         console.error('Error generating PDF:', error);
         showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
       }
