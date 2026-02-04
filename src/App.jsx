@@ -56,6 +56,9 @@ function App() {
     setSelectedButtonPart
   } = useDragDrop();
 
+  // Track active category tab
+  const [activeTab, setActiveTab] = useState('2-8-buttons');
+
   // Listen for saved design load events
   useEffect(() => {
     const handleLoadSavedDesign = (event) => {
@@ -86,13 +89,15 @@ function App() {
           setSelectedButton={setSelectedButton}
           setSelectedButtonPart={setSelectedButtonPart}
           onOpenSaveDesign={() => setShowSaveDesignModal(true)}
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
         />
         
-        <div className="container-fluid h-100" style={{ paddingTop: '160px',zIndex: 100, overflowX: 'auto' }}>
+        <div className="container-fluid h-100" style={{ paddingTop: '160px', overflowX: 'auto', overflowY: 'visible' }}>
           <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
-            {/* Left Column - Button Parts (show for Design Your Self and Thermostat) */}
-            {gridType && (!gridType.includes('dora') || gridType === 'dora-thermostat') && !gridType.includes('pblock') && (
-              <div className="h-100 overflow-auto" style={{ 
+            {/* Left Column - Button Parts (show only when Design Your Self is active) */}
+            {activeTab === 'design-self' && (
+              <div className="h-100" style={{ 
                 width: '25%',
                 minWidth: '200px',
                 
@@ -100,10 +105,10 @@ function App() {
                 flexGrow: 0,
                 padding: '0 8px',
                 position: 'relative',
-                zIndex: 1
+                zIndex: 1001
               }}>
                 <div className="h-100">
-                  <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
+                  <div className="x-card bg-white dark:bg-secondary-800 rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100" style={{ overflow: 'visible' }}>
                     <ButtonParts
                       selectedButton={selectedButton}
                       setSelectedButton={setSelectedButton}
@@ -134,7 +139,9 @@ function App() {
               flex: '1 1 auto',
               flexShrink: 1,
               padding: '0 8px',
-              overflow: 'visible'
+              overflow: 'visible',
+              position: 'relative',
+              zIndex: 1001
             }}>
               <Frame
                 gridType={gridType}
@@ -164,7 +171,7 @@ function App() {
             </div>
 
             {/* Right Column - Color Palette */}
-            <div className="h-100 overflow-auto" style={{ 
+            <div className="h-100" style={{ 
              
               minWidth: '240px',
               maxWidth: '300px',
@@ -173,12 +180,10 @@ function App() {
               padding: '0 8px 0 8px',
               marginRight: '0',
               position: 'relative',
-              zIndex: 10,
-              overflowX: 'visible',
-              overflowY: 'auto'
+              zIndex: 1001
             }}>
               <div className="h-100">
-                <div className="x-card bg-white dark:bg-secondary-800 overflow-hidden rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100">
+                <div className="x-card bg-white dark:bg-secondary-800 rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100" style={{ overflow: 'visible' }}>
                   <ColorPalette
                     selectedColor={selectedColor}
                     setSelectedColor={setSelectedColor}

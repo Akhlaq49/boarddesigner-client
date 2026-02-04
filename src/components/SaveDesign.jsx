@@ -159,6 +159,7 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
               >
                 <option value="2-8">2-8 Buttons Switch</option>
                 <option value="3-12">3-12 Button Switch</option>
+                <option value="design-self">Design Your Self</option>
                 <option value="custom">Custom</option>
               </select>
             </div>

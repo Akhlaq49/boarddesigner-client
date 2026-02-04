@@ -23,7 +23,7 @@ const GRID_CONFIGS = {
   //'dora-3plus2T': { columns: 3, rows: 3, visibleZones: 7, label: 'Dora 3+2T', category: '3-12 Button Switch', hasDisplay: false },
   'dora-6plus3T': { columns: 2, rows: 6, visibleZones: 9, label: 'Dora 6+3T', category: '3-12 Button Switch', hasDisplay: false },
   'dora-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora 2×6', category: '3-12 Button Switch', hasDisplay: false },
-  'dora-2x8': { columns: 2, rows: 8, visibleZones: 16, label: 'Dora XLarge 2×8', category: '3-12 Button Switch', hasDisplay: false },
+  'dora-2x8': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora XLarge 2×6', category: '3-12 Button Switch', hasDisplay: false },
   'pblock-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Pblock 2×6', category: '3-12 Button Switch', hasDisplay: false },
   
   // 2-8 Room Controller
@@ -116,8 +116,8 @@ function Frame({
 
   const allZones = useMemo(() => {
     const zones = [];
-    const maxRows = Math.max(8, config.rows); // Support up to 8 rows
-    const maxCols = Math.max(2, config.columns); // Support 1 or 2 columns
+    const maxRows = config.rows; // Use exact row count from config
+    const maxCols = config.columns; // Use exact column count from config
     
     // Special handling for 6+3T layout (left: all 1x1, right: all 1x2)
     if (gridType === 'dora-6plus3T') {

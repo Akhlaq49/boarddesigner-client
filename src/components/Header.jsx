@@ -7,58 +7,38 @@ const PRODUCT_CATEGORIES = [
     id: '2-8-buttons',
     name: '2-8 Buttons Switch',
     products: [
-      { id: 'dora-2x2', columns: 2, rows: 2, label: 'Dora 2×2' },
-      { id: 'dora-2plus1', columns: 2, rows: 2, label: 'Dora 2+1' },
-      { id: 'dora-2Lplus1', columns: 2, rows: 4, label: 'Dora 2L+1' },
-      { id: 'dora-4plus1L', columns: 2, rows: 4, label: 'Dora 4+1L' },
-      { id: 'dora-4plus2L', columns: 2, rows: 4, label: 'Dora 4+1L+2' },
-      { id: 'dora-2plus2plus1', columns: 2, rows: 4, label: 'Dora 2+2+1' },
-      { id: 'dora-2plus1plus1', columns: 2, rows: 3, label: 'Dora 2+1+1' },
-      { id: 'dora-1L2plus1', columns: 2, rows: 4, label: 'Dora 1L+2+1' },
-      { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora 2×4' },
-      { id: 'dora-1x3', columns: 1, rows: 3, label: 'Dora 1×3' },
-      { id: 'dora-1x4', columns: 1, rows: 4, label: 'Dora 1×4' },
-      { id: 'dora-1x5', columns: 1, rows: 5, label: 'Dora 1×5' },
-      { id: 'dora-1x6', columns: 1, rows: 6, label: 'Dora 1×6' },
-      { id: 'dora-1x7', columns: 1, rows: 7, label: 'Dora 1×7' },
-      { id: 'dora-1x8', columns: 1, rows: 8, label: 'Dora 1×8' },
-      { id: 'pblock-2x4', columns: 2, rows: 4, label: 'Pblock 2×4' }
+      
     ]
   },
   {
     id: '3-12-buttons',
     name: '3-12 Button Switch',
     products: [
-      { id: 'dora-3plus2T', columns: 3, rows: 3, label: 'Dora 3+2T' },
-      { id: 'dora-6plus3T', columns: 2, rows: 6, label: 'Dora 6+3T' },
-      { id: 'dora-2x6', columns: 2, rows: 6, label: 'Dora 2×6' },
-      { id: 'dora-2x8', columns: 2, rows: 8, label: 'Dora 2×8' },
-      { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' }
+      
     ]
   },
   {
     id: '2-8-room',
     name: '2-8 Room Controller',
     products: [
-      { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat' }
-    ]
+       ]
   },
   {
     id: 'design-self',
     name: 'Design Your Self',
     products: [
-      { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat' },
-      { id: '2x4', columns: 2, rows: 4, label: '2×4 Grid' },
-      { id: '2x6', columns: 2, rows: 6, label: '2×6 Grid' },
-      { id: '2x8', columns: 2, rows: 8, label: '2×8 Grid' }
+      { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora Keypad 2×4' },
+      { id: 'dora-2x8', columns: 2, rows: 6, label: 'Dora XLarge 2×6' },
+      { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat 4+4' },
+      { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' }
     ]
   }
 ];
 
-function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenSaveDesign }) {
-  const [activeTab, setActiveTab] = useState('2-8-buttons');
+function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenSaveDesign, activeTab, setActiveTab }) {
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
+  const [savedDesignsSelf, setSavedDesignsSelf] = useState([]);
   
   // Load saved designs on mount
   useEffect(() => {
@@ -90,9 +70,11 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       
       const designs28 = allDesigns.filter(d => d.category === '2-8');
       const designs312 = allDesigns.filter(d => d.category === '3-12');
+      const designsSelf = allDesigns.filter(d => d.category === 'design-self');
       
       setSavedDesigns28(designs28);
       setSavedDesigns312(designs312);
+      setSavedDesignsSelf(designsSelf);
     } catch (error) {
       console.error('Error loading saved designs:', error);
     }
@@ -245,13 +227,30 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   ))}
                 </div>
               )}
+              {activeCategory?.id === 'design-self' && savedDesignsSelf.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', paddingRight: '0.75rem', borderRight: '2px solid #ddd', marginRight: '0.75rem' }}>
+                  {savedDesignsSelf.map((design, idx) => (
+                    <SavedDesignsThumbnail
+                      key={`design-self-${idx}`}
+                      design={design}
+                      onLoad={(design) => {
+                        window.dispatchEvent(new CustomEvent('loadSavedDesign', {
+                          detail: design
+                        }));
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
 
               {/* Show regular products */}
               {activeCategory?.products && (
               <>
               {activeCategory?.products.map(product => {
               const isSelected = gridType === product.id;
-              const previewRows = product.id === 'dora-6plus3T' ? product.rows : Math.min(product.rows, 4);
+              const displayRows = Math.min(product.rows, 6);
+              const hasDisplay = product.id === 'dora-thermostat';
+              
               return (
                 <button
                   key={product.id}
@@ -275,285 +274,54 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                     overflow: 'hidden'
                   }}
                 >
-                  {/* Grid Visualization with cyan border */}
+                  {/* Product Preview Thumbnail */}
                   <div style={{
-                    display: 'grid',
-                    gridTemplateColumns: `repeat(${product.columns}, 1fr)`,
-                    gridTemplateRows: `repeat(${previewRows}, 1fr)`,
-                    
+                    display: 'flex',
+                    flexDirection: 'column',
                     width: '100%',
                     height: '100%',
-                    border: '2px solid #1e90ff',
-                    borderRadius: '3px',
-                    overflow: 'hidden',
-                    backgroundColor: 'transparent'
+                    gap: '1px',
+                    padding: '2px'
                   }}>
-                    {/* Special case for 2L+1 layout */}
-                    {product.id === 'dora-2Lplus1' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridRow: 'span 2'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridRow: 'span 2'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridColumn: 'span 2',
-                          gridRow: 'span 2'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-4plus1L' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridRow: 'span 4'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-4plus2L' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridRow: 'span 2'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-6plus3T' ? (
-                      <>
-                        {/* Left column: 6 × 1x1, Right column: 3 × 1x2 */}
-                        <div style={{
-                          gridColumn: '1',
-                          gridRow: '1',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '1',
-                          gridRow: '2',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '1',
-                          gridRow: '3',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '1',
-                          gridRow: '4',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '1',
-                          gridRow: '5',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '1',
-                          gridRow: '6',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        {/* Right column: 3 × 2x1 tall buttons */}
-                        <div style={{
-                          gridColumn: '2',
-                          gridRow: '1 / 3',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '2',
-                          gridRow: '3 / 5',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          gridColumn: '2',
-                          gridRow: '5 / 7',
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-2plus2plus1' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridColumn: 'span 2',
-                          gridRow: 'span 2'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-1L2plus1' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridRow: 'span 2'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridColumn: 'span 2',
-                          gridRow: 'span 2'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-2plus1plus1' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridColumn: 'span 2'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridColumn: 'span 2'
-                        }} />
-                      </>
-                    ) : product.id === 'dora-2plus1' ? (
-                      <>
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
-                        }} />
-                        <div style={{
-                          backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                          border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                          boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)',
-                          gridColumn: 'span 2'
-                        }} />
-                      </>
-                    ) : (
-                      Array.from({ length: product.columns * Math.min(product.rows, 4) }).map((_, i) => (
+                    {hasDisplay && (
+                      <div style={{
+                        width: '100%',
+                        height: '8px',
+                        backgroundColor: '#1a1a1a',
+                        borderRadius: '0.5px',
+                        border: '0.5px solid #000',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '2px',
+                        color: '#4CAF50',
+                        fontWeight: 'bold',
+                        overflow: 'hidden',
+                        flexShrink: 0
+                      }}>
+                        88°F
+                      </div>
+                    )}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: `repeat(${product.columns}, 1fr)`,
+                      gridTemplateRows: `repeat(${displayRows}, 1fr)`,
+                      width: '100%',
+                      height: '100%',
+                      gap: '0.5px',
+                      flex: 1
+                    }}>
+                      {Array.from({ length: product.columns * displayRows }).map((_, i) => (
                         <div
                           key={i}
                           style={{
-                            backgroundColor: isSelected ? '#1976d2' : '#f5f5f5',
-                            border: '0.5px solid rgba(0, 0, 0, 0.15)',
-                            boxShadow: 'inset 0 1px 2px rgba(0, 0, 0, 0.08)'
+                            backgroundColor: isSelected ? '#1976d2' : '#f0f0f0',
+                            border: '0.5px solid rgba(0, 0, 0, 0.2)',
+                            borderRadius: '0.5px'
                           }}
                         />
-                      ))
-                    )}
+                      ))}
+                    </div>
                   </div>
                 </button>
               );

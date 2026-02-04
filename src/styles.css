@@ -774,9 +774,9 @@ header.fixed {
 .layout-2x8,
 .layout-dora-2x8 {
     grid-template-columns: repeat(2, 1fr);
-    grid-template-rows: repeat(8, 1fr);
+    grid-template-rows: repeat(6, 1fr);
     width: 336px;
-    height: 672px;
+    height: 504px;
 }
 
 /* Dora Thermostat (2x4 with display) */
@@ -1488,7 +1488,7 @@ header.fixed {
     flex-shrink: 0 !important;
     flex-grow: 0 !important;
     position: relative;
-    z-index: 10;
+    z-index: 1001;
     margin-right: 0 !important;
     padding-right: 0 !important;
 }
@@ -2293,7 +2293,7 @@ legend {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1000;
+    z-index: 10000;
     display: flex;
     align-items: center;
     justify-content: center;
