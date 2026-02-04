@@ -123,7 +123,7 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      zIndex: 1000
+      zIndex: 9999
     }}>
       <div style={{
         backgroundColor: 'white',
