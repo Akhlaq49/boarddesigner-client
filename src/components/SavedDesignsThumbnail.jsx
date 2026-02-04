@@ -2,7 +2,7 @@ import React from 'react';
 
 function SavedDesignsThumbnail({ design, onLoad }) {
   const renderThumbnailPreview = () => {
-    const { gridType, dropZones, frameColor, fullColor, wallColor } = design;
+    const { gridType, dropZones, frameColor, fullColor } = design;
     
     // Grid configuration matching Frame.jsx
     const GRID_CONFIGS = {

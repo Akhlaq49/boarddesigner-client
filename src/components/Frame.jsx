@@ -545,155 +545,123 @@ function Frame({
         removeButtons.forEach(btn => btn.style.display = 'none');
         colorButtons.forEach(btn => btn.style.display = 'none');
 
-        // Temporarily adjust layout for cleaner PDF
-        const layout = frameElement.querySelector('.layout');
-        const originalGap = layout?.style.gap || '';
-        const originalBorderColor = layout?.style.borderColor || '';
-        if (layout) {
-          layout.style.gap = '1px';
-          layout.style.borderColor = 'transparent';
-        }
+        // Don't modify any styling - capture the frame exactly as it appears on screen
+        // This ensures symmetry and spacing are identical to the web version
 
-        // Hide borders on drop zones and buttons
-        const dropZones = frameElement.querySelectorAll('.drop-zone');
-        const originalBorders = new Map();
-        dropZones.forEach(zone => {
-          originalBorders.set(zone, {
-            border: zone.style.border,
-            borderWidth: zone.style.borderWidth,
-            boxShadow: zone.style.boxShadow,
-            padding: zone.style.padding
-          });
-          zone.style.border = 'none';
-          zone.style.boxShadow = 'none';
-          zone.style.padding = '0';
-        });
+        // Wait for everything to settle
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        const droppedButtons = frameElement.querySelectorAll('.dropped-button');
-        const originalButtonBorders = new Map();
-        droppedButtons.forEach(btn => {
-          originalButtonBorders.set(btn, {
-            border: btn.style.border,
-            boxShadow: btn.style.boxShadow
-          });
-          btn.style.border = 'none';
-          btn.style.boxShadow = 'none';
-        });
-
-        // Remove button-content styling
-        const buttonContents = frameElement.querySelectorAll('.button-content');
-        const originalButtonContents = new Map();
-        buttonContents.forEach(content => {
-          originalButtonContents.set(content, {
-            padding: content.style.padding,
-            border: content.style.border,
-            boxShadow: content.style.boxShadow
-          });
-          content.style.padding = '0';
-          content.style.border = 'none';
-          content.style.boxShadow = 'none';
-        });
-
-        // Wait for layout changes to apply
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        // Convert SVG icons to high-quality canvas elements for PDF rendering
-        const images = frameElement.querySelectorAll('img.button-icon');
-        const originalElements = new Map();
-
-        for (const img of images) {
+        // Convert SVG images to inline SVGs for proper rendering in capture
+        const svgImages = frameElement.querySelectorAll('img.button-icon[src*=".svg"]');
+        const originalSrcs = new Map();
+        
+        for (const img of svgImages) {
           try {
-            const src = img.src;
-            if (src && (src.includes('.svg') || src.includes('/ican/'))) {
-              // Get computed dimensions
-              const rect = img.getBoundingClientRect();
-              
-              // Create a high-resolution canvas to render the SVG
-              const scale = 4; // 4x for crisp quality
-              const tempCanvas = document.createElement('canvas');
-              tempCanvas.width = rect.width * scale;
-              tempCanvas.height = rect.height * scale;
-              const ctx = tempCanvas.getContext('2d');
-              
-              // Keep transparent background
-              ctx.clearRect(0, 0, tempCanvas.width, tempCanvas.height);
-              
-              // Create an image from the SVG
-              const svgImg = new Image();
-              svgImg.crossOrigin = 'anonymous';
-              
-              await new Promise((resolve, reject) => {
-                svgImg.onload = () => {
-                  // Draw the SVG image with high quality
-                  ctx.imageSmoothingEnabled = true;
-                  ctx.imageSmoothingQuality = 'high';
-                  ctx.drawImage(svgImg, 0, 0, tempCanvas.width, tempCanvas.height);
-                  
-                  // Replace img with high-quality PNG data URL (with transparency)
-                  const dataUrl = tempCanvas.toDataURL('image/png');
-                  originalElements.set(img, { src: img.src });
-                  img.src = dataUrl;
-                  resolve();
-                };
-                svgImg.onerror = () => resolve(); // Continue even if one fails
-                svgImg.src = src;
-              });
+            originalSrcs.set(img, img.src);
+            const response = await fetch(img.src);
+            const svgText = await response.text();
+            const wrapper = document.createElement('div');
+            wrapper.innerHTML = svgText;
+            const svg = wrapper.querySelector('svg');
+            if (svg) {
+              svg.style.width = img.style.width || img.width || '100%';
+              svg.style.height = img.style.height || img.height || '100%';
+              svg.style.display = 'block';
+              img.replaceWith(svg);
             }
           } catch (err) {
-            console.warn('Failed to convert icon:', err);
+            console.warn('Failed to convert SVG:', err);
           }
         }
 
-        // Wait for all conversions to complete
-        await new Promise(resolve => setTimeout(resolve, 300));
+        // Wait for SVG elements to render
+        await new Promise(resolve => setTimeout(resolve, 500));
 
-        // Capture the frame with high quality
+        // Wait for all images to load
+        const allImages = frameElement.querySelectorAll('img');
+        await Promise.all(
+          Array.from(allImages).map(img => 
+            new Promise(resolve => {
+              if (img.complete) {
+                resolve();
+              } else {
+                img.onload = resolve;
+                img.onerror = resolve;
+                // Timeout after 5 seconds
+                setTimeout(resolve, 5000);
+              }
+            })
+          )
+        );
+
+        // Additional wait to ensure everything is rendered
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        // Scroll frame into view to ensure proper rendering
+        frameElement.scrollIntoView({ behavior: 'auto', block: 'nearest' });
+        await new Promise(resolve => setTimeout(resolve, 200));
+
+        // Capture the original frame directly with pixel-perfect quality
+        // Use scale 1 to avoid any interpolation artifacts, then let PDF handle sizing
+        const captureScale = 1;
         const canvas = await html2canvas(frameElement, {
-          scale: 2,
+          scale: captureScale,
           useCORS: true,
-          allowTaint: true,
-          backgroundColor: null,
+          allowTaint: false,
+          backgroundColor: '#ffffff',
           logging: false,
           foreignObjectRendering: false,
           removeContainer: false,
-          imageTimeout: 0
+          imageTimeout: 0,
+          timeout: 60000,
+          width: Math.round(frameElement.offsetWidth),
+          height: Math.round(frameElement.offsetHeight)
         });
 
-        console.log('Canvas captured:', canvas.width, 'x', canvas.height);
-
-        // Restore original images
-        originalElements.forEach((data, img) => {
-          img.src = data.src;
-        });
-
-        // Restore gap
-        if (layout) {
-          layout.style.gap = originalGap;
-          layout.style.borderColor = originalBorderColor;
+        // Restore original SVG images in the frame (after capture is done)
+        for (const [img, originalSrc] of originalSrcs.entries()) {
+          try {
+            // Create a new img element to restore
+            const newImg = document.createElement('img');
+            newImg.src = originalSrc;
+            newImg.className = img.className;
+            newImg.style.width = img.style.width;
+            newImg.style.height = img.style.height;
+            newImg.alt = 'icon';
+            newImg.onError = (e) => {
+              console.error('Failed to load icon:', originalSrc);
+              e.target.style.display = 'none';
+            };
+            img.replaceWith(newImg);
+          } catch (err) {
+            console.warn('Failed to restore image:', err);
+          }
         }
 
-        // Restore borders
-        dropZones.forEach(zone => {
-          const original = originalBorders.get(zone);
-          zone.style.border = original?.border || '';
-          zone.style.borderWidth = original?.borderWidth || '';
-          zone.style.boxShadow = original?.boxShadow || '';
-          zone.style.padding = original?.padding || '';
-        });
-
-        droppedButtons.forEach(btn => {
-          const original = originalButtonBorders.get(btn);
-          btn.style.border = original?.border || '';
-          btn.style.boxShadow = original?.boxShadow || '';
-        });
-
-        // Restore button-content styling
-        buttonContents.forEach(content => {
-          const original = originalButtonContents.get(content);
-          content.style.padding = original?.padding || '';
-          content.style.border = original?.border || '';
-          content.style.boxShadow = original?.boxShadow || '';
-        });
+        // Create a PNG screenshot (web) and store it for reuse in the PDF
+        let screenshotDataUrl = '';
+        try {
+          screenshotDataUrl = canvas.toDataURL('image/png');
+        } catch (err) {
+          console.error('Failed to generate screenshot PNG:', err);
+        }
+        if (screenshotDataUrl) {
+          const previewId = 'pdf-screenshot-preview';
+          let previewImg = document.getElementById(previewId);
+          if (!previewImg) {
+            previewImg = document.createElement('img');
+            previewImg.id = previewId;
+            previewImg.style.position = 'fixed';
+            previewImg.style.left = '-99999px';
+            previewImg.style.top = '0';
+            previewImg.style.width = `${canvas.width}px`;
+            previewImg.style.height = `${canvas.height}px`;
+            previewImg.style.opacity = '0';
+            previewImg.style.pointerEvents = 'none';
+            document.body.appendChild(previewImg);
+          }
+          previewImg.src = screenshotDataUrl;
+        }
 
         // Restore buttons after capture
         removeButtons.forEach(btn => btn.style.display = '');
@@ -705,23 +673,21 @@ function Frame({
         }
 
         // Calculate PDF dimensions from canvas
-        // Canvas is at 2x scale, so divide by 2 to get screen size
-        const screenWidth = canvas.width / 2;
-        const screenHeight = canvas.height / 2;
+        // Canvas is at captureScale, so divide by it to get screen size
+        const screenWidth = canvas.width / captureScale;
+        const screenHeight = canvas.height / captureScale;
         
         // Convert pixels to mm (96 DPI = 25.4 mm/inch)
         const pxToMM = 25.4 / 96;
         let widthMM = screenWidth * pxToMM;
         let heightMM = screenHeight * pxToMM;
         
-        // Scale to fit nicely on PDF
-        const scale = 0.9; // 90% of original size for good proportion
-        widthMM = widthMM * scale;
-        heightMM = heightMM * scale;
+        // Don't scale down - keep original size to preserve spacing and symmetry
+        // (removing the 0.9 scale factor that was distorting button spacing)
 
         // Calculate PDF page size with proper margins
         const pageMarginMM = 15;
-        const infoHeightMM = 50; // Space for information section
+        const infoHeightMM = 120; // Space for information section - increased for button details
         const totalHeightMM = heightMM + infoHeightMM + pageMarginMM * 2;
         const pageWidthMM = Math.max(widthMM + pageMarginMM * 2, 210); // A4 width
         const pageHeightMM = Math.max(totalHeightMM, 297); // A4 height
@@ -750,12 +716,25 @@ function Frame({
         pdf.setLineWidth(0.5);
         pdf.line(pageMarginMM, 15, pageWidthMM - pageMarginMM, 15);
 
-        // Add design screenshot
-        const imgData = canvas.toDataURL('image/png');
+        // Calculate image positioning
         const topMargin = pageMarginMM;
         const leftMargin = (pageWidthMM - widthMM) / 2;
-        
-        pdf.addImage(imgData, 'PNG', leftMargin, topMargin + 15, widthMM, heightMM);
+
+        // Add design screenshot
+        try {
+          const imgData = screenshotDataUrl;
+          if (!imgData) {
+            throw new Error('Failed to convert canvas to image');
+          }
+          console.log('Adding image to PDF, dimensions:', widthMM, 'x', heightMM);
+          pdf.addImage(imgData, 'PNG', leftMargin, topMargin + 15, widthMM, heightMM);
+          console.log('Image added successfully');
+        } catch (err) {
+          console.error('Error adding image to PDF:', err);
+          // Add a text placeholder if image fails
+          pdf.setTextColor(200, 200, 200);
+          pdf.text('Design Screenshot', leftMargin + widthMM / 2, topMargin + heightMM / 2 + 15, { align: 'center' });
+        }
 
         // Add design info section
         const infoPosY = topMargin + heightMM + 20;
@@ -813,23 +792,60 @@ function Frame({
         
         currentY += 2;
 
-        // Collect button details for display
+        // Create new page for button details
+        pdf.addPage();
+        currentY = pageMarginMM + 5;
+
+        // Add Button Details heading
+        pdf.setFontSize(12);
+        pdf.setFont(undefined, 'bold');
+        pdf.setTextColor(40, 40, 40);
+        pdf.text('Button Details', pageMarginMM + 3, currentY);
+        currentY += 8;
+
+        // Collect button details for display - collect all zones with content
         const buttonDetails = [];
-        Object.keys(dropZones).forEach((zoneId, index) => {
+        const zoneKeys = Object.keys(dropZones).sort((a, b) => {
+          const numA = parseInt(a.replace('button', ''));
+          const numB = parseInt(b.replace('button', ''));
+          return numA - numB;
+        });
+        
+        zoneKeys.forEach((zoneId, index) => {
           const zone = dropZones[zoneId];
-          if (zone && zone.isPrimary) {
-            const s1Center = zone.s1?.type === 'icon' ? zone.s1.value : (zone.s1?.type === 'text' ? zone.s1.value : '');
-            const buttonColor = zone.color || fullColor || 'Default';
-            buttonDetails.push({
-              number: index + 1,
-              color: buttonColor,
-              center: s1Center
-            });
+          if (zone) {
+            const s0Content = zone.s0?.type === 'icon' ? `Icon: ${zone.s0.value}` : (zone.s0?.type === 'text' ? `Text: ${zone.s0.value}` : '');
+            const s1Content = zone.s1?.type === 'icon' ? `Icon: ${zone.s1.value}` : (zone.s1?.type === 'text' ? `Text: ${zone.s1.value}` : '');
+            const s2Content = zone.s2?.type === 'icon' ? `Icon: ${zone.s2.value}` : (zone.s2?.type === 'text' ? `Text: ${zone.s2.value}` : '');
+            
+            // Only add to details if zone has any content or is a primary zone
+            if (zone.isPrimary || s0Content || s1Content || s2Content) {
+              const details = {
+                number: index + 1,
+                color: zone.color || fullColor || 'Default',
+                s0: s0Content,
+                s1: s1Content,
+                s2: s2Content
+              };
+              buttonDetails.push(details);
+            }
           }
         });
 
+        // Add a new page for button details to ensure space
+        if (buttonDetails.length > 0 && currentY > pageHeightMM - 60) {
+          pdf.addPage();
+          currentY = pageMarginMM + 5;
+          pdf.setFontSize(10);
+          pdf.setFont(undefined, 'bold');
+          pdf.setTextColor(60, 60, 60);
+          pdf.text('Button Details (continued)', pageMarginMM + 3, currentY);
+          currentY += 5;
+        }
+
         // Display buttons
         buttonDetails.forEach((btn) => {
+          // Check if we need a new page
           if (currentY > pageHeightMM - pageMarginMM - 5) {
             pdf.addPage();
             currentY = pageMarginMM;
@@ -837,6 +853,8 @@ function Frame({
           
           // Button number and color with color code
           pdf.setFont(undefined, 'bold');
+          pdf.setFontSize(9);
+          pdf.setTextColor(40, 40, 40);
           pdf.text(`Button ${btn.number}`, pageMarginMM + 3, currentY);
           
           pdf.setFont(undefined, 'normal');
@@ -844,14 +862,37 @@ function Frame({
           pdf.text(`: ${colorCode}`, pageMarginMM + 24, currentY);
           currentY += 4;
 
-          // Center content
-          if (btn.center) {
+          // Top content (s0)
+          if (btn.s0 && typeof btn.s0 === 'string' && btn.s0.trim().length > 0) {
             pdf.setFontSize(8);
-            pdf.text(`— Center`, pageMarginMM + 5, currentY);
-            pdf.text(`: ${btn.center}`, pageMarginMM + 24, currentY);
-            currentY += 4;
+            pdf.setFont(undefined, 'normal');
+            pdf.setTextColor(40, 40, 40);
+            const s0Text = `  Top: ${btn.s0}`;
+            pdf.text(s0Text, pageMarginMM + 5, currentY);
+            currentY += 3;
+          }
+
+          // Center content (s1)
+          if (btn.s1 && typeof btn.s1 === 'string' && btn.s1.trim().length > 0) {
+            pdf.setFontSize(8);
+            pdf.setFont(undefined, 'normal');
+            pdf.setTextColor(40, 40, 40);
+            const s1Text = `  Center: ${btn.s1}`;
+            pdf.text(s1Text, pageMarginMM + 5, currentY);
+            currentY += 3;
+          }
+
+          // Bottom content (s2)
+          if (btn.s2 && typeof btn.s2 === 'string' && btn.s2.trim().length > 0) {
+            pdf.setFontSize(8);
+            pdf.setFont(undefined, 'normal');
+            pdf.setTextColor(40, 40, 40);
+            const s2Text = `  Bottom: ${btn.s2}`;
+            pdf.text(s2Text, pageMarginMM + 5, currentY);
+            currentY += 3;
           }
           
+          currentY += 2;
           currentY += 1;
         });
 
@@ -878,33 +919,6 @@ function Frame({
         pdf.save(`board-design-${gridType}-${Date.now()}.pdf`);
         showFeedback('PDF downloaded successfully!', 'success');
       } catch (error) {
-        // Restore gap on error
-        const layout = frameElement?.querySelector('.layout');
-        if (layout) {
-          layout.style.gap = '';
-        }
-
-        // Restore borders on error
-        const dropZonesError = frameElement?.querySelectorAll('.drop-zone');
-        dropZonesError?.forEach(zone => {
-          zone.style.border = '';
-          zone.style.boxShadow = '';
-          zone.style.padding = '';
-        });
-
-        const droppedButtonsError = frameElement?.querySelectorAll('.dropped-button');
-        droppedButtonsError?.forEach(btn => {
-          btn.style.border = '';
-          btn.style.boxShadow = '';
-        });
-
-        const buttonContentsError = frameElement?.querySelectorAll('.button-content');
-        buttonContentsError?.forEach(content => {
-          content.style.padding = '';
-          content.style.border = '';
-          content.style.boxShadow = '';
-        });
-        
         // Restore buttons on error
         const removeButtons = frameElement?.querySelectorAll('.remove-button');
         const colorButtons = frameElement?.querySelectorAll('.button-color-btn');
@@ -917,7 +931,7 @@ function Frame({
       console.error('Error generating PDF:', error);
       showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
     }
-  }, [config, frameColor, fullColor, getColorValue, gridType, showFeedback, generateProductCode]);
+  }, [config, frameColor, fullColor, getColorValue, gridType, showFeedback, generateProductCode, dropZones]);
 
   // Register PDF download handler with parent
   useEffect(() => {
@@ -929,6 +943,15 @@ function Frame({
   const renderZoneContent = (zoneId) => {
     const zone = dropZones[zoneId];
     if (!zone || !zone.isPrimary) return null; // Only render in primary zone
+
+    // Determine icon size - use fixed pixels so icons are same size on all button sizes
+    const iconStyle = {
+      objectFit: 'contain',
+      maxWidth: '40px',
+      maxHeight: '40px',
+      width: '40px',
+      height: '40px'
+    };
 
     const buttonStyle = {};
     if (zone.dimensions.colSpan > 1) {
@@ -976,7 +999,7 @@ function Frame({
                 src={`/ican/images/${zone.s0.value}`} 
                 alt="icon" 
                 className="button-icon"
-                style={{ objectFit: 'contain' }}
+                style={iconStyle}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s0.value);
                   e.target.style.display = 'none';
@@ -993,7 +1016,7 @@ function Frame({
                 src={`/ican/images/${zone.s1.value}`} 
                 alt="icon" 
                 className="button-icon"
-                style={{ objectFit: 'contain' }}
+                style={iconStyle}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s1.value);
                   e.target.style.display = 'none';
@@ -1010,7 +1033,7 @@ function Frame({
                 src={`/ican/images/${zone.s2.value}`} 
                 alt="icon" 
                 className="button-icon"
-                style={{ objectFit: 'contain' }}
+                style={iconStyle}
                 onError={(e) => {
                   console.error('Failed to load icon:', zone.s2.value);
                   e.target.style.display = 'none';

@@ -1,6 +1,75 @@
 {
   "designs": [
     {
+      "id": "test-with-icons",
+      "name": "Test Design With Icons",
+      "category": "2-4",
+      "timestamp": "2/4/2026, 5:30:00 PM",
+      "gridType": "dora-2x2",
+      "dropZones": {
+        "button1": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          "zones": ["button1"],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": {"type": "icon", "value": "lightbulb.svg"},
+          "s1": {"type": "text", "value": "Light"},
+          "s2": null
+        },
+        "button2": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          "zones": ["button2"],
+          "color": "pure-silver",
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": {"type": "icon", "value": "fan.svg"},
+          "s1": {"type": "text", "value": "Fan"},
+          "s2": null
+        },
+        "button3": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          "zones": ["button3"],
+          "color": "pure-white",
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": {"type": "icon", "value": "blinds.svg"},
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          "zones": ["button4"],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": {"type": "text", "value": "On"},
+          "s1": {"type": "text", "value": "Off"},
+          "s2": null
+        }
+      },
+      "frameColor": "pure-white",
+      "fullColor": null,
+      "wallColor": "#ffffff",
+      "createdAt": "2026-02-04T12:30:00.000Z"
+    },
+    {
       "id": "1770207251714",
       "name": "First Design",
       "category": "2-8",
