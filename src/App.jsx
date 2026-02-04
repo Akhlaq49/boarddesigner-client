@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from './components/Header';
 import ButtonParts from './components/ButtonParts';
 import Frame from './components/Frame';
@@ -6,10 +6,12 @@ import ColorPalette from './components/ColorPalette';
 import IconPopup from './components/IconPopup';
 import ButtonColorPopup from './components/ButtonColorPopup';
 import FeedbackMessage from './components/FeedbackMessage';
+import SaveDesign from './components/SaveDesign';
 import { useDragDrop } from './hooks/useDragDrop';
 
 function App() {
   const [frameDownloadPDF, setFrameDownloadPDF] = useState(null);
+  const [showSaveDesignModal, setShowSaveDesignModal] = useState(false);
   
   const {
     gridType,
@@ -19,6 +21,7 @@ function App() {
     dropZones,
     updateDropZone,
     clearDropZone,
+    loadDesign,
     applyFrameColor,
     applyFullColor,
     selectedColor,
@@ -53,6 +56,21 @@ function App() {
     setSelectedButtonPart
   } = useDragDrop();
 
+  // Listen for saved design load events
+  useEffect(() => {
+    const handleLoadSavedDesign = (event) => {
+      const designData = event.detail;
+      if (designData) {
+        loadDesign(designData);
+      }
+    };
+
+    window.addEventListener('loadSavedDesign', handleLoadSavedDesign);
+    return () => {
+      window.removeEventListener('loadSavedDesign', handleLoadSavedDesign);
+    };
+  }, [loadDesign]);
+
   return (
     <section className="fixed w-full h-full" style={{ overflowX: 'auto', overflowY: 'auto' }}>
       <div className="wrapper flex flex-col align-middle justify-center transition-colors duration-300 select-none">
@@ -67,6 +85,7 @@ function App() {
           onDownloadPDF={() => frameDownloadPDF && frameDownloadPDF()}
           setSelectedButton={setSelectedButton}
           setSelectedButtonPart={setSelectedButtonPart}
+          onOpenSaveDesign={() => setShowSaveDesignModal(true)}
         />
         
         <div className="container-fluid h-100" style={{ paddingTop: '160px',zIndex: 100, overflowX: 'auto' }}>
@@ -200,6 +219,17 @@ function App() {
         />
 
         <FeedbackMessage feedback={feedback} />
+
+        <SaveDesign
+          isOpen={showSaveDesignModal}
+          onClose={() => setShowSaveDesignModal(false)}
+          dropZones={dropZones}
+          gridType={gridType}
+          frameColor={frameColor}
+          fullColor={fullColor}
+          wallColor={wallColor}
+          onLoadDesign={loadDesign}
+        />
       </div>
     </section>
   );

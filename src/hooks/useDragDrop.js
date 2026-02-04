@@ -148,6 +148,16 @@ export function useDragDrop() {
     });
   }, []);
 
+  const loadDesign = useCallback((designData) => {
+    setGridType(designData.gridType);
+    setDropZones(designData.dropZones);
+    if (designData.frameColor) setFrameColor(designData.frameColor);
+    if (designData.fullColor) setFullColor(designData.fullColor);
+    if (designData.wallColor) setWallColor(designData.wallColor);
+    setSelectedButton(null);
+    showFeedback('Design loaded successfully', 'success');
+  }, [showFeedback]);
+
   const placeButtonInZones = useCallback((zones, buttonData) => {
     if (!zones || zones.length === 0) return;
     
@@ -381,6 +391,7 @@ export function useDragDrop() {
     dropZones,
     updateDropZone,
     clearDropZone,
+    loadDesign,
     selectedColor,
     setSelectedColor,
     frameColor,

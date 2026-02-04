@@ -4,15 +4,30 @@ import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 const GRID_CONFIGS = {
   // 2-4 Buttons Switch
   'dora-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'Dora 2×2', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-2plus1': { columns: 2, rows: 2, visibleZones: 3, label: 'Dora 2+1', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-2Lplus1': { columns: 2, rows: 4, visibleZones: 3, label: 'Dora 2L+1', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-4plus1L': { columns: 2, rows: 4, visibleZones: 5, label: 'Dora 4+1L', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-4plus2L': { columns: 2, rows: 4, visibleZones: 7, label: 'Dora 4+1L+2', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-2plus2plus1': { columns: 2, rows: 4, visibleZones: 5, label: 'Dora 2+2+1', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-2plus1plus1': { columns: 2, rows: 3, visibleZones: 4, label: 'Dora 2+1+1', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-1L2plus1': { columns: 2, rows: 4, visibleZones: 4, label: 'Dora 1L+2+1', category: '2-4 Buttons Switch', hasDisplay: false },
   'dora-2x4': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Keypad 2×4', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-1x4': { columns: 1, rows: 4, visibleZones: 4, label: 'Dora 1×4', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-1x5': { columns: 1, rows: 5, visibleZones: 5, label: 'Dora 1×5', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-1x6': { columns: 1, rows: 6, visibleZones: 6, label: 'Dora 1×6', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-1x7': { columns: 1, rows: 7, visibleZones: 7, label: 'Dora 1×7', category: '2-4 Buttons Switch', hasDisplay: false },
+  'dora-1x8': { columns: 1, rows: 8, visibleZones: 8, label: 'Dora 1×8', category: '2-4 Buttons Switch', hasDisplay: false },
   
   // 3-12 Button Switch
   'dora-1x3': { columns: 1, rows: 3, visibleZones: 3, label: 'Dora 1×3', category: '3-12 Button Switch', hasDisplay: false },
+  //'dora-3plus2T': { columns: 3, rows: 3, visibleZones: 7, label: 'Dora 3+2T', category: '3-12 Button Switch', hasDisplay: false },
+  'dora-6plus3T': { columns: 2, rows: 6, visibleZones: 9, label: 'Dora 6+3T', category: '3-12 Button Switch', hasDisplay: false },
+  'dora-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora 2×6', category: '3-12 Button Switch', hasDisplay: false },
+  'dora-2x8': { columns: 2, rows: 8, visibleZones: 16, label: 'Dora XLarge 2×8', category: '3-12 Button Switch', hasDisplay: false },
   'pblock-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Pblock 2×6', category: '3-12 Button Switch', hasDisplay: false },
   
   // 2-8 Room Controller
-  'dora-2x6': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora 2×6', category: '2-8 Room Controller', hasDisplay: false },
-  'dora-2x8': { columns: 2, rows: 8, visibleZones: 16, label: 'Dora XLarge 2×8', category: '2-8 Room Controller', hasDisplay: false },
+  // Note: Currently empty, room controller products can be added here
   
   // Design Your Self
   'dora-thermostat': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Thermostat 4+4', category: 'Design Your Self', hasDisplay: true },
@@ -68,7 +83,7 @@ function Frame({
         // Handle both single and double column layouts
         const zoneId = columns === 1 
           ? `button${row}`
-          : `button${(row - 1) * 2 + col}`;
+          : `button${(row - 1) * columns + col}`;
         const zone = dropZones[zoneId];
         if (zone && zone.isPrimary) {
           buttonCount++;
@@ -104,12 +119,158 @@ function Frame({
     const maxRows = Math.max(8, config.rows); // Support up to 8 rows
     const maxCols = Math.max(2, config.columns); // Support 1 or 2 columns
     
+    // Special handling for 6+3T layout (left: all 1x1, right: all 1x2)
+    if (gridType === 'dora-6plus3T') {
+      // Left column: 6 buttons (1x1 each)
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: true });
+      zones.push({ id: 'button9', row: 5, col: 1, visible: true });
+      zones.push({ id: 'button11', row: 6, col: 1, visible: true });
+      // Right column: 3 large buttons (1x2 each, spanning two rows)
+      zones.push({ id: 'button2', row: 1, col: 2, rowSpan: 2, visible: true });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button2' });
+      zones.push({ id: 'button6', row: 3, col: 2, rowSpan: 2, visible: true });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: false, mergedInto: 'button6' });
+      zones.push({ id: 'button10', row: 5, col: 2, rowSpan: 2, visible: true });
+      zones.push({ id: 'button12', row: 6, col: 2, visible: false, mergedInto: 'button10' });
+      return zones;
+    }
+
+    // Special handling for 3+2T layout (3 on top row, 2 on middle, 2 on bottom)
+    if (gridType === 'dora-3plus2T') {
+       // Left column: 6 buttons (1x1 each)
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: true });
+      zones.push({ id: 'button9', row: 5, col: 1, visible: true });
+      zones.push({ id: 'button11', row: 6, col: 1, visible: true });
+      // Right column: 3 large buttons (1x2 each, spanning two rows)
+      zones.push({ id: 'button2', row: 1, col: 2, rowSpan: 2, visible: true });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button2' });
+      zones.push({ id: 'button6', row: 3, col: 2, rowSpan: 2, visible: true });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: false, mergedInto: 'button6' });
+      zones.push({ id: 'button10', row: 5, col: 2, rowSpan: 2, visible: true });
+      zones.push({ id: 'button12', row: 6, col: 2, visible: false, mergedInto: 'button10' });
+      return zones;
+    }
+
+
+    
+    // Special handling for 2L+1 layout (3 buttons: 2 large buttons on top each spanning 2 rows, 1 wide bottom spanning 2 rows)
+    if (gridType === 'dora-2Lplus1') {
+      // Left side: Large button spanning 2 rows
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true, rowSpan: 2 });
+      zones.push({ id: 'button3', row: 2, col: 1, visible: false, mergedInto: 'button1' });
+      // Right side: Large button spanning 2 rows
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true, rowSpan: 2 });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button2' });
+      // Bottom rows: 1 wide button spanning both columns and 2 rows
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true, colSpan: 2, rowSpan: 2 });
+      zones.push({ id: 'button6', row: 3, col: 2, visible: false, mergedInto: 'button5' });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: false, mergedInto: 'button5' });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: false, mergedInto: 'button5' });
+      return zones;
+    }
+    
+    // Special handling for 4+1L layout (5 buttons: 4 stacked on left, 1 large on right spanning 4 rows)
+    if (gridType === 'dora-4plus1L') {
+      // Left side: 4 buttons stacked
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: true });
+      // Right side: Large button spanning 4 rows
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true, rowSpan: 4 });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button2' });
+      zones.push({ id: 'button6', row: 3, col: 2, visible: false, mergedInto: 'button2' });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: false, mergedInto: 'button2' });
+      return zones;
+    }
+    
+    // Special handling for 4+2L layout (7 buttons: 4 on left each 1 row, 1 large top right spanning 2 rows, 2 bottom right each 1 row)
+    if (gridType === 'dora-4plus2L') {
+      // Left side: 4 buttons stacked, each 1 row
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: true });
+      // Right side top: Large button spanning 2 rows
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true, rowSpan: 2 });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button2' });
+      // Right side bottom: 2 buttons, each 1 row
+      zones.push({ id: 'button6', row: 3, col: 2, visible: true });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: true });
+      return zones;
+    }
+    
+    // Special handling for 2+2+1 layout (5 buttons: 2 on top row, 2 on second row, 1 wide bottom spanning 2 rows)
+    if (gridType === 'dora-2plus2plus1') {
+      // Top row: 2 buttons
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      // Second row: 2 buttons
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: true });
+      // Bottom rows: 1 wide button spanning both columns and 2 rows
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true, colSpan: 2, rowSpan: 2 });
+      zones.push({ id: 'button6', row: 3, col: 2, visible: false, mergedInto: 'button5' });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: false, mergedInto: 'button5' });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: false, mergedInto: 'button5' });
+      return zones;
+    }
+    
+    // Special handling for 1L+2+1 layout (4 buttons: 1 large left spanning 2 rows, 2 right stacked, 1 wide bottom spanning 2 rows)
+    if (gridType === 'dora-1L2plus1') {
+      // Left side: Large button spanning 2 rows
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true, rowSpan: 2 });
+      zones.push({ id: 'button3', row: 2, col: 1, visible: false, mergedInto: 'button1' });
+      // Right side top: Button
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      // Right side middle: Button
+      zones.push({ id: 'button4', row: 2, col: 2, visible: true });
+      // Bottom rows: 1 wide button spanning both columns and 2 rows
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true, colSpan: 2, rowSpan: 2 });
+      zones.push({ id: 'button6', row: 3, col: 2, visible: false, mergedInto: 'button5' });
+      zones.push({ id: 'button7', row: 4, col: 1, visible: false, mergedInto: 'button5' });
+      zones.push({ id: 'button8', row: 4, col: 2, visible: false, mergedInto: 'button5' });
+      return zones;
+    }
+    
+    // Special handling for 2+1+1 layout (4 buttons: 2 on top, 1 wide middle, 1 wide bottom)
+    if (gridType === 'dora-2plus1plus1') {
+      // Top row: 2 buttons
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      // Middle row: 1 wide button spanning both columns
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true, colSpan: 2 });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button3' });
+      // Bottom row: 1 wide button spanning both columns
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true, colSpan: 2 });
+      zones.push({ id: 'button6', row: 3, col: 2, visible: false, mergedInto: 'button5' });
+      return zones;
+    }
+    
+    // Special handling for 2+1 layout (3 buttons: 2 on top, 1 wide bottom)
+    if (gridType === 'dora-2plus1') {
+      // Top row: 2 buttons
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      // Bottom row: 1 wide button spanning both columns
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true, colSpan: 2 });
+      // Hidden zone for proper grid structure
+      zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button3' });
+      return zones;
+    }
+    
     for (let row = 1; row <= maxRows; row++) {
       for (let col = 1; col <= maxCols; col++) {
         // For single column layouts (1x3, focus-mode), use simpler ID
         const zoneId = config.columns === 1 
           ? `button${row}`
-          : `button${(row - 1) * 2 + col}`;
+          : `button${(row - 1) * config.columns + col}`;
         zones.push({
           id: zoneId,
           row,
@@ -119,7 +280,7 @@ function Frame({
       }
     }
     return zones;
-  }, [config]);
+  }, [config, gridType]);
 
   const getZonesToMerge = useCallback((startZone, dimensions) => {
     const zones = [];
@@ -756,7 +917,7 @@ function Frame({
       console.error('Error generating PDF:', error);
       showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
     }
-  }, [config, dropZones, frameColor, fullColor, getColorValue, getTextureImage, gridType, showFeedback, generateProductCode]);
+  }, [config, frameColor, fullColor, getColorValue, gridType, showFeedback, generateProductCode]);
 
   // Register PDF download handler with parent
   useEffect(() => {
@@ -919,7 +1080,7 @@ function Frame({
       >
         {allZones.map(zone => {
           const zoneData = dropZones[zone.id];
-          const isMerged = zoneData?.isMerged;
+          const isMerged = zoneData?.isMerged || zone.mergedInto;
           const isPrimary = zoneData?.isPrimary;
           const isHighlighted = highlightedZones.includes(zone.id);
           const shouldShow = zone.visible && !isMerged;
@@ -927,9 +1088,18 @@ function Frame({
           if (!shouldShow && !isMerged) return null;
 
           const zoneStyle = {
+            // Position the zone in the grid
+            ...(zone.col && zone.row ? {
+              gridColumn: zone.col,
+              gridRow: zone.row
+            } : {}),
+            // Apply row/col span
             ...(isPrimary && zoneData?.dimensions ? {
-              gridColumn: zoneData.dimensions.colSpan > 1 ? `span ${zoneData.dimensions.colSpan}` : undefined,
-              gridRow: zoneData.dimensions.rowSpan > 1 ? `span ${zoneData.dimensions.rowSpan}` : undefined
+              gridColumn: zone.col && zoneData.dimensions.colSpan > 1 ? `${zone.col} / span ${zoneData.dimensions.colSpan}` : (zone.col ? zone.col : undefined),
+              gridRow: zone.row && zoneData.dimensions.rowSpan > 1 ? `${zone.row} / span ${zoneData.dimensions.rowSpan}` : (zone.row ? zone.row : undefined)
+            } : (zone.colSpan || zone.rowSpan) ? {
+              gridColumn: zone.col && zone.colSpan ? `${zone.col} / span ${zone.colSpan}` : (zone.col ? zone.col : undefined),
+              gridRow: zone.row && zone.rowSpan ? `${zone.row} / span ${zone.rowSpan}` : (zone.row ? zone.row : undefined)
             } : {}),
             // Apply fullColor to empty zones
             ...(!isPrimary && fullColor ? {
