@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 
 function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColor, wallColor, onLoadDesign }) {
   const [category, setCategory] = useState('2-8');
@@ -7,29 +7,35 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
   const [showList, setShowList] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
-  // Load designs from localStorage on mount and when category changes
-  useEffect(() => {
-    loadDesigns();
-  }, [category]);
-
-  const loadDesigns = () => {
+  const loadDesigns = useCallback(async () => {
     try {
-      const stored = localStorage.getItem(`designs_${category}`);
-      setSavedDesigns(stored ? JSON.parse(stored) : []);
+      const response = await fetch('/designs.json');
+      if (!response.ok) throw new Error('Failed to load designs');
+      const data = await response.json();
+      const allDesigns = data.designs || [];
+      const filteredDesigns = allDesigns.filter(d => d.category === category);
+      setSavedDesigns(filteredDesigns);
     } catch (error) {
       console.error('Error loading designs:', error);
       setSavedDesigns([]);
     }
-  };
+  }, [category]);
 
-  const saveDesign = () => {
+  // Load designs from API on mount and when category changes
+  useEffect(() => {
+    loadDesigns();
+  }, [category, loadDesigns]);
+
+  const saveDesign = async () => {
     if (!designName.trim()) {
       alert('Please enter a design name');
       return;
     }
 
     const designData = {
+      id: Date.now().toString(),
       name: designName,
+      category,
       timestamp: new Date().toLocaleString(),
       gridType,
       dropZones,
@@ -39,30 +45,31 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
     };
 
     try {
-      let designs = [];
-      const stored = localStorage.getItem(`designs_${category}`);
-      if (stored) {
-        designs = JSON.parse(stored);
-      }
-
-      // Check if design with same name exists
-      const existingIndex = designs.findIndex(d => d.name === designName);
-      if (existingIndex >= 0) {
-        if (window.confirm(`Design "${designName}" already exists. Do you want to replace it?`)) {
-          designs[existingIndex] = designData;
-        } else {
+      // Check if design already exists
+      const existing = savedDesigns.find(d => d.name === designName);
+      if (existing) {
+        if (!window.confirm(`Design "${designName}" already exists. Do you want to replace it?`)) {
           return;
         }
-      } else {
-        designs.push(designData);
       }
 
-      localStorage.setItem(`designs_${category}`, JSON.stringify(designs));
-      setSavedDesigns(designs);
+      // Save to backend API
+      const response = await fetch('http://localhost:5000/api/designs', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(designData)
+      });
+
+      if (!response.ok) throw new Error('Failed to save design');
+
       setDesignName('');
       alert(`Design "${designName}" saved successfully in ${category} category!`);
       // Trigger header refresh
       window.dispatchEvent(new CustomEvent('designsSaved'));
+      // Reload designs
+      loadDesigns();
       onClose();
     } catch (error) {
       console.error('Error saving design:', error);
@@ -82,18 +89,20 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
     }
   };
 
-  const deleteDesign = (designName) => {
+  const deleteDesign = async (designName) => {
     try {
-      const designs = savedDesigns.filter(d => d.name !== designName);
-      if (designs.length > 0) {
-        localStorage.setItem(`designs_${category}`, JSON.stringify(designs));
-      } else {
-        localStorage.removeItem(`designs_${category}`);
-      }
-      setSavedDesigns(designs);
-      setDeleteConfirm(null);
+      // Delete via backend API
+      const response = await fetch(`http://localhost:5000/api/designs?name=${encodeURIComponent(designName)}&category=${category}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) throw new Error('Failed to delete design');
+
       // Trigger header refresh
       window.dispatchEvent(new CustomEvent('designsSaved'));
+      // Reload designs
+      await loadDesigns();
+      setDeleteConfirm(null);
       alert('Design deleted successfully');
     } catch (error) {
       console.error('Error deleting design:', error);

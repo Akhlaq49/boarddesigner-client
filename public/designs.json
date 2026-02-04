@@ -1,0 +1,235 @@
+{
+  "designs": [
+    {
+      "id": "1770207251714",
+      "name": "First Design",
+      "category": "2-8",
+      "timestamp": "2/4/2026, 5:14:11 PM",
+      "gridType": "dora-thermostat",
+      "dropZones": {
+        "button1": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button2",
+            "button4"
+          ],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button2",
+            "button4"
+          ],
+          "color": "pure-gold",
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button2"
+        },
+        "button6": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button6",
+            "button8"
+          ],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button6",
+            "button8"
+          ],
+          "color": "pure-gold",
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button6"
+        }
+      },
+      "frameColor": null,
+      "fullColor": "pure-gold",
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-04T12:14:11.714Z"
+    },
+    {
+      "id": "1770207824392",
+      "name": "rr",
+      "category": "2-8",
+      "timestamp": "2/4/2026, 5:23:44 PM",
+      "gridType": "2x4",
+      "dropZones": {
+        "button1": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button2",
+            "button4"
+          ],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button2",
+            "button4"
+          ],
+          "color": "pure-gold",
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button2"
+        },
+        "button6": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button6",
+            "button8"
+          ],
+          "color": "pure-gold",
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 3,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 2
+          },
+          "zones": [
+            "button6",
+            "button8"
+          ],
+          "color": "pure-gold",
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button6"
+        }
+      },
+      "frameColor": null,
+      "fullColor": "pure-gold",
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-04T12:23:44.441Z"
+    },
+    {
+      "id": "1770208104941",
+      "name": "uu",
+      "category": "2-8",
+      "timestamp": "2/4/2026, 5:28:24 PM",
+      "gridType": "2x4",
+      "dropZones": {
+        "button7": {
+          "type": 2,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1
+          },
+          "zones": [
+            "button7",
+            "button8"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button7",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 2,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1
+          },
+          "zones": [
+            "button7",
+            "button8"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button7"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-04T12:28:24.973Z"
+    }
+  ]
+}

@@ -81,12 +81,18 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
     };
   }, []);
   
-  const loadSavedDesigns = () => {
+  const loadSavedDesigns = async () => {
     try {
-      const designs28 = localStorage.getItem('designs_2-8');
-      const designs312 = localStorage.getItem('designs_3-12');
-      setSavedDesigns28(designs28 ? JSON.parse(designs28) : []);
-      setSavedDesigns312(designs312 ? JSON.parse(designs312) : []);
+      const response = await fetch('/designs.json');
+      if (!response.ok) throw new Error('Failed to load designs');
+      const data = await response.json();
+      const allDesigns = data.designs || [];
+      
+      const designs28 = allDesigns.filter(d => d.category === '2-8');
+      const designs312 = allDesigns.filter(d => d.category === '3-12');
+      
+      setSavedDesigns28(designs28);
+      setSavedDesigns312(designs312);
     } catch (error) {
       console.error('Error loading saved designs:', error);
     }
