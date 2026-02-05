@@ -38,6 +38,7 @@ const PRODUCT_CATEGORIES = [
 function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenSaveDesign, activeTab, setActiveTab }) {
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
+  const [savedDesigns28Room, setSavedDesigns28Room] = useState([]);
   const [savedDesignsSelf, setSavedDesignsSelf] = useState([]);
   
   // Load saved designs on mount
@@ -71,9 +72,11 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       const designs28 = allDesigns.filter(d => d.category === '2-8');
       const designs312 = allDesigns.filter(d => d.category === '3-12');
       const designsSelf = allDesigns.filter(d => d.category === 'design-self');
-      
+      const designs28Room = allDesigns.filter(d => d.category === '2-8-room');
+     
       setSavedDesigns28(designs28);
       setSavedDesigns312(designs312);
+      setSavedDesigns28Room(designs28Room);
       setSavedDesignsSelf(designsSelf);
     } catch (error) {
       console.error('Error loading saved designs:', error);
@@ -144,7 +147,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
             
             {/* Right side: Save Design and Save PDF Buttons */}
             <div className="flex-shrink-0" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              <button
+              {/* <button
                 type="button"
                 className="save-design-btn"
                 onClick={onOpenSaveDesign}
@@ -166,7 +169,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
               >
                 <i className="fas fa-save"></i>
                 <span>Save Design</span>
-              </button>
+              </button> */}
               <button
                 type="button"
                 className="save-pdf-btn"
@@ -227,11 +230,11 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   ))}
                 </div>
               )}
-              {activeCategory?.id === 'design-self' && savedDesignsSelf.length > 0 && (
+              {activeCategory?.id === '2-8-room' && savedDesigns28Room.length > 0 && (
                 <div style={{ display: 'flex', gap: '0.5rem', paddingRight: '0.75rem', borderRight: '2px solid #ddd', marginRight: '0.75rem' }}>
-                  {savedDesignsSelf.map((design, idx) => (
+                  {savedDesigns28Room.map((design, idx) => (
                     <SavedDesignsThumbnail
-                      key={`design-self-${idx}`}
+                      key={`design-28-room-${idx}`}
                       design={design}
                       onLoad={(design) => {
                         window.dispatchEvent(new CustomEvent('loadSavedDesign', {
