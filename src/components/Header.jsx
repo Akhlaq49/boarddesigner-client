@@ -70,7 +70,6 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       
       const designs28 = allDesigns.filter(d => d.category === '2-8');
       const designs312 = allDesigns.filter(d => d.category === '3-12');
-      const designsSelf = allDesigns.filter(d => d.category === 'design-self');
       const designs28Room = allDesigns.filter(d => d.category === '2-8-room');
      
       setSavedDesigns28(designs28);
