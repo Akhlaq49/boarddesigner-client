@@ -31,7 +31,13 @@ const PRODUCT_CATEGORIES = [
       { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora Keypad 2×4' },
       { id: 'dora-2x8', columns: 2, rows: 6, label: 'Dora XLarge 2×6' },
       { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat 4+4' },
-      { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' }
+      { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' },
+      { id: 'pblock-2x2', columns: 2, rows: 2, label: 'PBlock 2×2 (Max 4 Buttons)' },
+      { id: 'pblock-2x2-display', columns: 2, rows: 1, label: 'PBlock 2×2 + Display' },
+      { id: 'pblock-3x2', columns: 2, rows: 3, label: 'PBlock 3×2 (Max 6 Buttons)' },
+      { id: 'pblock-3x2-display', columns: 2, rows: 2, label: 'PBlock 3×2 + Display' },
+      { id: 'pblock-4x2', columns: 2, rows: 4, label: 'PBlock 4×2 (Max 8 Buttons)' },
+      { id: 'pblock-4x2-display', columns: 2, rows: 3, label: 'PBlock 4×2 + Display' }
     ]
   }
 ];

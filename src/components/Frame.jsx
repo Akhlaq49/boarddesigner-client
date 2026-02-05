@@ -32,12 +32,15 @@ const GRID_CONFIGS = {
   // 2-8 Room Controller
   // Note: Currently empty, room controller products can be added here
   
-  // PBlock Frames
-  'pblock-display-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock with Display 2×2', category: 'Design Your Self', hasDisplay: true },
-  
   // Design Your Self
   'dora-thermostat': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Thermostat 4+4', category: 'Design Your Self', hasDisplay: true },
   'pblock-2x4': { columns: 2, rows: 4, visibleZones: 8, label: 'Pblock 2×4', category: 'Design Your Self', hasDisplay: false },
+  'pblock-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock 2×2 (Max 4 Buttons)', category: 'Design Your Self', hasDisplay: false },
+  'pblock-2x2-display': { columns: 2, rows: 1, visibleZones: 2, label: 'PBlock 2×2 + Display', category: 'Design Your Self', hasDisplay: true },
+  'pblock-3x2': { columns: 2, rows: 3, visibleZones: 6, label: 'PBlock 3×2 (Max 6 Buttons)', category: 'Design Your Self', hasDisplay: false },
+  'pblock-3x2-display': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock 3×2 + Display', category: 'Design Your Self', hasDisplay: true },
+  'pblock-4x2': { columns: 2, rows: 4, visibleZones: 8, label: 'PBlock 4×2 (Max 8 Buttons)', category: 'Design Your Self', hasDisplay: false },
+  'pblock-4x2-display': { columns: 2, rows: 3, visibleZones: 6, label: 'PBlock 4×2 + Display', category: 'Design Your Self', hasDisplay: true },
   
   // Focus Mode
   'focus-mode': { columns: 1, rows: 1, visibleZones: 1, label: 'Focus Mode', category: 'Focus Mode', hasDisplay: false },
@@ -268,6 +271,39 @@ function Frame({
       zones.push({ id: 'button3', row: 2, col: 1, visible: true, colSpan: 2 });
       // Hidden zone for proper grid structure
       zones.push({ id: 'button4', row: 2, col: 2, visible: false, mergedInto: 'button3' });
+      return zones;
+    }
+    
+    // Special handling for PBlock 2x2 with Display (display on top, buttons on row 1)
+    if (gridType === 'pblock-2x2-display') {
+      // Row 1: 2 buttons
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      return zones;
+    }
+    
+    // Special handling for PBlock 3x2 with Display (display on top, buttons on rows 1-2)
+    if (gridType === 'pblock-3x2-display') {
+      // Row 1: 2 buttons
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      // Row 2: 2 buttons
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: true });
+      return zones;
+    }
+    
+    // Special handling for PBlock 4x2 with Display (display on top, buttons on rows 1-3)
+    if (gridType === 'pblock-4x2-display') {
+      // Row 1: 2 buttons
+      zones.push({ id: 'button1', row: 1, col: 1, visible: true });
+      zones.push({ id: 'button2', row: 1, col: 2, visible: true });
+      // Row 2: 2 buttons
+      zones.push({ id: 'button3', row: 2, col: 1, visible: true });
+      zones.push({ id: 'button4', row: 2, col: 2, visible: true });
+      // Row 3: 2 buttons
+      zones.push({ id: 'button5', row: 3, col: 1, visible: true });
+      zones.push({ id: 'button6', row: 3, col: 2, visible: true });
       return zones;
     }
     

@@ -806,6 +806,54 @@ header.fixed {
     height: 336px;
 }
 
+/* Pblock 2x2 - Max 4 Buttons */
+.layout-pblock-2x2 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    width: 336px;
+    height: 336px;
+}
+
+/* Pblock 2x2 with Display */
+.layout-pblock-2x2-display {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    width: 336px;
+    height: 168px;
+}
+
+/* Pblock 3x2 - Max 6 Buttons */
+.layout-pblock-3x2 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 336px;
+    height: 504px;
+}
+
+/* Pblock 3x2 with Display */
+.layout-pblock-3x2-display {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    width: 336px;
+    height: 336px;
+}
+
+/* Pblock 4x2 - Max 8 Buttons */
+.layout-pblock-4x2 {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    width: 336px;
+    height: 672px;
+}
+
+/* Pblock 4x2 with Display */
+.layout-pblock-4x2-display {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: 336px;
+    height: 504px;
+}
+
 /* Focus Mode (1x1) */
 .layout-focus-mode {
     grid-template-columns: 1fr;
@@ -1060,6 +1108,7 @@ header.fixed {
 .frame-container-2x4,
 .frame-container-2x6,
 .frame-container-2x8,
+.frame-container-dora-1x1,
 .frame-container-dora-2x2,
 .frame-container-dora-2plus1,
 .frame-container-dora-2Lplus1,
@@ -1079,8 +1128,15 @@ header.fixed {
 .frame-container-dora-2x6,
 .frame-container-dora-2x8,
 .frame-container-dora-thermostat,
+.frame-container-focus-mode,
 .frame-container-pblock-2x4,
-.frame-container-pblock-2x6 {
+.frame-container-pblock-2x6,
+.frame-container-pblock-2x2,
+.frame-container-pblock-2x2-display,
+.frame-container-pblock-3x2,
+.frame-container-pblock-3x2-display,
+.frame-container-pblock-4x2,
+.frame-container-pblock-4x2-display {
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1096,6 +1152,7 @@ header.fixed {
 .frame-container-2x4::before,
 .frame-container-2x6::before,
 .frame-container-2x8::before,
+.frame-container-dora-1x1::before,
 .frame-container-dora-2x2::before,
 .frame-container-dora-2plus1::before,
 .frame-container-dora-2Lplus1::before,
@@ -1115,8 +1172,15 @@ header.fixed {
 .frame-container-dora-2x6::before,
 .frame-container-dora-2x8::before,
 .frame-container-dora-thermostat::before,
+.frame-container-focus-mode::before,
 .frame-container-pblock-2x4::before,
-.frame-container-pblock-2x6::before {
+.frame-container-pblock-2x6::before,
+.frame-container-pblock-2x2::before,
+.frame-container-pblock-2x2-display::before,
+.frame-container-pblock-3x2::before,
+.frame-container-pblock-3x2-display::before,
+.frame-container-pblock-4x2::before,
+.frame-container-pblock-4x2-display::before {
     content: '';
     position: absolute;
     top: 0;
