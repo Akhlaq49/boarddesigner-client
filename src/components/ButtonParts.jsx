@@ -155,6 +155,17 @@ function ButtonParts({
               >
                 <div className="font-medium">Icon & Text</div>
               </button>
+              <button
+                type="button"
+                className={`x-tab ${activeTab === 'pblock' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('pblock');
+                  setSelectedButton(null);
+                  setSelectedButtonPart(null);
+                }}
+              >
+                <div className="font-medium">PBlock Buttons</div>
+              </button>
             </div>
           </div>
         </div>
@@ -417,6 +428,93 @@ function ButtonParts({
               </div>
             </fieldset>
           </div>
+        </div>
+      )}
+
+      {/* PBlock Buttons Tab Panel */}
+      {activeTab === 'pblock' && (
+        <div role="tabpanel" className="py-2 animate-fade-in">
+          <div className="grid grid-cols-2 gap-3">
+            <button
+              type="button"
+              className={`custom-button-1 polar-white draggable-btn ${selectedButtonPart === 8 ? 'selected-part' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, 8)}
+              onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(8)}
+              data-button-type="8"
+              title="PBlock Single Button"
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
+              } : {}}
+            >
+              <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+              </div>
+            </button>
+            <button
+              type="button"
+              className={`custom-button-2 col-span-2 polar-white draggable-btn ${selectedButtonPart === 9 ? 'selected-part' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, 9)}
+              onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(9)}
+              data-button-type="9"
+              title="PBlock Wide Button (2 positions)"
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
+              } : {}}
+            >
+              <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+              </div>
+            </button>
+            <button
+              type="button"
+              className={`custom-button-3 row-span-2 polar-white ring-2 ring-secondary-700 dark:ring-secondary-200 draggable-btn ${selectedButtonPart === 10 ? 'selected-part' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, 10)}
+              onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(10)}
+              data-button-type="10"
+              title="PBlock Tall Button (2 positions)"
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
+              } : {}}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+              </div>
+            </button>
+          </div>
+          <div className="flex flex-row gap-2 my-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div><i className="fas fa-info-circle text-blue-600 dark:text-blue-400"></i></div>
+            <div className="text-xs text-blue-700 dark:text-blue-300">PBlock buttons with dot positions for icons/text placement.</div>
+          </div>
+          <button
+            type="button"
+            className={`custom-button-11 polar-white draggable-btn ${selectedButtonPart === 11 ? 'selected-part' : ''}`}
+            draggable
+            onDragStart={(e) => handleDragStart(e, 11)}
+            onDragEnd={handleDragEnd}
+            onClick={() => handleButtonPartClick(11)}
+            data-button-type="11"
+            title="Square Button (2 vertical positions)"
+            style={(fullColor || selectedColor) ? { 
+              backgroundColor: getColorValue(fullColor || selectedColor),
+              backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
+            } : {}}
+          >
+            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+            </div>
+          </button>
         </div>
       )}
     </div>

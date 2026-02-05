@@ -27,6 +27,7 @@ const PRODUCT_CATEGORIES = [
     id: 'design-self',
     name: 'Design Your Self',
     products: [
+      { id: 'dora-1x1', columns: 1, rows: 1, label: 'Single Square Button' },
       { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora Keypad 2×4' },
       { id: 'dora-2x8', columns: 2, rows: 6, label: 'Dora XLarge 2×6' },
       { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat 4+4' },

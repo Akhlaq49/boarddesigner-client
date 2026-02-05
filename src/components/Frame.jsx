@@ -2,6 +2,9 @@ import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react'
 
 // Product categories with proper configurations
 const GRID_CONFIGS = {
+  // Single Button
+  'dora-1x1': { columns: 1, rows: 1, visibleZones: 1, label: 'Single Square Button', category: 'Design Your Self', hasDisplay: false },
+  
   // 2-4 Buttons Switch
   'dora-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'Dora 2×2', category: '2-4 Buttons Switch', hasDisplay: false },
   'dora-2plus1': { columns: 2, rows: 2, visibleZones: 3, label: 'Dora 2+1', category: '2-4 Buttons Switch', hasDisplay: false },
@@ -28,6 +31,9 @@ const GRID_CONFIGS = {
   
   // 2-8 Room Controller
   // Note: Currently empty, room controller products can be added here
+  
+  // PBlock Frames
+  'pblock-display-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock with Display 2×2', category: 'Design Your Self', hasDisplay: true },
   
   // Design Your Self
   'dora-thermostat': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Thermostat 4+4', category: 'Design Your Self', hasDisplay: true },
@@ -990,60 +996,176 @@ function Frame({
       }
     }
 
+    // Check if button type has dots (5, 6, 7, 8, 9, 10, 11)
+    const buttonType = zone.dimensions?.buttonType;
+    const isButtonWithDots = [5, 6, 7, 8, 9, 10, 11].includes(buttonType);
+
     return (
       <div className="dropped-button" style={buttonStyle}>
         <div className="button-content">
-          <span className="s0">
-            {zone.s0?.type === 'icon' && zone.s0?.value && (
-              <img 
-                src={`/ican/images/${zone.s0.value}`} 
-                alt="icon" 
-                className="button-icon"
-                style={iconStyle}
-                onError={(e) => {
-                  console.error('Failed to load icon:', zone.s0.value);
-                  e.target.style.display = 'none';
-                }}
-              />
-            )}
-            {zone.s0?.type === 'text' && zone.s0?.value && (
-              <span style={{ color: zone.s0?.color || '#ffffff' }}>{zone.s0.value}</span>
-            )}
-          </span>
-          <span className="s1">
-            {zone.s1?.type === 'icon' && zone.s1?.value && (
-              <img 
-                src={`/ican/images/${zone.s1.value}`} 
-                alt="icon" 
-                className="button-icon"
-                style={iconStyle}
-                onError={(e) => {
-                  console.error('Failed to load icon:', zone.s1.value);
-                  e.target.style.display = 'none';
-                }}
-              />
-            )}
-            {zone.s1?.type === 'text' && zone.s1?.value && (
-              <span style={{ color: zone.s1?.color || '#ffffff' }}>{zone.s1.value}</span>
-            )}
-          </span>
-          <span className="s2">
-            {zone.s2?.type === 'icon' && zone.s2?.value && (
-              <img 
-                src={`/ican/images/${zone.s2.value}`} 
-                alt="icon" 
-                className="button-icon"
-                style={iconStyle}
-                onError={(e) => {
-                  console.error('Failed to load icon:', zone.s2.value);
-                  e.target.style.display = 'none';
-                }}
-              />
-            )}
-            {zone.s2?.type === 'text' && zone.s2?.value && (
-              <span style={{ color: zone.s2?.color || '#ffffff' }}>{zone.s2.value}</span>
-            )}
-          </span>
+          {/* Render dots for buttons with dots */}
+          {isButtonWithDots && (
+            <>
+              {(buttonType === 5 || buttonType === 10 || buttonType === 11) && (
+                <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
+                  <span className="s0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
+                    {zone.s0?.type === 'icon' && zone.s0?.value ? (
+                      <img 
+                        src={`/ican/images/${zone.s0.value}`} 
+                        alt="icon" 
+                        className="button-icon"
+                        style={iconStyle}
+                        onError={(e) => {
+                          console.error('Failed to load icon:', zone.s0.value);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : zone.s0?.type === 'text' && zone.s0?.value ? (
+                      <span style={{ color: zone.s0?.color || '#ffffff', fontSize: '12px' }}>{zone.s0.value}</span>
+                    ) : (
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                    )}
+                  </span>
+                  <span className="s1" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
+                    {zone.s1?.type === 'icon' && zone.s1?.value ? (
+                      <img 
+                        src={`/ican/images/${zone.s1.value}`} 
+                        alt="icon" 
+                        className="button-icon"
+                        style={iconStyle}
+                        onError={(e) => {
+                          console.error('Failed to load icon:', zone.s1.value);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : zone.s1?.type === 'text' && zone.s1?.value ? (
+                      <span style={{ color: zone.s1?.color || '#ffffff', fontSize: '12px' }}>{zone.s1.value}</span>
+                    ) : (
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                    )}
+                  </span>
+                </div>
+              )}
+              {(buttonType === 6 || buttonType === 9) && (
+                <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
+                  <span className="s0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
+                    {zone.s0?.type === 'icon' && zone.s0?.value ? (
+                      <img 
+                        src={`/ican/images/${zone.s0.value}`} 
+                        alt="icon" 
+                        className="button-icon"
+                        style={iconStyle}
+                        onError={(e) => {
+                          console.error('Failed to load icon:', zone.s0.value);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : zone.s0?.type === 'text' && zone.s0?.value ? (
+                      <span style={{ color: zone.s0?.color || '#ffffff', fontSize: '12px' }}>{zone.s0.value}</span>
+                    ) : (
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                    )}
+                  </span>
+                  <span className="s1" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
+                    {zone.s1?.type === 'icon' && zone.s1?.value ? (
+                      <img 
+                        src={`/ican/images/${zone.s1.value}`} 
+                        alt="icon" 
+                        className="button-icon"
+                        style={iconStyle}
+                        onError={(e) => {
+                          console.error('Failed to load icon:', zone.s1.value);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : zone.s1?.type === 'text' && zone.s1?.value ? (
+                      <span style={{ color: zone.s1?.color || '#ffffff', fontSize: '12px' }}>{zone.s1.value}</span>
+                    ) : (
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                    )}
+                  </span>
+                </div>
+              )}
+              {(buttonType === 7 || buttonType === 8) && (
+                <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
+                  <span className="s0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
+                    {zone.s0?.type === 'icon' && zone.s0?.value ? (
+                      <img 
+                        src={`/ican/images/${zone.s0.value}`} 
+                        alt="icon" 
+                        className="button-icon"
+                        style={iconStyle}
+                        onError={(e) => {
+                          console.error('Failed to load icon:', zone.s0.value);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : zone.s0?.type === 'text' && zone.s0?.value ? (
+                      <span style={{ color: zone.s0?.color || '#ffffff', fontSize: '12px' }}>{zone.s0.value}</span>
+                    ) : (
+                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+                    )}
+                  </span>
+                </div>
+              )}
+            </>
+          )}
+          {/* Render original content for standard buttons */}
+          {!isButtonWithDots && (
+            <>
+              <span className="s0">
+                {zone.s0?.type === 'icon' && zone.s0?.value && (
+                  <img 
+                    src={`/ican/images/${zone.s0.value}`} 
+                    alt="icon" 
+                    className="button-icon"
+                    style={iconStyle}
+                    onError={(e) => {
+                      console.error('Failed to load icon:', zone.s0.value);
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+                {zone.s0?.type === 'text' && zone.s0?.value && (
+                  <span style={{ color: zone.s0?.color || '#ffffff' }}>{zone.s0.value}</span>
+                )}
+              </span>
+              <span className="s1">
+                {zone.s1?.type === 'icon' && zone.s1?.value && (
+                  <img 
+                    src={`/ican/images/${zone.s1.value}`} 
+                    alt="icon" 
+                    className="button-icon"
+                    style={iconStyle}
+                    onError={(e) => {
+                      console.error('Failed to load icon:', zone.s1.value);
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+                {zone.s1?.type === 'text' && zone.s1?.value && (
+                  <span style={{ color: zone.s1?.color || '#ffffff' }}>{zone.s1.value}</span>
+                )}
+              </span>
+              <span className="s2">
+                {zone.s2?.type === 'icon' && zone.s2?.value && (
+                  <img 
+                    src={`/ican/images/${zone.s2.value}`} 
+                    alt="icon" 
+                    className="button-icon"
+                    style={iconStyle}
+                    onError={(e) => {
+                      console.error('Failed to load icon:', zone.s2.value);
+                      e.target.style.display = 'none';
+                    }}
+                  />
+                )}
+                {zone.s2?.type === 'text' && zone.s2?.value && (
+                  <span style={{ color: zone.s2?.color || '#ffffff' }}>{zone.s2.value}</span>
+                )}
+              </span>
+            </>
+          )}
         </div>
         <button
           className="remove-button"

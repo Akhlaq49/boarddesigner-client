@@ -623,12 +623,20 @@ header.fixed {
 /* Device Layout Styles - Match Sample UI */
 
 /* Layout Configurations */
+/* 1x1 Layout - Single Square Button */
+.layout-dora-1x1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr;
+    width: 168px;
+    height: 168px;
+}
+
 /* 2x2 Layout */
 .layout-dora-2x2 {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     width: 336px;
-    height: 172px;
+    height: 336px;
 }
 
 /* 2x4 Layout (Default) */
@@ -644,8 +652,8 @@ header.fixed {
 .layout-dora-1x3 {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(3, 1fr);
-    width: 172px;
-    height: 252px;
+    width: 168px;
+    height: 504px;
 }
 
 /* 3+2T Layout (3 top, 2 middle, 2 bottom) */
@@ -653,7 +661,7 @@ header.fixed {
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     width: 504px;
-    height: 252px;
+    height: 504px;
 }
 
 /* 2+1 Layout (2 buttons top, 1 wide button bottom) */
@@ -661,7 +669,7 @@ header.fixed {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(2, 1fr);
     width: 336px;
-    height: 172px;
+    height: 336px;
 }
 
 /* 2L+1 Layout (2 large buttons on top each spanning 2 rows, 1 wide bottom spanning 2 rows) */
@@ -701,7 +709,7 @@ header.fixed {
     grid-template-columns: repeat(2, 1fr);
     grid-template-rows: repeat(3, 1fr);
     width: 336px;
-    height: 252px;
+    height: 504px;
 }
 
 /* 1L+2+1 Layout (1 large left spanning 2 rows, 2 right stacked, 1 wide bottom spanning 2 rows) */
@@ -716,7 +724,7 @@ header.fixed {
 .layout-dora-1x4 {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(4, 1fr);
-    width: 172px;
+    width: 168px;
     height: 336px;
 }
 
@@ -724,7 +732,7 @@ header.fixed {
 .layout-dora-1x5 {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(5, 1fr);
-    width: 172px;
+    width: 168px;
     height: 420px;
 }
 
@@ -732,7 +740,7 @@ header.fixed {
 .layout-dora-1x6 {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(6, 1fr);
-    width: 172px;
+    width: 168px;
     height: 504px;
 }
 
@@ -740,7 +748,7 @@ header.fixed {
 .layout-dora-1x7 {
     grid-template-columns: 1fr;
     grid-template-rows: repeat(7, 1fr);
-    width: 172px;
+    width: 168px;
     height: 588px;
 }
 
@@ -1283,7 +1291,14 @@ header.fixed {
 .custom-button-1,
 .custom-button-2,
 .custom-button-3,
-.custom-button-4 {
+.custom-button-4,
+.custom-button-5,
+.custom-button-6,
+.custom-button-7,
+.custom-button-8,
+.custom-button-9,
+.custom-button-10,
+.custom-button-11 {
     align-content: center;
     align-items: center;
     border-radius: 0.25rem;
@@ -1296,7 +1311,6 @@ header.fixed {
     line-height: 1rem;
     box-shadow: 0 4px 6px -1px rgba(148, 163, 184, 0.3), 
                 0 2px 4px -2px rgba(148, 163, 184, 0.2);
-    min-height: 3rem;
     text-shadow: 1px 1px 0 hsla(0, 0%, 100%, 0.7);
 }
 
@@ -1316,10 +1330,59 @@ header.fixed {
     min-height: 3rem;
 }
 
+.custom-button-5 {
+    min-height: 8rem;
+    min-width: 4rem;
+    aspect-ratio: auto;
+}
+
+.custom-button-6 {
+    min-height: 4rem;
+    min-width: 8rem;
+    aspect-ratio: auto;
+}
+
+.custom-button-7 {
+    min-height: 4rem;
+    min-width: 4rem;
+    aspect-ratio: 1 / 1;
+}
+
+.custom-button-8 {
+    min-height: 3rem;
+    min-width: 3rem;
+    aspect-ratio: 1 / 1;
+}
+
+.custom-button-9 {
+    min-height: 3rem;
+    min-width: 6rem;
+    aspect-ratio: auto;
+}
+
+.custom-button-10 {
+    min-height: 6rem;
+    min-width: 3rem;
+    aspect-ratio: auto;
+}
+
+.custom-button-11 {
+    min-height: 4rem;
+    min-width: 4rem;
+    aspect-ratio: 1 / 1;
+}
+
 .custom-button-1.selected,
 .custom-button-2.selected,
 .custom-button-3.selected,
-.custom-button-4.selected {
+.custom-button-4.selected,
+.custom-button-5.selected,
+.custom-button-6.selected,
+.custom-button-7.selected,
+.custom-button-8.selected,
+.custom-button-9.selected,
+.custom-button-10.selected,
+.custom-button-11.selected {
     --tw-ring-offset-shadow: 0 0 0 2px var(--tw-ring-offset-color, #fff);
     --tw-ring-shadow: 0 0 0 calc(2px + 2px) rgb(43, 135, 196);
     box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), 

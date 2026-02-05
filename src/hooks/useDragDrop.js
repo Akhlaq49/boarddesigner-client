@@ -131,7 +131,16 @@ export function useDragDrop() {
       1: { colSpan: 1, rowSpan: 1 },
       2: { colSpan: 2, rowSpan: 1 },
       3: { colSpan: 1, rowSpan: 2 },
-      4: { colSpan: 2, rowSpan: 2 }
+      4: { colSpan: 2, rowSpan: 2 },
+      5: { colSpan: 1, rowSpan: 2 },
+      6: { colSpan: 2, rowSpan: 1 },
+      7: { colSpan: 1, rowSpan: 1 },
+      // PBlock buttons
+      8: { colSpan: 1, rowSpan: 1 }, // PBlock Single Button
+      9: { colSpan: 2, rowSpan: 1 }, // PBlock Wide Button
+      10: { colSpan: 1, rowSpan: 2 }, // PBlock Tall Button
+      // Square Buttons
+      11: { colSpan: 1, rowSpan: 1 } // Square Button (2 vertical dots)
     };
     return dimensions[buttonType] || { colSpan: 1, rowSpan: 1 };
   };
