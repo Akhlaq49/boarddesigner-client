@@ -39,7 +39,6 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
   const [savedDesigns28Room, setSavedDesigns28Room] = useState([]);
-  const [savedDesignsSelf, setSavedDesignsSelf] = useState([]);
   
   // Load saved designs on mount
   useEffect(() => {
@@ -77,7 +76,6 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       setSavedDesigns28(designs28);
       setSavedDesigns312(designs312);
       setSavedDesigns28Room(designs28Room);
-      setSavedDesignsSelf(designsSelf);
     } catch (error) {
       console.error('Error loading saved designs:', error);
     }
