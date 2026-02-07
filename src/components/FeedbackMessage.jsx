@@ -13,7 +13,7 @@ function FeedbackMessage({ feedback }) {
   if (!feedback.message) return null;
 
   return (
-    <div className={`drag-feedback ${feedback.type} ${feedback.show ? 'show' : ''}`}>
+    <div className={`drag-feedback drag-feedback-${feedback.type} ${feedback.show ? 'show' : ''}`}>
       {feedback.message}
     </div>
   );

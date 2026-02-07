@@ -60,6 +60,8 @@ const PRODUCT_CATEGORIES = [
   }
 ];
 
+const PBLOCK_LEVEL_IDS = ['pblock-level-2', 'pblock-level-3', 'pblock-level-4'];
+
 function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenSaveDesign, activeTab, setActiveTab }) {
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
@@ -115,13 +117,16 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
   };
   
   const activeCategory = PRODUCT_CATEGORIES.find(cat => cat.id === activeTab);
+  const tabCategories = PRODUCT_CATEGORIES.filter(cat => !PBLOCK_LEVEL_IDS.includes(cat.id));
+  const isPblockTabActive = PBLOCK_LEVEL_IDS.includes(activeTab);
+  const pblockSelectValue = isPblockTabActive ? activeTab : 'pblock';
   
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md" style={{ height: '140px' }}>
+    <header className="fixed top-0 left-0 right-0 z-50 bg-white shadow-md app-header">
       <div className="container-fluid px-3 py-2 h-100">
-        <div className="d-flex flex-column h-100">
+        <div className="d-flex flex-column h-100 header-inner">
           {/* Top Row: Logo, Home Button, Category Tabs, and Save PDF */}
-          <div className="d-flex align-items-center justify-content-between w-100 border-bottom" style={{ height: '50px' }}>
+          <div className="d-flex align-items-center justify-content-between w-100 border-bottom header-top-row">
             {/* Left side: Logo and Home Button */}
             <div className="d-flex align-items-center gap-3 flex-shrink-0">
               <div className="future-logo">
@@ -148,36 +153,70 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
             </div>
 
             {/* Center: Category Tabs */}
-            <div className="d-flex align-items-center gap-2 flex-grow-1 justify-content-center">
-              {PRODUCT_CATEGORIES.map(category => (
-                <button
-                  key={category.id}
-                  className={`nav-category-btn ${activeTab === category.id ? 'active' : ''}`}
-                  onClick={() => {
-                    setActiveTab(category.id);
-                    if (setSelectedButton) setSelectedButton(null);
-                    if (setSelectedButtonPart) setSelectedButtonPart(null);
-                  }}
-                  style={{
-                    padding: '0.5rem 1.5rem',
-                    backgroundColor: activeTab === category.id ? '#ffeb3b' : 'transparent',
-                    color: activeTab === category.id ? '#000' : '#555',
-                    border: 'none',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    fontWeight: '500',
-                    transition: 'all 0.2s',
-                    borderRadius: '6px',
-                    whiteSpace: 'nowrap'
-                  }}
-                >
-                  {category.name}
-                </button>
+            <div className="d-flex align-items-center gap-2 flex-grow-1 justify-content-center header-tabs">
+              {tabCategories.map(category => (
+                <React.Fragment key={category.id}>
+                  <button
+                    className={`nav-category-btn ${activeTab === category.id ? 'active' : ''}`}
+                    onClick={() => {
+                      setActiveTab(category.id);
+                      if (setSelectedButton) setSelectedButton(null);
+                      if (setSelectedButtonPart) setSelectedButtonPart(null);
+                    }}
+                    style={{
+                      padding: '0.5rem 1.5rem',
+                      backgroundColor: activeTab === category.id ? '#ffeb3b' : 'transparent',
+                      color: activeTab === category.id ? '#000' : '#555',
+                      border: 'none',
+                      cursor: 'pointer',
+                      fontSize: '0.9rem',
+                      fontWeight: '500',
+                      transition: 'all 0.2s',
+                      borderRadius: '6px',
+                      whiteSpace: 'nowrap'
+                    }}
+                  >
+                    {category.name}
+                  </button>
+                  {category.id === '2-8-room' && (
+                    <div style={{ position: 'relative' }}>
+                      <select
+                        value={pblockSelectValue}
+                        onChange={(event) => {
+                          const nextTab = event.target.value;
+                          if (nextTab === 'pblock') return;
+                          setActiveTab(nextTab);
+                          if (setSelectedButton) setSelectedButton(null);
+                          if (setSelectedButtonPart) setSelectedButtonPart(null);
+                        }}
+                        style={{
+                          padding: '0.5rem 1.4rem 0.5rem 0.9rem',
+                          backgroundColor: isPblockTabActive ? '#ffeb3b' : 'transparent',
+                          color: isPblockTabActive ? '#000' : '#555',
+                          border: '1px solid #ddd',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem',
+                          fontWeight: '500',
+                          transition: 'all 0.2s',
+                          borderRadius: '6px',
+                          whiteSpace: 'nowrap',
+                          appearance: 'auto'
+                        }}
+                        aria-label="PBlock levels"
+                      >
+                        <option value="pblock">PBlock</option>
+                        <option value="pblock-level-2">PBlock Level 2</option>
+                        <option value="pblock-level-3">PBlock Level 3</option>
+                        <option value="pblock-level-4">PBlock Level 4</option>
+                      </select>
+                    </div>
+                  )}
+                </React.Fragment>
               ))}
             </div>
             
             {/* Right side: Save Design and Save PDF Buttons */}
-            <div className="flex-shrink-0" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <div className="flex-shrink-0 header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
               <button
                 type="button"
                 className="save-design-btn"
@@ -228,7 +267,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
           </div>
 
           {/* Product Icons Row */}
-          <div className="d-flex align-items-center gap-2 w-100" style={{ height: '90px', padding: '1rem 0', overflowX: 'auto' }}>
+          <div className="d-flex align-items-center gap-2 w-100 header-products-row">
             <>
               {/* Show saved designs first if in relevant categories */}
               {activeCategory?.id === '2-8-buttons' && savedDesigns28.length > 0 && (

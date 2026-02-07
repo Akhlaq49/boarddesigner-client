@@ -31,9 +31,11 @@ function ColorPalette({
   setSelectedColor,
   applyFrameColor,
   applyFullColor,
+  applyButtonColor,
   showFeedback,
   applyWallColor,
-  wallColor
+  wallColor,
+  selectedButton
 }) {
   const [activeTab, setActiveTab] = useState('textures');
   const [activeColor, setActiveColor] = useState('royal-silver');
@@ -62,6 +64,15 @@ function ColorPalette({
   const handleAllClick = (colorName) => {
     applyFullColor(colorName);
   };
+
+  const handleButtonClick = (colorName) => {
+    if (!selectedButton) {
+      showFeedback('Please select a button first', 'info');
+      return;
+    }
+    applyButtonColor(selectedButton, colorName);
+  };
+
 
   // Convert HSL to RGB
   const hslToRgb = (h, s, l) => {
@@ -322,6 +333,15 @@ function ColorPalette({
                       data-color={color.name}
                     >
                       <span>FRAME</span>
+                    </button>
+                    <button
+                      type="button"
+                      className="button-color-action"
+                      onClick={() => handleButtonClick(color.name)}
+                      data-place="button"
+                      data-color={color.name}
+                    >
+                      <span>BUTTON</span>
                     </button>
                     <button
                       type="button"

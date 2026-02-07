@@ -93,7 +93,7 @@ function App() {
           setActiveTab={setActiveTab}
         />
         
-        <div className="container-fluid h-100" style={{ paddingTop: '160px', overflowX: 'auto', overflowY: 'visible' }}>
+        <div className="container-fluid h-100 app-content">
           <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
             {/* Left Column - Button Parts (show only when Design Your Self is active) */}
             {activeTab === 'design-self' && (
@@ -189,9 +189,11 @@ function App() {
                     setSelectedColor={setSelectedColor}
                     applyFrameColor={applyFrameColor}
                     applyFullColor={applyFullColor}
+                    applyButtonColor={applyButtonColor}
                     showFeedback={showFeedback}
                     applyWallColor={applyWallColor}
                     wallColor={wallColor}
+                    selectedButton={selectedButton}
                   />
                 </div>
               </div>

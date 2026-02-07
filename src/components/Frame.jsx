@@ -491,6 +491,19 @@ function Frame({
     showFeedback('Button placed successfully!', 'success');
   };
 
+  const handleFrameDrop = (e) => {
+    e.preventDefault();
+    if (e.target.closest('.drop-zone')) {
+      return;
+    }
+    setHighlightedZones([]);
+    showFeedback('Please drop the button on a valid zone', 'info');
+  };
+
+  const handleFrameDragOver = (e) => {
+    e.preventDefault();
+  };
+
   const handleZoneClick = (zoneId) => {
     // If a button part is selected (click-to-apply mode), place it
     if (selectedButtonPart) {
@@ -1339,6 +1352,8 @@ function Frame({
         style={{
           borderColor: (frameColor || fullColor) ? getColorValue(frameColor || fullColor) : undefined
         }}
+        onDragOver={handleFrameDragOver}
+        onDrop={handleFrameDrop}
       >
         {allZones.map(zone => {
           const zoneData = dropZones[zone.id];

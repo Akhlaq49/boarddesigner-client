@@ -195,13 +195,11 @@ export function useDragDrop() {
 
   const applyFrameColor = useCallback((colorName) => {
     setFrameColor(colorName);
-    setFullColor(null); // Clear full color when applying frame color
     showFeedback(`${colorName} applied to frame`, 'success');
   }, [showFeedback]);
 
   const applyFullColor = useCallback((colorName) => {
     setFullColor(colorName);
-    setFrameColor(null); // Clear frame color when applying full color
     
     // Update all existing buttons with the new color
     setDropZones(prevZones => {
