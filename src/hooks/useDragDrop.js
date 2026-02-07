@@ -163,8 +163,31 @@ export function useDragDrop() {
     if (designData.fullColor) setFullColor(designData.fullColor);
     if (designData.wallColor) setWallColor(designData.wallColor);
     setSelectedButton(null);
+    setSelectedButtonPart(null);
+    setSelectedColor(null);
+    setShowIconPopup(false);
+    setCurrentIconPosition(null);
+    setShowButtonColorPopup(false);
+    setButtonColorTarget(null);
     showFeedback('Design loaded successfully', 'success');
   }, [showFeedback]);
+
+  const resetSelections = useCallback(() => {
+    setSelectedButton(null);
+    setSelectedButtonPart(null);
+    setSelectedColor(null);
+    setShowIconPopup(false);
+    setCurrentIconPosition(null);
+    setShowButtonColorPopup(false);
+    setButtonColorTarget(null);
+  }, []);
+
+  const resetDesign = useCallback(() => {
+    setDropZones({});
+    setFrameColor(null);
+    setFullColor(null);
+    resetSelections();
+  }, [resetSelections]);
 
   const placeButtonInZones = useCallback((zones, buttonData) => {
     if (!zones || zones.length === 0) return;
@@ -398,6 +421,7 @@ export function useDragDrop() {
     updateDropZone,
     clearDropZone,
     loadDesign,
+    resetDesign,
     selectedColor,
     setSelectedColor,
     frameColor,

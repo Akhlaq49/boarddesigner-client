@@ -22,6 +22,7 @@ function App() {
     updateDropZone,
     clearDropZone,
     loadDesign,
+    resetDesign,
     applyFrameColor,
     applyFullColor,
     selectedColor,
@@ -59,6 +60,11 @@ function App() {
   // Track active category tab
   const [activeTab, setActiveTab] = useState('2-8-buttons');
 
+  const handleGridTypeChange = (nextGridType) => {
+    resetDesign();
+    setGridType(nextGridType);
+  };
+
   // Listen for saved design load events
   useEffect(() => {
     const handleLoadSavedDesign = (event) => {
@@ -84,7 +90,7 @@ function App() {
           setColorPaletteWidth={setColorPaletteWidth}
           onNavigateHome={() => window.location.reload()}
           gridType={gridType}
-          setGridType={setGridType}
+          setGridType={handleGridTypeChange}
           onDownloadPDF={() => frameDownloadPDF && frameDownloadPDF()}
           setSelectedButton={setSelectedButton}
           setSelectedButtonPart={setSelectedButtonPart}
