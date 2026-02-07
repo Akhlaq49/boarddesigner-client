@@ -87,12 +87,23 @@ function ButtonParts({
     }
   }, [selectedButton, dropZones]);
 
+  // Check if selected button is a button with dots (PBlock or other dot buttons)
+  const isPBlockButton = selectedButton && dropZones[selectedButton] && 
+    [5, 6, 7, 8, 9, 10, 11].includes(dropZones[selectedButton]?.dimensions?.buttonType);
+
   const handleDragStart = (e, buttonType) => {
     const dimensions = {
       1: { colSpan: 1, rowSpan: 1 },
       2: { colSpan: 2, rowSpan: 1 },
       3: { colSpan: 1, rowSpan: 2 },
-      4: { colSpan: 2, rowSpan: 2 }
+      4: { colSpan: 2, rowSpan: 2 },
+      5: { colSpan: 1, rowSpan: 2 },
+      6: { colSpan: 2, rowSpan: 1 },
+      7: { colSpan: 1, rowSpan: 1 },
+      8: { colSpan: 1, rowSpan: 1 }, // PBlock Single Button
+      9: { colSpan: 2, rowSpan: 1 }, // PBlock Wide Button
+      10: { colSpan: 1, rowSpan: 2 }, // PBlock Tall Button
+      11: { colSpan: 1, rowSpan: 1 }  // PBlock Square Button (2 vertical dots)
     }[buttonType] || { colSpan: 1, rowSpan: 1 };
 
     const data = {
@@ -239,9 +250,22 @@ function ButtonParts({
       {activeTab === 'label' && (
         <div role="tabpanel" className="py-2 animate-fade-in">
           <div className="relative flex flex-col icon-text-config">
+            {/* Helper text for PBlock buttons */}
+            {isPBlockButton && (
+              <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-2">
+                  <i className="fas fa-info-circle text-blue-600 dark:text-blue-400 mt-0.5"></i>
+                  <div className="text-xs text-blue-700 dark:text-blue-300">
+                    <strong>Tip:</strong> You can add different icons/text to BOTH zones. Use "First Zone" for the first square and "Second Zone" for the second square.
+                  </div>
+                </div>
+              </div>
+            )}
             {/* Right / Top Position */}
             <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Right / Top</legend>
+              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
+                {isPBlockButton ? 'First Zone' : 'Right / Top'}
+              </legend>
               <div className="flex flex-row items-center gap-4">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
@@ -304,7 +328,9 @@ function ButtonParts({
 
             {/* Center Position */}
             <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Center</legend>
+              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
+                {isPBlockButton ? 'Second Zone' : 'Center'}
+              </legend>
               <div className="flex flex-row items-center gap-4">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
@@ -365,9 +391,10 @@ function ButtonParts({
               </div>
             </fieldset>
 
-            {/* Left / Bottom Position */}
-            <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
-              <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Left / Bottom</legend>
+            {/* Left / Bottom Position - Hidden for PBlock buttons */}
+            {!isPBlockButton && (
+              <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+                <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Left / Bottom</legend>
               <div className="flex flex-row items-center gap-4">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
@@ -427,6 +454,7 @@ function ButtonParts({
                 )}
               </div>
             </fieldset>
+            )}
           </div>
         </div>
       )}
@@ -449,8 +477,28 @@ function ButtonParts({
                 backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
               } : {}}
             >
-              <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-between', alignItems: 'flex-start', padding: '12px 8px' }}>
+                <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)' }}></div>
+                <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)' }}></div>
+              </div>
+            </button>
+            <button
+              type="button"
+              className={`custom-button-11 polar-white draggable-btn ${selectedButtonPart === 11 ? 'selected-part' : ''}`}
+              draggable
+              onDragStart={(e) => handleDragStart(e, 11)}
+              onDragEnd={handleDragEnd}
+              onClick={() => handleButtonPartClick(11)}
+              data-button-type="11"
+              title="Square Button (2 vertical positions)"
+              style={(fullColor || selectedColor) ? { 
+                backgroundColor: getColorValue(fullColor || selectedColor),
+                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
+              } : {}}
+            >
+              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center', gap: '20px' }}>
+                <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)' }}></div>
+                <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)' }}></div>
               </div>
             </button>
             <button
@@ -467,54 +515,16 @@ function ButtonParts({
                 backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
               } : {}}
             >
-              <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-              </div>
-            </button>
-            <button
-              type="button"
-              className={`custom-button-3 row-span-2 polar-white ring-2 ring-secondary-700 dark:ring-secondary-200 draggable-btn ${selectedButtonPart === 10 ? 'selected-part' : ''}`}
-              draggable
-              onDragStart={(e) => handleDragStart(e, 10)}
-              onDragEnd={handleDragEnd}
-              onClick={() => handleButtonPartClick(10)}
-              data-button-type="10"
-              title="PBlock Tall Button (2 positions)"
-              style={(fullColor || selectedColor) ? { 
-                backgroundColor: getColorValue(fullColor || selectedColor),
-                backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
-              } : {}}
-            >
-              <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
+              <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'space-between', alignItems: 'center', padding: '8px 20px' }}>
+                <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)' }}></div>
+                <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)' }}></div>
               </div>
             </button>
           </div>
           <div className="flex flex-row gap-2 my-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
             <div><i className="fas fa-info-circle text-blue-600 dark:text-blue-400"></i></div>
-            <div className="text-xs text-blue-700 dark:text-blue-300">PBlock buttons with dot positions for icons/text placement.</div>
+            <div className="text-xs text-blue-700 dark:text-blue-300">PBlock buttons with editable square zones. Click zones to add icons/text, drag to reposition.</div>
           </div>
-          <button
-            type="button"
-            className={`custom-button-11 polar-white draggable-btn ${selectedButtonPart === 11 ? 'selected-part' : ''}`}
-            draggable
-            onDragStart={(e) => handleDragStart(e, 11)}
-            onDragEnd={handleDragEnd}
-            onClick={() => handleButtonPartClick(11)}
-            data-button-type="11"
-            title="Square Button (2 vertical positions)"
-            style={(fullColor || selectedColor) ? { 
-              backgroundColor: getColorValue(fullColor || selectedColor),
-              backgroundImage: getTextureImage(fullColor || selectedColor) ? `url(${getTextureImage(fullColor || selectedColor)})` : undefined
-            } : {}}
-          >
-            <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-              <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-            </div>
-          </button>
         </div>
       )}
     </div>

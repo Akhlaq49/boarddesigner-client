@@ -77,6 +77,8 @@ function Frame({
 }) {
   const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['dora-2x4'];
   const [highlightedZones, setHighlightedZones] = useState([]);
+  const [draggingDot, setDraggingDot] = useState(null);
+  const [dotPositions, setDotPositions] = useState({});
   const frameRef = useRef(null);  
   // Product code generation logic
   const generateProductCode = useCallback(() => {
@@ -476,7 +478,10 @@ function Frame({
     // Place button with merge info using the hook function
     const buttonDataWithMerge = {
       type: buttonData.buttonType,
-      dimensions,
+      dimensions: {
+        ...dimensions,
+        buttonType: buttonData.buttonType // Include buttonType in dimensions
+      },
       zones: zonesToMerge,
       color: buttonData.color || null // Include color from drag data
     };
@@ -528,7 +533,10 @@ function Frame({
       // Place button with merge info
       const buttonDataWithMerge = {
         type: buttonType,
-        dimensions,
+        dimensions: {
+          ...dimensions,
+          buttonType: buttonType // Include buttonType in dimensions
+        },
         zones: zonesToMerge,
         color: selectedColor || fullColor || null // Include selected color in click-to-apply
       };
@@ -573,7 +581,9 @@ function Frame({
         return;
       }
 
-      showFeedback('Generating PDF...', 'info');
+      // NOTE: Do NOT call showFeedback before capture — it triggers React re-renders
+      // via setState + a 3-second auto-dismiss timer, which can recreate the DOM
+      // during the async capture process and undo our icon processing.
 
       // Dynamically import html2canvas and jsPDF
       const html2canvas = (await import('html2canvas')).default;
@@ -581,111 +591,156 @@ function Frame({
       const jsPDF = jsPDFModule.jsPDF || jsPDFModule.default;
 
       try {
-        // Hide action buttons before capture
-        const removeButtons = frameElement.querySelectorAll('.remove-button');
-        const colorButtons = frameElement.querySelectorAll('.button-color-btn');
-        removeButtons.forEach(btn => btn.style.display = 'none');
-        colorButtons.forEach(btn => btn.style.display = 'none');
+        // === LIVE-DOM CAPTURE ===
+        // Instead of cloning (which loses CSS context and causes layout displacement),
+        // we modify the live DOM, capture it, and immediately restore.
+        // Key: all async work (image loading) is done BEFORE touching the DOM.
+        // The swap -> capture -> restore happens with NO awaits in between,
+        // so React has no opportunity to re-render and undo our changes.
 
-        // Don't modify any styling - capture the frame exactly as it appears on screen
-        // This ensures symmetry and spacing are identical to the web version
+        const frameWidth = frameElement.offsetWidth;
+        const frameHeight = frameElement.offsetHeight;
 
-        // Wait for everything to settle
-        await new Promise(resolve => setTimeout(resolve, 500));
+        // --- Phase 1: Pre-load all icon white versions (async, no DOM changes) ---
+        const liveIcons = frameElement.querySelectorAll('img.button-icon');
+        console.log('Pre-loading', liveIcons.length, 'icons for PDF capture');
 
-        // Convert SVG images to inline SVGs for proper rendering in capture
-        const svgImages = frameElement.querySelectorAll('img.button-icon[src*=".svg"]');
-        const originalSrcs = new Map();
-        
-        for (const img of svgImages) {
+        // Map: img element -> { whiteSrc, originalSrc, originalStyles }
+        const iconData = new Map();
+
+        for (const img of liveIcons) {
           try {
-            originalSrcs.set(img, img.src);
-            const response = await fetch(img.src);
-            const svgText = await response.text();
-            const wrapper = document.createElement('div');
-            wrapper.innerHTML = svgText;
-            const svg = wrapper.querySelector('svg');
-            if (svg) {
-              svg.style.width = img.style.width || img.width || '100%';
-              svg.style.height = img.style.height || img.height || '100%';
-              svg.style.display = 'block';
-              img.replaceWith(svg);
-            }
-          } catch (err) {
-            console.warn('Failed to convert SVG:', err);
-          }
-        }
+            const src = img.getAttribute('src') || img.src;
 
-        // Wait for SVG elements to render
-        await new Promise(resolve => setTimeout(resolve, 500));
+            const loadedImg = await new Promise((resolve, reject) => {
+              const testImg = new Image();
+              testImg.crossOrigin = 'anonymous';
+              testImg.onload = () => resolve(testImg);
+              testImg.onerror = () => reject(new Error('Failed to load: ' + src));
+              testImg.src = src;
+              setTimeout(() => reject(new Error('Timeout loading: ' + src)), 5000);
+            });
 
-        // Wait for all images to load
-        const allImages = frameElement.querySelectorAll('img');
-        await Promise.all(
-          Array.from(allImages).map(img => 
-            new Promise(resolve => {
-              if (img.complete) {
-                resolve();
-              } else {
-                img.onload = resolve;
-                img.onerror = resolve;
-                // Timeout after 5 seconds
-                setTimeout(resolve, 5000);
+            // Render at minimum 200×200 for quality
+            const c = document.createElement('canvas');
+            const ctx = c.getContext('2d');
+            const minSize = 200;
+            const w = Math.max(loadedImg.naturalWidth || minSize, minSize);
+            const h = Math.max(loadedImg.naturalHeight || minSize, minSize);
+            c.width = w;
+            c.height = h;
+            ctx.drawImage(loadedImg, 0, 0, w, h);
+
+            // brightness(0) + invert(1) via pixel manipulation -> pure white
+            const imageData = ctx.getImageData(0, 0, w, h);
+            const pixels = imageData.data;
+            for (let i = 0; i < pixels.length; i += 4) {
+              if (pixels[i + 3] > 0) {
+                pixels[i] = 255;
+                pixels[i + 1] = 255;
+                pixels[i + 2] = 255;
               }
-            })
-          )
-        );
+            }
+            ctx.putImageData(imageData, 0, 0);
 
-        // Additional wait to ensure everything is rendered
-        await new Promise(resolve => setTimeout(resolve, 500));
-
-        // Scroll frame into view to ensure proper rendering
-        frameElement.scrollIntoView({ behavior: 'auto', block: 'nearest' });
-        await new Promise(resolve => setTimeout(resolve, 200));
-
-        // Capture the original frame directly with pixel-perfect quality
-        // Use scale 1 to avoid any interpolation artifacts, then let PDF handle sizing
-        const captureScale = 1;
-        const canvas = await html2canvas(frameElement, {
-          scale: captureScale,
-          useCORS: true,
-          allowTaint: false,
-          backgroundColor: '#ffffff',
-          logging: false,
-          foreignObjectRendering: false,
-          removeContainer: false,
-          imageTimeout: 0,
-          timeout: 60000,
-          width: Math.round(frameElement.offsetWidth),
-          height: Math.round(frameElement.offsetHeight)
-        });
-
-        // Restore original SVG images in the frame (after capture is done)
-        for (const [img, originalSrc] of originalSrcs.entries()) {
-          try {
-            // Create a new img element to restore
-            const newImg = document.createElement('img');
-            newImg.src = originalSrc;
-            newImg.className = img.className;
-            newImg.style.width = img.style.width;
-            newImg.style.height = img.style.height;
-            newImg.alt = 'icon';
-            newImg.onError = (e) => {
-              console.error('Failed to load icon:', originalSrc);
-              e.target.style.display = 'none';
-            };
-            img.replaceWith(newImg);
+            iconData.set(img, {
+              whiteSrc: c.toDataURL('image/png'),
+              originalSrc: src,
+              originalFilter: img.style.filter,
+              originalWebkitFilter: img.style.webkitFilter
+            });
           } catch (err) {
-            console.warn('Failed to restore image:', err);
+            console.warn('Failed to pre-load icon for PDF:', err);
           }
         }
+
+        // --- Phase 2: Synchronous swap, capture, restore (no awaits between swap and restore) ---
+
+        // Inject CSS override to disable filter (html2canvas ignores CSS filter)
+        // and remove overflow clipping on inner button containers so icons
+        // aren't trimmed (especially pblock with 2 icons per button).
+        // IMPORTANT: Do NOT override overflow on .drop-zone or .frame-container-*
+        // as that displaces grid items.
+        const styleOverride = document.createElement('style');
+        styleOverride.id = 'pdf-capture-style-override';
+        styleOverride.textContent = `
+          .button-icon, img.button-icon,
+          .button-content .button-icon, .dropped-button .button-icon,
+          .button-content img.button-icon, .dropped-button img.button-icon {
+            filter: none !important;
+            -webkit-filter: none !important;
+          }
+          .dropped-button .button-content,
+          .button-content {
+            overflow: visible !important;
+          }
+          .button-content .s0,
+          .button-content .s1,
+          .button-content .s2 {
+            overflow: visible !important;
+          }
+        `;
+        document.head.appendChild(styleOverride);
+
+        // Hide action buttons
+        const removeBtns = frameElement.querySelectorAll('.remove-button');
+        const colorBtns = frameElement.querySelectorAll('.button-color-btn');
+        removeBtns.forEach(btn => btn.style.display = 'none');
+        colorBtns.forEach(btn => btn.style.display = 'none');
+
+        // Swap icon sources to pre-rendered white versions
+        for (const [img, data] of iconData) {
+          img.src = data.whiteSrc;
+          img.style.filter = 'none';
+          img.style.webkitFilter = 'none';
+        }
+
+        // Small delay for data-URL images to render, then capture
+        await new Promise(r => setTimeout(r, 100));
+
+        const captureScale = 2;
+        let canvas;
+        try {
+          canvas = await html2canvas(frameElement, {
+            scale: captureScale,
+            useCORS: true,
+            allowTaint: false,
+            backgroundColor: null,
+            logging: false,
+            foreignObjectRendering: false,
+            removeContainer: false,
+            imageTimeout: 15000,
+            timeout: 60000,
+            width: frameWidth,
+            height: frameHeight,
+            scrollX: -window.scrollX,
+            scrollY: -window.scrollY
+          });
+        } finally {
+          // --- Phase 3: Restore everything (always runs, even if capture fails) ---
+          document.head.removeChild(styleOverride);
+          removeBtns.forEach(btn => btn.style.display = '');
+          colorBtns.forEach(btn => btn.style.display = '');
+          for (const [img, data] of iconData) {
+            img.src = data.originalSrc;
+            img.style.filter = data.originalFilter;
+            img.style.webkitFilter = data.originalWebkitFilter;
+          }
+        }
+
+        console.log('Canvas captured, size:', canvas.width, 'x', canvas.height);
 
         // Create a PNG screenshot (web) and store it for reuse in the PDF
         let screenshotDataUrl = '';
         try {
+          if (!canvas || canvas.width === 0 || canvas.height === 0) {
+            throw new Error('Canvas is empty or invalid');
+          }
           screenshotDataUrl = canvas.toDataURL('image/png');
+          console.log('Screenshot data URL created, length:', screenshotDataUrl.length);
         } catch (err) {
           console.error('Failed to generate screenshot PNG:', err);
+          showFeedback('Failed to generate PDF screenshot', 'error');
         }
         if (screenshotDataUrl) {
           const previewId = 'pdf-screenshot-preview';
@@ -704,10 +759,6 @@ function Frame({
           }
           previewImg.src = screenshotDataUrl;
         }
-
-        // Restore buttons after capture
-        removeButtons.forEach(btn => btn.style.display = '');
-        colorButtons.forEach(btn => btn.style.display = '');
 
         // Check if canvas has content
         if (!canvas || canvas.width === 0 || canvas.height === 0) {
@@ -765,17 +816,18 @@ function Frame({
         // Add design screenshot
         try {
           const imgData = screenshotDataUrl;
-          if (!imgData) {
-            throw new Error('Failed to convert canvas to image');
+          if (!imgData || imgData.length === 0) {
+            throw new Error('Screenshot data is empty');
           }
           console.log('Adding image to PDF, dimensions:', widthMM, 'x', heightMM);
           pdf.addImage(imgData, 'PNG', leftMargin, topMargin + 15, widthMM, heightMM);
-          console.log('Image added successfully');
+          console.log('Image added successfully to PDF');
         } catch (err) {
           console.error('Error adding image to PDF:', err);
+          showFeedback('Failed to add design image to PDF: ' + err.message, 'error');
           // Add a text placeholder if image fails
           pdf.setTextColor(200, 200, 200);
-          pdf.text('Design Screenshot', leftMargin + widthMM / 2, topMargin + heightMM / 2 + 15, { align: 'center' });
+          pdf.text('Design Screenshot Failed', leftMargin + widthMM / 2, topMargin + heightMM / 2 + 15, { align: 'center' });
         }
 
         // Add design info section
@@ -961,11 +1013,9 @@ function Frame({
         pdf.save(`board-design-${gridType}-${Date.now()}.pdf`);
         showFeedback('PDF downloaded successfully!', 'success');
       } catch (error) {
-        // Restore buttons on error
-        const removeButtons = frameElement?.querySelectorAll('.remove-button');
-        const colorButtons = frameElement?.querySelectorAll('.button-color-btn');
-        removeButtons?.forEach(btn => btn.style.display = '');
-        colorButtons?.forEach(btn => btn.style.display = '');
+        // Clean up style override if it exists
+        const leftoverStyle = document.getElementById('pdf-capture-style-override');
+        if (leftoverStyle) document.head.removeChild(leftoverStyle);
         console.error('Error generating PDF:', error);
         showFeedback(`Failed to generate PDF: ${error.message}`, 'error');
       }
@@ -981,6 +1031,60 @@ function Frame({
       setDownloadPDFHandler(() => handleDownloadPDF);
     }
   }, [setDownloadPDFHandler, handleDownloadPDF]);
+
+  // Dot drag-and-drop handlers
+  const handleDotMouseDown = useCallback((e, zoneId, dotKey) => {
+    e.stopPropagation();
+    e.preventDefault();
+    const startTime = Date.now();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    
+    setDraggingDot({ zoneId, dotKey, startTime, startX, startY });
+  }, []);
+
+  const handleDotMouseUp = useCallback((e, zoneId, dotKey) => {
+    if (draggingDot && draggingDot.zoneId === zoneId && draggingDot.dotKey === dotKey) {
+      const duration = Date.now() - draggingDot.startTime;
+      const distance = Math.sqrt(
+        Math.pow(e.clientX - draggingDot.startX, 2) + 
+        Math.pow(e.clientY - draggingDot.startY, 2)
+      );
+      
+      // If click was short and didn't move much, treat as click to select
+      if (duration < 300 && distance < 5) {
+        setSelectedButton(zoneId);
+        // User can now use Icon & Text tab to add icon to this position
+        showFeedback(`Zone selected. Use Icon & Text tab to add content to ${dotKey}`, 'info');
+      }
+    }
+    setDraggingDot(null);
+  }, [draggingDot, showFeedback, setSelectedButton]);
+
+  const handleDotMouseMove = useCallback((e, zoneId) => {
+    if (!draggingDot || draggingDot.zoneId !== zoneId) return;
+    
+    const button = e.currentTarget.getBoundingClientRect();
+    const x = ((e.clientX - button.left) / button.width) * 100;
+    const y = ((e.clientY - button.top) / button.height) * 100;
+    
+    // Clamp values between 25% and 75% to prevent icons from being clipped at button edges
+    // Provides adequate margin for 35px icons in PDF capture (scaled from 40px in web view)
+    const clampedX = Math.max(25, Math.min(75, x));
+    const clampedY = Math.max(25, Math.min(75, y));
+    
+    setDotPositions(prev => ({
+      ...prev,
+      [zoneId]: {
+        ...prev[zoneId],
+        [draggingDot.dotKey]: { x: clampedX, y: clampedY }
+      }
+    }));
+  }, [draggingDot]);
+
+  const handleDotMouseLeave = useCallback(() => {
+    setDraggingDot(null);
+  }, []);
 
   const renderZoneContent = (zoneId) => {
     const zone = dropZones[zoneId];
@@ -1036,114 +1140,91 @@ function Frame({
     const buttonType = zone.dimensions?.buttonType;
     const isButtonWithDots = [5, 6, 7, 8, 9, 10, 11].includes(buttonType);
 
+    // Get custom dot positions or use defaults
+    const customPositions = dotPositions[zoneId] || {};
+    
+    // Default positions for each button type
+    const getDefaultDotPosition = (type, dotKey) => {
+      const defaults = {
+        5: { s0: { x: 50, y: 30 }, s1: { x: 50, y: 70 } },
+        6: { s0: { x: 30, y: 50 }, s1: { x: 70, y: 50 } },
+        7: { s0: { x: 50, y: 50 } },
+        8: { s0: { x: 30, y: 30 }, s1: { x: 30, y: 70 } },
+        9: { s0: { x: 30, y: 50 }, s1: { x: 70, y: 50 } },
+        10: { s0: { x: 50, y: 30 }, s1: { x: 50, y: 70 } },
+        11: { s0: { x: 50, y: 35 }, s1: { x: 50, y: 65 } }
+      };
+      return defaults[type]?.[dotKey] || { x: 50, y: 50 };
+    };
+
+    const renderDot = (dotKey) => {
+      const position = customPositions[dotKey] || getDefaultDotPosition(buttonType, dotKey);
+      const zoneData = zone[dotKey];
+      const hasContent = (zoneData?.type === 'icon' && zoneData?.value) || (zoneData?.type === 'text' && zoneData?.value);
+      
+      return (
+        <span
+          key={dotKey}
+          className={dotKey}
+          style={{
+            position: 'absolute',
+            left: `${position.x}%`,
+            top: `${position.y}%`,
+            transform: 'translate(-50%, -50%)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            minWidth: hasContent ? '40px' : '20px',
+            minHeight: hasContent ? '40px' : '20px',
+            cursor: draggingDot?.zoneId === zoneId && draggingDot?.dotKey === dotKey ? 'grabbing' : 'grab',
+            zIndex: 10
+          }}
+          onMouseDown={(e) => handleDotMouseDown(e, zoneId, dotKey)}
+          onMouseUp={(e) => handleDotMouseUp(e, zoneId, dotKey)}
+        >
+          {zoneData?.type === 'icon' && zoneData?.value ? (
+            <img 
+              src={`/ican/images/${zoneData.value}`} 
+              alt="icon" 
+              className="button-icon"
+              style={{
+                filter: 'brightness(0) invert(1)',
+                WebkitFilter: 'brightness(0) invert(1)',
+                objectFit: 'contain',
+                maxWidth: '40px',
+                maxHeight: '40px',
+                width: '40px',
+                height: '40px',
+                pointerEvents: 'none',
+                display: 'block'
+              }}
+              onError={(e) => {
+                console.error('Failed to load icon:', zoneData.value);
+                e.target.style.display = 'none';
+              }}
+            />
+          ) : zoneData?.type === 'text' && zoneData?.value ? (
+            <span style={{ color: zoneData?.color || '#ffffff', fontSize: '14px', fontWeight: '500', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{zoneData.value}</span>
+          ) : (
+            <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)', pointerEvents: 'none' }}></div>
+          )}
+        </span>
+      );
+    };
+
     return (
-      <div className="dropped-button" style={buttonStyle}>
-        <div className="button-content">
-          {/* Render dots for buttons with dots */}
+      <div 
+        className="dropped-button" 
+        style={buttonStyle}
+        onMouseMove={(e) => handleDotMouseMove(e, zoneId)}
+        onMouseLeave={handleDotMouseLeave}
+      >
+        <div className="button-content" style={{ position: 'relative', width: '100%', height: '100%' }}>
+          {/* Render draggable dots for buttons with dots */}
           {isButtonWithDots && (
             <>
-              {(buttonType === 5 || buttonType === 10 || buttonType === 11) && (
-                <div style={{ display: 'flex', flexDirection: 'column', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
-                  <span className="s0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
-                    {zone.s0?.type === 'icon' && zone.s0?.value ? (
-                      <img 
-                        src={`/ican/images/${zone.s0.value}`} 
-                        alt="icon" 
-                        className="button-icon"
-                        style={iconStyle}
-                        onError={(e) => {
-                          console.error('Failed to load icon:', zone.s0.value);
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : zone.s0?.type === 'text' && zone.s0?.value ? (
-                      <span style={{ color: zone.s0?.color || '#ffffff', fontSize: '12px' }}>{zone.s0.value}</span>
-                    ) : (
-                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                    )}
-                  </span>
-                  <span className="s1" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
-                    {zone.s1?.type === 'icon' && zone.s1?.value ? (
-                      <img 
-                        src={`/ican/images/${zone.s1.value}`} 
-                        alt="icon" 
-                        className="button-icon"
-                        style={iconStyle}
-                        onError={(e) => {
-                          console.error('Failed to load icon:', zone.s1.value);
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : zone.s1?.type === 'text' && zone.s1?.value ? (
-                      <span style={{ color: zone.s1?.color || '#ffffff', fontSize: '12px' }}>{zone.s1.value}</span>
-                    ) : (
-                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                    )}
-                  </span>
-                </div>
-              )}
-              {(buttonType === 6 || buttonType === 9) && (
-                <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'space-around', alignItems: 'center', padding: '8px' }}>
-                  <span className="s0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
-                    {zone.s0?.type === 'icon' && zone.s0?.value ? (
-                      <img 
-                        src={`/ican/images/${zone.s0.value}`} 
-                        alt="icon" 
-                        className="button-icon"
-                        style={iconStyle}
-                        onError={(e) => {
-                          console.error('Failed to load icon:', zone.s0.value);
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : zone.s0?.type === 'text' && zone.s0?.value ? (
-                      <span style={{ color: zone.s0?.color || '#ffffff', fontSize: '12px' }}>{zone.s0.value}</span>
-                    ) : (
-                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                    )}
-                  </span>
-                  <span className="s1" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
-                    {zone.s1?.type === 'icon' && zone.s1?.value ? (
-                      <img 
-                        src={`/ican/images/${zone.s1.value}`} 
-                        alt="icon" 
-                        className="button-icon"
-                        style={iconStyle}
-                        onError={(e) => {
-                          console.error('Failed to load icon:', zone.s1.value);
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : zone.s1?.type === 'text' && zone.s1?.value ? (
-                      <span style={{ color: zone.s1?.color || '#ffffff', fontSize: '12px' }}>{zone.s1.value}</span>
-                    ) : (
-                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                    )}
-                  </span>
-                </div>
-              )}
-              {(buttonType === 7 || buttonType === 8) && (
-                <div style={{ display: 'flex', width: '100%', height: '100%', justifyContent: 'center', alignItems: 'center' }}>
-                  <span className="s0" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minWidth: '20px', minHeight: '20px' }}>
-                    {zone.s0?.type === 'icon' && zone.s0?.value ? (
-                      <img 
-                        src={`/ican/images/${zone.s0.value}`} 
-                        alt="icon" 
-                        className="button-icon"
-                        style={iconStyle}
-                        onError={(e) => {
-                          console.error('Failed to load icon:', zone.s0.value);
-                          e.target.style.display = 'none';
-                        }}
-                      />
-                    ) : zone.s0?.type === 'text' && zone.s0?.value ? (
-                      <span style={{ color: zone.s0?.color || '#ffffff', fontSize: '12px' }}>{zone.s0.value}</span>
-                    ) : (
-                      <div style={{ width: '12px', height: '12px', borderRadius: '50%', backgroundColor: 'rgba(0,0,0,0.3)', border: '2px solid rgba(0,0,0,0.5)' }}></div>
-                    )}
-                  </span>
-                </div>
-              )}
+              {renderDot('s0')}
+              {(buttonType !== 7) && renderDot('s1')}
             </>
           )}
           {/* Render original content for standard buttons */}

@@ -27,6 +27,12 @@ function SavedDesignsThumbnail({ design, onLoad }) {
       'pblock-2x6': { columns: 2, rows: 6 },
       'dora-thermostat': { columns: 2, rows: 4 },
       'pblock-2x4': { columns: 2, rows: 4 },
+      'pblock-2x2': { columns: 2, rows: 2 },
+      'pblock-2x2-display': { columns: 2, rows: 1 },
+      'pblock-3x2': { columns: 2, rows: 3 },
+      'pblock-3x2-display': { columns: 2, rows: 2 },
+      'pblock-4x2': { columns: 2, rows: 4 },
+      'pblock-4x2-display': { columns: 2, rows: 3 },
       '2x4': { columns: 2, rows: 4 },
       '2x6': { columns: 2, rows: 6 },
       '2x8': { columns: 2, rows: 8 }
@@ -35,7 +41,7 @@ function SavedDesignsThumbnail({ design, onLoad }) {
     const config = GRID_CONFIGS[gridType] || { columns: 2, rows: 4 };
     
     // Check if this design has a digital display
-    const hasDisplay = gridType === 'dora-thermostat';
+    const hasDisplay = gridType === 'dora-thermostat' || gridType?.endsWith('-display');
     
     // Limit display to 6 rows for thumbnail
     const displayRows = Math.min(config.rows, 6);

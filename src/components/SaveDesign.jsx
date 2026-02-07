@@ -1,15 +1,30 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColor, wallColor, onLoadDesign }) {
-  const [category, setCategory] = useState('2-8');
+  // Auto-select category based on current gridType
+  const getDefaultCategory = (gt) => {
+    if (!gt) return '2-8';
+    if (gt.startsWith('pblock-2x2') || gt === 'pblock-2x6') return 'pblock-level-2';
+    if (gt.startsWith('pblock-3x2')) return 'pblock-level-3';
+    if (gt.startsWith('pblock-4x2') || gt === 'pblock-2x4') return 'pblock-level-4';
+    return '2-8';
+  };
+  const [category, setCategory] = useState(() => getDefaultCategory(gridType));
   const [designName, setDesignName] = useState('');
   const [savedDesigns, setSavedDesigns] = useState([]);
   const [showList, setShowList] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
+  // Update category when modal opens with a different gridType
+  useEffect(() => {
+    if (isOpen) {
+      setCategory(getDefaultCategory(gridType));
+    }
+  }, [isOpen, gridType]);
+
   const loadDesigns = useCallback(async () => {
     try {
-      const response = await fetch('/designs.json');
+      const response = await fetch(`/designs.json?ts=${Date.now()}`);
       if (!response.ok) throw new Error('Failed to load designs');
       const data = await response.json();
       const allDesigns = data.designs || [];
@@ -160,6 +175,9 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
                 <option value="2-8">2-8 Buttons Switch</option>
                 <option value="3-12">3-12 Button Switch</option>
                 <option value="2-8-room">2-8 Room Controller</option>
+                <option value="pblock-level-2">PBlock Level 2</option>
+                <option value="pblock-level-3">PBlock Level 3</option>
+                <option value="pblock-level-4">PBlock Level 4</option>
               </select>
             </div>
 

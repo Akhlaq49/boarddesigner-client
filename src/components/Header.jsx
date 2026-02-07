@@ -24,6 +24,24 @@ const PRODUCT_CATEGORIES = [
        ]
   },
   {
+    id: 'pblock-level-2',
+    name: 'PBlock Level 2',
+    products: [
+    ]
+  },
+  {
+    id: 'pblock-level-3',
+    name: 'PBlock Level 3',
+    products: [
+    ]
+  },
+  {
+    id: 'pblock-level-4',
+    name: 'PBlock Level 4',
+    products: [
+    ]
+  },
+  {
     id: 'design-self',
     name: 'Design Your Self',
     products: [
@@ -46,6 +64,9 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
   const [savedDesigns28Room, setSavedDesigns28Room] = useState([]);
+  const [savedDesignsPblockL2, setSavedDesignsPblockL2] = useState([]);
+  const [savedDesignsPblockL3, setSavedDesignsPblockL3] = useState([]);
+  const [savedDesignsPblockL4, setSavedDesignsPblockL4] = useState([]);
   
   // Load saved designs on mount
   useEffect(() => {
@@ -70,7 +91,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
   
   const loadSavedDesigns = async () => {
     try {
-      const response = await fetch('/designs.json');
+      const response = await fetch(`/designs.json?ts=${Date.now()}`);
       if (!response.ok) throw new Error('Failed to load designs');
       const data = await response.json();
       const allDesigns = data.designs || [];
@@ -78,10 +99,16 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       const designs28 = allDesigns.filter(d => d.category === '2-8');
       const designs312 = allDesigns.filter(d => d.category === '3-12');
       const designs28Room = allDesigns.filter(d => d.category === '2-8-room');
+      const designsPblockL2 = allDesigns.filter(d => d.category === 'pblock-level-2');
+      const designsPblockL3 = allDesigns.filter(d => d.category === 'pblock-level-3');
+      const designsPblockL4 = allDesigns.filter(d => d.category === 'pblock-level-4');
      
       setSavedDesigns28(designs28);
       setSavedDesigns312(designs312);
       setSavedDesigns28Room(designs28Room);
+      setSavedDesignsPblockL2(designsPblockL2);
+      setSavedDesignsPblockL3(designsPblockL3);
+      setSavedDesignsPblockL4(designsPblockL4);
     } catch (error) {
       console.error('Error loading saved designs:', error);
     }
@@ -151,7 +178,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
             
             {/* Right side: Save Design and Save PDF Buttons */}
             <div className="flex-shrink-0" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              {/* <button
+              <button
                 type="button"
                 className="save-design-btn"
                 onClick={onOpenSaveDesign}
@@ -173,7 +200,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
               >
                 <i className="fas fa-save"></i>
                 <span>Save Design</span>
-              </button> */}
+              </button>
               <button
                 type="button"
                 className="save-pdf-btn"
@@ -239,6 +266,51 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   {savedDesigns28Room.map((design, idx) => (
                     <SavedDesignsThumbnail
                       key={`design-28-room-${idx}`}
+                      design={design}
+                      onLoad={(design) => {
+                        window.dispatchEvent(new CustomEvent('loadSavedDesign', {
+                          detail: design
+                        }));
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {activeCategory?.id === 'pblock-level-2' && savedDesignsPblockL2.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', paddingRight: '0.75rem', borderRight: '2px solid #ddd', marginRight: '0.75rem' }}>
+                  {savedDesignsPblockL2.map((design, idx) => (
+                    <SavedDesignsThumbnail
+                      key={`design-pblock-l2-${idx}`}
+                      design={design}
+                      onLoad={(design) => {
+                        window.dispatchEvent(new CustomEvent('loadSavedDesign', {
+                          detail: design
+                        }));
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {activeCategory?.id === 'pblock-level-3' && savedDesignsPblockL3.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', paddingRight: '0.75rem', borderRight: '2px solid #ddd', marginRight: '0.75rem' }}>
+                  {savedDesignsPblockL3.map((design, idx) => (
+                    <SavedDesignsThumbnail
+                      key={`design-pblock-l3-${idx}`}
+                      design={design}
+                      onLoad={(design) => {
+                        window.dispatchEvent(new CustomEvent('loadSavedDesign', {
+                          detail: design
+                        }));
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {activeCategory?.id === 'pblock-level-4' && savedDesignsPblockL4.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', paddingRight: '0.75rem', borderRight: '2px solid #ddd', marginRight: '0.75rem' }}>
+                  {savedDesignsPblockL4.map((design, idx) => (
+                    <SavedDesignsThumbnail
+                      key={`design-pblock-l4-${idx}`}
                       design={design}
                       onLoad={(design) => {
                         window.dispatchEvent(new CustomEvent('loadSavedDesign', {

@@ -2261,6 +2261,26 @@ legend {
     color: #1976d2; /* Material Design primary */
 }
 
+/* Draggable dot styles */
+.button-content .s0:hover,
+.button-content .s1:hover {
+    opacity: 0.8;
+}
+
+.button-content .s0,
+.button-content .s1 {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.button-content .s0:active,
+.button-content .s1:active {
+    cursor: grabbing !important;
+    opacity: 0.9;
+}
+
 .button-indicator {
     font-size: 0.75rem;
     color: #1976d2;
