@@ -5,21 +5,21 @@ import SavedDesignsThumbnail from './SavedDesignsThumbnail';
 const PRODUCT_CATEGORIES = [
   {
     id: '2-8-buttons',
-    name: '2-8 Buttons Switch',
+    name: 'DORA Keypad',
     products: [
       
     ]
   },
   {
     id: '3-12-buttons',
-    name: '3-12 Button Switch',
+    name: 'DORA XL',
     products: [
       
     ]
   },
   {
     id: '2-8-room',
-    name: '2-8 Room Controller',
+    name: 'Dora RTC',
     products: [
        ]
   },
