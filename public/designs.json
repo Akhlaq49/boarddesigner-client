@@ -4487,77 +4487,82 @@
       "createdAt": "2026-02-05T09:42:45.884Z"
     },
     {
-      "id": "1770498697648",
-      "name": "dd",
+      "id": "1770567191082",
+      "name": "0001",
       "category": "pblock-level-2",
-      "timestamp": "08/02/2026, 2:11:37 am",
+      "timestamp": "08/02/2026, 9:13:11 pm",
       "gridType": "pblock-2x2-display",
       "dropZones": {
-        "button2": {
-          "type": 8,
+        "button1": {
+          "type": 9,
           "dimensions": {
-            "colSpan": 1,
+            "colSpan": 2,
             "rowSpan": 1,
-            "buttonType": 8
+            "buttonType": 9
           },
           "zones": [
+            "button1",
             "button2"
           ],
           "color": null,
           "isPrimary": true,
-          "primaryZone": "button2",
-          "s0": {
-            "type": "icon",
-            "value": "M&T-15.svg"
-          },
-          "s1": {
-            "type": "icon",
-            "value": "LL-18.svg"
-          },
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
           "s2": null
         },
-        "button1": {
-          "type": 8,
+        "button2": {
+          "type": 9,
           "dimensions": {
-            "colSpan": 1,
+            "colSpan": 2,
             "rowSpan": 1,
-            "buttonType": 8
+            "buttonType": 9
           },
           "zones": [
-            "button1"
+            "button1",
+            "button2"
           ],
-          "color": "pure-gold",
-          "isPrimary": true,
-          "primaryZone": "button1",
-          "s0": {
-            "type": "icon",
-            "value": "0CB-60.svg"
-          },
-          "s1": {
-            "type": "icon",
-            "value": "C&H-14.svg"
-          },
-          "s2": null
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
         }
       },
       "frameColor": null,
-      "fullColor": "pure-gold",
+      "fullColor": null,
       "wallColor": "#e8e8e8",
-      "createdAt": "2026-02-07T21:11:37.711Z"
+      "createdAt": "2026-02-08T16:13:11.162Z"
     },
     {
-      "id": "1770499071096",
-      "name": "eeee",
-      "category": "pblock-level-3",
-      "timestamp": "08/02/2026, 2:17:51 am",
-      "gridType": "pblock-3x2",
+      "id": "1770567274027",
+      "name": "0002",
+      "category": "pblock-level-2",
+      "timestamp": "08/02/2026, 9:14:34 pm",
+      "gridType": "pblock-2x2-display",
       "dropZones": {
-        "button2": {
-          "type": 8,
+        "button1": {
+          "type": 11,
           "dimensions": {
             "colSpan": 1,
             "rowSpan": 1,
-            "buttonType": 8
+            "buttonType": 11
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
           },
           "zones": [
             "button2"
@@ -4565,16 +4570,23 @@
           "color": null,
           "isPrimary": true,
           "primaryZone": "button2",
-          "s0": {
-            "type": "icon",
-            "value": "M&T-15.svg"
-          },
-          "s1": {
-            "type": "icon",
-            "value": "LL-18.svg"
-          },
+          "s0": null,
+          "s1": null,
           "s2": null
-        },
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:14:34.042Z"
+    },
+    {
+      "id": "1770567373393",
+      "name": "0003",
+      "category": "pblock-level-2",
+      "timestamp": "08/02/2026, 9:16:13 pm",
+      "gridType": "dora-1x1",
+      "dropZones": {
         "button1": {
           "type": 8,
           "dimensions": {
@@ -4585,24 +4597,1100 @@
           "zones": [
             "button1"
           ],
-          "color": "pure-gold",
+          "color": null,
           "isPrimary": true,
           "primaryZone": "button1",
-          "s0": {
-            "type": "icon",
-            "value": "0CB-60.svg"
-          },
-          "s1": {
-            "type": "icon",
-            "value": "C&H-14.svg"
-          },
+          "s0": null,
+          "s1": null,
           "s2": null
         }
       },
       "frameColor": null,
-      "fullColor": "pure-gold",
+      "fullColor": null,
       "wallColor": "#e8e8e8",
-      "createdAt": "2026-02-07T21:17:51.133Z"
+      "createdAt": "2026-02-08T16:16:13.405Z"
+    },
+    {
+      "id": "1770567516111",
+      "name": "0004",
+      "category": "pblock-level-2",
+      "timestamp": "08/02/2026, 9:18:36 pm",
+      "gridType": "pblock-2x2",
+      "dropZones": {
+        "button1": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button3": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button3"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:18:36.125Z"
+    },
+    {
+      "id": "1770567581896",
+      "name": "0005",
+      "category": "pblock-level-2",
+      "timestamp": "08/02/2026, 9:19:41 pm",
+      "gridType": "pblock-2x2",
+      "dropZones": {
+        "button1": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:19:41.907Z"
+    },
+    {
+      "id": "1770567702715",
+      "name": "0006",
+      "category": "pblock-level-3",
+      "timestamp": "08/02/2026, 9:21:42 pm",
+      "gridType": "pblock-3x2-display",
+      "dropZones": {
+        "button1": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button3": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button3"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:21:42.726Z"
+    },
+    {
+      "id": "1770567869558",
+      "name": "0007",
+      "category": "pblock-level-3",
+      "timestamp": "08/02/2026, 9:24:29 pm",
+      "gridType": "pblock-3x2-display",
+      "dropZones": {
+        "button1": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:24:29.568Z"
+    },
+    {
+      "id": "1770567907066",
+      "name": "0008",
+      "category": "pblock-level-3",
+      "timestamp": "08/02/2026, 9:25:07 pm",
+      "gridType": "pblock-3x2",
+      "dropZones": {
+        "button1": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button3": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button3"
+        },
+        "button5": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button5",
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button5",
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button5"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:25:07.075Z"
+    },
+    {
+      "id": "1770567954890",
+      "name": "0009",
+      "category": "pblock-level-3",
+      "timestamp": "08/02/2026, 9:25:54 pm",
+      "gridType": "pblock-3x2",
+      "dropZones": {
+        "button1": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button5": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button5"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:25:54.901Z"
+    },
+    {
+      "id": "1770568114838",
+      "name": "0010",
+      "category": "pblock-level-4",
+      "timestamp": "08/02/2026, 9:28:34 pm",
+      "gridType": "pblock-4x2-display",
+      "dropZones": {
+        "button1": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button3": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button3"
+        },
+        "button5": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button5",
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button5",
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button5"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:28:34.850Z"
+    },
+    {
+      "id": "1770568162759",
+      "name": "0011",
+      "category": "pblock-level-4",
+      "timestamp": "08/02/2026, 9:29:22 pm",
+      "gridType": "pblock-4x2-display",
+      "dropZones": {
+        "button1": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button5": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button5"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:29:22.771Z"
+    },
+    {
+      "id": "1770568222207",
+      "name": "0012",
+      "category": "pblock-level-4",
+      "timestamp": "08/02/2026, 9:30:22 pm",
+      "gridType": "pblock-4x2",
+      "dropZones": {
+        "button1": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button5": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button5"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button7": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button7"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button7",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 11,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 11
+          },
+          "zones": [
+            "button8"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button8",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:30:22.215Z"
+    },
+    {
+      "id": "1770568261170",
+      "name": "0013",
+      "category": "pblock-level-4",
+      "timestamp": "08/02/2026, 9:31:01 pm",
+      "gridType": "pblock-4x2",
+      "dropZones": {
+        "button1": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button1",
+            "button2"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button3": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button3"
+        },
+        "button5": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button5",
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button5",
+            "button6"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button5"
+        },
+        "button7": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button7",
+            "button8"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button7",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 9,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 1,
+            "buttonType": 9
+          },
+          "zones": [
+            "button7",
+            "button8"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button7"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-08T16:31:01.178Z"
     }
   ]
 }
