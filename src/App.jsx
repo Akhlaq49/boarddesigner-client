@@ -60,6 +60,8 @@ function App() {
   // Track active category tab
   const [activeTab, setActiveTab] = useState('2-8-buttons');
 
+  const showButtonParts = activeTab === 'design-self' || activeTab.startsWith('pblock-level-');
+
   const handleGridTypeChange = (nextGridType) => {
     resetDesign();
     setGridType(nextGridType);
@@ -102,7 +104,7 @@ function App() {
         <div className="container-fluid h-100 app-content">
           <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
             {/* Left Column - Button Parts (show only when Design Your Self is active) */}
-            {activeTab === 'design-self' && (
+            {showButtonParts && (
               <div className="h-100" style={{ 
                 width: '25%',
                 minWidth: '200px',
@@ -131,6 +133,7 @@ function App() {
                       dropZones={dropZones}
                       selectedButtonPart={selectedButtonPart}
                       setSelectedButtonPart={setSelectedButtonPart}
+                      labelOnly={activeTab.startsWith('pblock-level-')}
                     />
                   </div>
                 </div>
@@ -155,6 +158,8 @@ function App() {
                 dropZones={dropZones}
                 selectedButton={selectedButton}
                 setSelectedButton={setSelectedButton}
+                setShowIconPopup={setShowIconPopup}
+                setCurrentIconPosition={setCurrentIconPosition}
                 updateDropZone={updateDropZone}
                 clearDropZone={clearDropZone}
                 getButtonDimensions={getButtonDimensions}

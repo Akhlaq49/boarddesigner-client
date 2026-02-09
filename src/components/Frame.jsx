@@ -57,6 +57,8 @@ function Frame({
   dropZones,
   selectedButton,
   setSelectedButton,
+  setShowIconPopup,
+  setCurrentIconPosition,
   updateDropZone,
   clearDropZone,
   getButtonDimensions,
@@ -1067,12 +1069,17 @@ function Frame({
       // If click was short and didn't move much, treat as click to select
       if (duration < 300 && distance < 5) {
         setSelectedButton(zoneId);
-        // User can now use Icon & Text tab to add icon to this position
-        showFeedback(`Zone selected. Use Icon & Text tab to add content to ${dotKey}`, 'info');
+        if (setCurrentIconPosition) {
+          setCurrentIconPosition(dotKey);
+        }
+        if (setShowIconPopup) {
+          setShowIconPopup(true);
+        }
+        showFeedback(`Zone selected. Choose an icon for ${dotKey}`, 'info');
       }
     }
     setDraggingDot(null);
-  }, [draggingDot, showFeedback, setSelectedButton]);
+  }, [draggingDot, setCurrentIconPosition, setSelectedButton, setShowIconPopup, showFeedback]);
 
   const handleDotMouseMove = useCallback((e, zoneId) => {
     if (!draggingDot || draggingDot.zoneId !== zoneId) return;
@@ -1150,7 +1157,7 @@ function Frame({
     }
 
     // Check if button type has dots (5, 6, 7, 8, 9, 10, 11)
-    const buttonType = zone.dimensions?.buttonType;
+    const buttonType = zone.dimensions?.buttonType ?? zone.buttonType ?? zone.type;
     const isButtonWithDots = [5, 6, 7, 8, 9, 10, 11].includes(buttonType);
 
     // Get custom dot positions or use defaults
@@ -1219,7 +1226,7 @@ function Frame({
           ) : zoneData?.type === 'text' && zoneData?.value ? (
             <span style={{ color: zoneData?.color || '#ffffff', fontSize: '14px', fontWeight: '500', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{zoneData.value}</span>
           ) : (
-            <div style={{ width: '10px', height: '10px', backgroundColor: 'rgba(0,0,0,0.4)', border: '2px solid rgba(0,0,0,0.6)', pointerEvents: 'none' }}></div>
+            <div className="dot-placeholder"></div>
           )}
         </span>
       );

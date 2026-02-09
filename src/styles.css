@@ -2379,6 +2379,37 @@ legend {
 }
 
 /* Draggable dot styles */
+.dot-placeholder {
+    width: 10px;
+    height: 10px;
+    border: 2px solid rgba(0, 0, 0, 0.6);
+    background-color: #f4d03f;
+    border-radius: 100%;
+    pointer-events: none;
+
+    /* box-shadow: 0 0 0 rgba(244, 208, 63, 0); */
+    animation: yellowBlink 1s ease-in-out infinite;
+}
+
+@keyframes yellowBlink {
+    0% {
+        box-shadow: 0 0 0 rgba(244, 208, 63, 0);
+    }
+    50% {
+        box-shadow: 0 0 6px rgba(244, 208, 63, 0.9),
+                    0 0 12px rgba(244, 208, 63, 0.6);
+    }
+    100% {
+        box-shadow: 0 0 0 rgba(244, 208, 63, 0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dot-placeholder {
+        animation: none;
+    }
+}
+
 .button-content .s0:hover,
 .button-content .s1:hover {
     opacity: 0.8;

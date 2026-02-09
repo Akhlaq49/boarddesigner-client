@@ -45,17 +45,17 @@ const PRODUCT_CATEGORIES = [
     id: 'design-self',
     name: 'Design Your Self',
     products: [
-      { id: 'dora-1x1', columns: 1, rows: 1, label: 'Single Square Button' },
+      // { id: 'dora-1x1', columns: 1, rows: 1, label: 'Single Square Button' },
       { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora Keypad 2×4' },
       { id: 'dora-2x8', columns: 2, rows: 6, label: 'Dora XLarge 2×6' },
       { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat 4+4' },
-      { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' },
-      { id: 'pblock-2x2', columns: 2, rows: 2, label: 'PBlock 2×2 (Max 4 Buttons)' },
-      { id: 'pblock-2x2-display', columns: 2, rows: 1, label: 'PBlock 2×2 + Display' },
-      { id: 'pblock-3x2', columns: 2, rows: 3, label: 'PBlock 3×2 (Max 6 Buttons)' },
-      { id: 'pblock-3x2-display', columns: 2, rows: 2, label: 'PBlock 3×2 + Display' },
-      { id: 'pblock-4x2', columns: 2, rows: 4, label: 'PBlock 4×2 (Max 8 Buttons)' },
-      { id: 'pblock-4x2-display', columns: 2, rows: 3, label: 'PBlock 4×2 + Display' }
+      // { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' },
+      // { id: 'pblock-2x2', columns: 2, rows: 2, label: 'PBlock 2×2 (Max 4 Buttons)' },
+      // { id: 'pblock-2x2-display', columns: 2, rows: 1, label: 'PBlock 2×2 + Display' },
+      // { id: 'pblock-3x2', columns: 2, rows: 3, label: 'PBlock 3×2 (Max 6 Buttons)' },
+      // { id: 'pblock-3x2-display', columns: 2, rows: 2, label: 'PBlock 3×2 + Display' },
+      // { id: 'pblock-4x2', columns: 2, rows: 4, label: 'PBlock 4×2 (Max 8 Buttons)' },
+      // { id: 'pblock-4x2-display', columns: 2, rows: 3, label: 'PBlock 4×2 + Display' }
     ]
   }
 ];
@@ -130,7 +130,11 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
             {/* Left side: Logo and Home Button */}
             <div className="d-flex align-items-center gap-3 flex-shrink-0">
               <div className="future-logo">
-                <h1 style={{ color: '#00a651', margin: 0, fontSize: '1.5rem', fontWeight: 'bold' }}>future</h1>
+                <img
+                  src="/images/logo-mmti.png"
+                  alt="MMTI Technology & Interior"
+                  style={{ height: '70px', width: 'auto', display: 'block' }}
+                />
               </div>
               <button 
                 className="home-page-btn"

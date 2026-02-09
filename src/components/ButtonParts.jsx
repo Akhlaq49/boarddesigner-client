@@ -15,9 +15,10 @@ function ButtonParts({
   getTextureImage,
   dropZones,
   selectedButtonPart,
-  setSelectedButtonPart
+  setSelectedButtonPart,
+  labelOnly = false
 }) {
-  const [activeTab, setActiveTab] = useState('parts');
+  const [activeTab, setActiveTab] = useState(labelOnly ? 'label' : 'parts');
   const [positionTypes, setPositionTypes] = useState({
     s0: 'empty',
     s1: 'empty',
@@ -54,6 +55,9 @@ function ButtonParts({
 
   // Sync text values and colors when button is selected
   useEffect(() => {
+    if (labelOnly && activeTab !== 'label') {
+      setActiveTab('label');
+    }
     if (selectedButton && dropZones[selectedButton]) {
       const zone = dropZones[selectedButton];
       const primaryZoneId = zone.isPrimary ? selectedButton : (zone.mergedInto || selectedButton);
@@ -85,11 +89,12 @@ function ButtonParts({
       setTextValues({ s0: '', s1: '', s2: '' });
       setTextColors({ s0: '#ffffff', s1: '#ffffff', s2: '#ffffff' });
     }
-  }, [selectedButton, dropZones]);
+  }, [activeTab, labelOnly, selectedButton, dropZones]);
 
   // Check if selected button is a button with dots (PBlock or other dot buttons)
-  const isPBlockButton = selectedButton && dropZones[selectedButton] && 
-    [5, 6, 7, 8, 9, 10, 11].includes(dropZones[selectedButton]?.dimensions?.buttonType);
+  const selectedZone = selectedButton ? dropZones[selectedButton] : null;
+  const selectedButtonType = selectedZone?.dimensions?.buttonType ?? selectedZone?.buttonType ?? selectedZone?.type;
+  const isPBlockButton = !!selectedZone && [5, 6, 7, 8, 9, 10, 11].includes(selectedButtonType);
 
   const handleDragStart = (e, buttonType) => {
     const dimensions = {
@@ -140,47 +145,49 @@ function ButtonParts({
 
   return (
     <div className="h-full">
-      <div className="relative x-tab-group">
-        <div className="flex relative overflow-hidden max-w-full max-h-full">
-          <div className="relative overflow-auto w-full">
-            <div className="relative flex min-w-full w-fit border-b border-secondary-200 dark:border-secondary-700">
-              <button
-                type="button"
-                className={`x-tab ${activeTab === 'parts' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveTab('parts');
-                  setSelectedButton(null);
-                  setSelectedButtonPart(null);
-                }}
-              >
-                <div className="font-medium">Button Parts</div>
-              </button>
-              <button
-                type="button"
-                className={`x-tab ${activeTab === 'label' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveTab('label');
-                  setSelectedButton(null);
-                  setSelectedButtonPart(null);
-                }}
-              >
-                <div className="font-medium">Icon & Text</div>
-              </button>
-              <button
-                type="button"
-                className={`x-tab ${activeTab === 'pblock' ? 'active' : ''}`}
-                onClick={() => {
-                  setActiveTab('pblock');
-                  setSelectedButton(null);
-                  setSelectedButtonPart(null);
-                }}
-              >
-                <div className="font-medium">PBlock Buttons</div>
-              </button>
+      {!labelOnly && (
+        <div className="relative x-tab-group">
+          <div className="flex relative overflow-hidden max-w-full max-h-full">
+            <div className="relative overflow-auto w-full">
+              <div className="relative flex min-w-full w-fit border-b border-secondary-200 dark:border-secondary-700">
+                <button
+                  type="button"
+                  className={`x-tab ${activeTab === 'parts' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveTab('parts');
+                    setSelectedButton(null);
+                    setSelectedButtonPart(null);
+                  }}
+                >
+                  <div className="font-medium">Button Parts</div>
+                </button>
+                <button
+                  type="button"
+                  className={`x-tab ${activeTab === 'label' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveTab('label');
+                    setSelectedButton(null);
+                    setSelectedButtonPart(null);
+                  }}
+                >
+                  <div className="font-medium">Icon & Text</div>
+                </button>
+                <button
+                  type="button"
+                  className={`x-tab ${activeTab === 'pblock' ? 'active' : ''}`}
+                  onClick={() => {
+                    setActiveTab('pblock');
+                    setSelectedButton(null);
+                    setSelectedButtonPart(null);
+                  }}
+                >
+                  <div className="font-medium">PBlock Buttons</div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      )}
 
       {/* Button Parts Tab Panel */}
       {activeTab === 'parts' && (
