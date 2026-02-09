@@ -221,7 +221,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
             
             {/* Right side: Save Design and Save PDF Buttons */}
             <div className="flex-shrink-0 header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              <button
+              {/* <button
                 type="button"
                 className="save-design-btn"
                 onClick={onOpenSaveDesign}
@@ -243,7 +243,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
               >
                 <i className="fas fa-save"></i>
                 <span>Save Design</span>
-              </button>
+              </button> */}
               <button
                 type="button"
                 className="save-pdf-btn"
