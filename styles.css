@@ -655,7 +655,7 @@ section.fixed.w-full.h-full.overflow-hidden {
 }
 
 .pattern-select {
-    display: flex;
+    /* display: flex; */
     flex-direction: column;
     gap: 0.25rem;
     margin-bottom: 0.5rem;

@@ -205,6 +205,7 @@ function App() {
                     applyWallColor={applyWallColor}
                     wallColor={wallColor}
                     selectedButton={selectedButton}
+                    selectedMenu={activeTab}
                   />
                 </div>
               </div>

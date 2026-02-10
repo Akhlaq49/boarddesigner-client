@@ -1182,6 +1182,14 @@ function Frame({
       const zoneData = zone[dotKey];
       const hasContent = (zoneData?.type === 'icon' && zoneData?.value) || (zoneData?.type === 'text' && zoneData?.value);
       
+      // Icon line color logic for Pblock and Dora
+      let iconLineFilter = 'brightness(0) invert(1)';
+      const btnColor = getColorValue(zone.color || fullColor);
+      if (btnColor === '#ffffff') {
+        iconLineFilter = 'brightness(0)'; // black lines
+      } else if (btnColor === '#000000') {
+        iconLineFilter = 'brightness(0) invert(1)'; // white lines
+      }
       return (
         <span
           key={dotKey}
@@ -1208,8 +1216,8 @@ function Frame({
               alt="icon" 
               className="button-icon"
               style={{
-                filter: 'brightness(0) invert(1)',
-                WebkitFilter: 'brightness(0) invert(1)',
+                filter: iconLineFilter,
+                WebkitFilter: iconLineFilter,
                 objectFit: 'contain',
                 maxWidth: '40px',
                 maxHeight: '40px',
@@ -1256,7 +1264,11 @@ function Frame({
                     src={`/ican/images/${zone.s0.value}`} 
                     alt="icon" 
                     className="button-icon"
-                    style={iconStyle}
+                    style={{
+                      ...iconStyle,
+                      filter: (getColorValue(zone.color || fullColor) === '#ffffff') ? 'brightness(0)' : 'brightness(0) invert(1)',
+                      WebkitFilter: (getColorValue(zone.color || fullColor) === '#ffffff') ? 'brightness(0)' : 'brightness(0) invert(1)'
+                    }}
                     onError={(e) => {
                       console.error('Failed to load icon:', zone.s0.value);
                       e.target.style.display = 'none';
@@ -1266,6 +1278,8 @@ function Frame({
                 {zone.s0?.type === 'text' && zone.s0?.value && (
                   <span style={{ color: zone.s0?.color || '#ffffff' }}>{zone.s0.value}</span>
                 )}
+                {/* Align s0 to flex-end (right or top) */}
+                <style>{`.s0 { justify-content: flex-end !important; align-items: flex-start !important; display: flex !important; height: 100%; width: 100%; }`}</style>
               </span>
               <span className="s1">
                 {zone.s1?.type === 'icon' && zone.s1?.value && (
@@ -1273,7 +1287,11 @@ function Frame({
                     src={`/ican/images/${zone.s1.value}`} 
                     alt="icon" 
                     className="button-icon"
-                    style={iconStyle}
+                    style={{
+                      ...iconStyle,
+                      filter: (getColorValue(zone.color || fullColor) === '#ffffff') ? 'brightness(0)' : 'brightness(0) invert(1)',
+                      WebkitFilter: (getColorValue(zone.color || fullColor) === '#ffffff') ? 'brightness(0)' : 'brightness(0) invert(1)'
+                    }}
                     onError={(e) => {
                       console.error('Failed to load icon:', zone.s1.value);
                       e.target.style.display = 'none';
@@ -1283,6 +1301,8 @@ function Frame({
                 {zone.s1?.type === 'text' && zone.s1?.value && (
                   <span style={{ color: zone.s1?.color || '#ffffff' }}>{zone.s1.value}</span>
                 )}
+                {/* Align s1 to center */}
+                <style>{`.s1 { justify-content: center !important; align-items: center !important; display: flex !important; height: 100%; width: 100%; }`}</style>
               </span>
               <span className="s2">
                 {zone.s2?.type === 'icon' && zone.s2?.value && (
@@ -1290,7 +1310,11 @@ function Frame({
                     src={`/ican/images/${zone.s2.value}`} 
                     alt="icon" 
                     className="button-icon"
-                    style={iconStyle}
+                    style={{
+                      ...iconStyle,
+                      filter: (getColorValue(zone.color || fullColor) === '#ffffff') ? 'brightness(0)' : 'brightness(0) invert(1)',
+                      WebkitFilter: (getColorValue(zone.color || fullColor) === '#ffffff') ? 'brightness(0)' : 'brightness(0) invert(1)'
+                    }}
                     onError={(e) => {
                       console.error('Failed to load icon:', zone.s2.value);
                       e.target.style.display = 'none';
@@ -1300,6 +1324,8 @@ function Frame({
                 {zone.s2?.type === 'text' && zone.s2?.value && (
                   <span style={{ color: zone.s2?.color || '#ffffff' }}>{zone.s2.value}</span>
                 )}
+                {/* Align s2 to flex-start (left or bottom) */}
+                <style>{`.s2 { justify-content: flex-start !important; align-items: flex-end !important; display: flex !important; height: 100%; width: 100%; }`}</style>
               </span>
             </>
           )}

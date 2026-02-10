@@ -223,12 +223,13 @@ export function useDragDrop() {
 
   const applyFullColor = useCallback((colorName) => {
     setFullColor(colorName);
-    
-    // Update all existing buttons with the new color
+    setFrameColor(colorName); // Also apply to frame
+
+    // Update all drop zones with the new color
     setDropZones(prevZones => {
       const updatedZones = { ...prevZones };
       Object.keys(updatedZones).forEach(zoneId => {
-        if (updatedZones[zoneId] && updatedZones[zoneId].buttonType) {
+        if (updatedZones[zoneId]) {
           updatedZones[zoneId] = {
             ...updatedZones[zoneId],
             color: colorName
@@ -237,9 +238,9 @@ export function useDragDrop() {
       });
       return updatedZones;
     });
-    
-    showFeedback(`${colorName} applied to all`, 'success');
-  }, [showFeedback]);
+
+    showFeedback(`${colorName} applied to all (frame + buttons + drop zones)`, 'success');
+  }, [showFeedback, setFrameColor]);
 
   const applyIconToButton = useCallback((buttonId, position, iconPath) => {
     if (!buttonId) {

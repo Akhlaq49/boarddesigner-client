@@ -1,5 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 
+const PBLOCK_COLORS = [
+  { name: 'anthracite-gray', value: '#475569', label: 'Anthracite' },
+  { name: 'meteor-black', value: '#1e293b', label: 'Black' },
+  { name: 'polar-white', value: '#ffffff', label: 'White' },
+  { name: 'royal-silver', value: '#cbd5e1', label: 'Silver' },
+];
+
 const COLORS = [
   { name: 'polar-white', value: '#ffffff', label: 'Polar White' },
   { name: 'royal-silver', value: '#cbd5e1', label: 'Royal Silver' },
@@ -35,7 +42,9 @@ function ColorPalette({
   showFeedback,
   applyWallColor,
   wallColor,
-  selectedButton
+  selectedButton,
+  dropZones,
+  selectedMenu // <-- pass this prop from parent, e.g. 'PBlock Level 2'
 }) {
   const [activeTab, setActiveTab] = useState('textures');
   const [activeColor, setActiveColor] = useState('royal-silver');
@@ -301,61 +310,123 @@ function ColorPalette({
       {activeTab === 'textures' && (
         <div role="tabpanel" className="py-2" style={{ overflowX: 'visible' }}>
           <div className="flex flex-col gap-2 color-palette-list">
-            {COLORS.map(color => (
-              <div
-                key={color.name}
-                className={`pattern-select relative ${activeColor === color.name ? 'active' : ''}`}
-                data-color={color.name}
-              >
-                <button
-                  type="button"
-                  className={`btn pattern h-9 ${color.name} color-btn ${activeColor === color.name ? 'selected' : ''}`}
-                  style={{ 
-                    backgroundColor: color.value,
-                    backgroundImage: TEXTURE_IMAGES[color.name] ? `url(${TEXTURE_IMAGES[color.name]})` : undefined,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    backgroundRepeat: 'no-repeat'
-                  }}
-                  onClick={() => handleColorClick(color.name)}
-                  title={color.label}
-                  data-color-name={color.name}
-                >
-                  <span className="color-label">{color.label}</span>
-                </button>
-                {activeColor === color.name && (
-                  <div className="color-actions animate-slide-in">
+            {/* Only show PBLOCK_COLORS if selectedButton is a Pblock */}
+            {(() => {
+              // If selectedMenu is set and includes 'pblock', ONLY show PBLOCK_COLORS
+              if (selectedMenu && selectedMenu.toLowerCase().includes('pblock')) {
+                return PBLOCK_COLORS.map(color => (
+                  <div
+                    key={color.name}
+                    className={`pattern-select relative ${activeColor === color.name ? 'active' : ''}`}
+                    data-color={color.name}
+                  >
                     <button
                       type="button"
-                      className="frame-color-btn"
-                      onClick={() => handleFrameClick(color.name)}
-                      data-place="frame"
-                      data-color={color.name}
+                      className={`btn pattern h-9 ${color.name} color-btn ${activeColor === color.name ? 'selected' : ''}`}
+                      style={{ 
+                        backgroundColor: color.value,
+                        backgroundImage: TEXTURE_IMAGES[color.name] ? `url(${TEXTURE_IMAGES[color.name]})` : undefined,
+                        backgroundSize: 'cover',
+                        backgroundPosition: 'center',
+                        backgroundRepeat: 'no-repeat'
+                      }}
+                      onClick={() => handleColorClick(color.name)}
+                      title={color.label}
+                      data-color-name={color.name}
                     >
-                      <span>FRAME</span>
+                      <span className="color-label">{color.label}</span>
                     </button>
-                    <button
-                      type="button"
-                      className="button-color-action"
-                      onClick={() => handleButtonClick(color.name)}
-                      data-place="button"
-                      data-color={color.name}
-                    >
-                      <span>BUTTON</span>
-                    </button>
-                    <button
-                      type="button"
-                      className="all-color-btn"
-                      onClick={() => handleAllClick(color.name)}
-                      data-place="full"
-                      data-color={color.name}
-                    >
-                      <span>ALL</span>
-                    </button>
+                    {activeColor === color.name && (
+                      <div className="color-actions animate-slide-in">
+                        <button
+                          type="button"
+                          className="frame-color-btn"
+                          onClick={() => handleFrameClick(color.name)}
+                          data-place="frame"
+                          data-color={color.name}
+                        >
+                          <span>FRAME</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="button-color-action"
+                          onClick={() => handleButtonClick(color.name)}
+                          data-place="button"
+                          data-color={color.name}
+                        >
+                          <span>BUTTON</span>
+                        </button>
+                        <button
+                          type="button"
+                          className="all-color-btn"
+                          onClick={() => handleAllClick(color.name)}
+                          data-place="full"
+                          data-color={color.name}
+                        >
+                          <span>ALL</span>
+                        </button>
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                ));
+              }
+              // Otherwise, show all colors
+              return COLORS.map(color => (
+                <div
+                  key={color.name}
+                  className={`pattern-select relative ${activeColor === color.name ? 'active' : ''}`}
+                  data-color={color.name}
+                >
+                  <button
+                    type="button"
+                    className={`btn pattern h-9 ${color.name} color-btn ${activeColor === color.name ? 'selected' : ''}`}
+                    style={{ 
+                      backgroundColor: color.value,
+                      backgroundImage: TEXTURE_IMAGES[color.name] ? `url(${TEXTURE_IMAGES[color.name]})` : undefined,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      backgroundRepeat: 'no-repeat'
+                    }}
+                    onClick={() => handleColorClick(color.name)}
+                    title={color.label}
+                    data-color-name={color.name}
+                  >
+                    <span className="color-label">{color.label}</span>
+                  </button>
+                  {activeColor === color.name && (
+                    <div className="color-actions animate-slide-in">
+                      <button
+                        type="button"
+                        className="frame-color-btn"
+                        onClick={() => handleFrameClick(color.name)}
+                        data-place="frame"
+                        data-color={color.name}
+                      >
+                        <span>FRAME</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="button-color-action"
+                        onClick={() => handleButtonClick(color.name)}
+                        data-place="button"
+                        data-color={color.name}
+                      >
+                        <span>BUTTON</span>
+                      </button>
+                      <button
+                        type="button"
+                        className="all-color-btn"
+                        onClick={() => handleAllClick(color.name)}
+                        data-place="full"
+                        data-color={color.name}
+                      >
+                        <span>ALL</span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ));
+            })()}
           </div>
         </div>
       )}

@@ -37,6 +37,11 @@ function ButtonParts({
 
   const handlePositionTypeChange = (position, type) => {
     setPositionTypes(prev => ({ ...prev, [position]: type }));
+    if (type === 'empty' && selectedButton) {
+      // Remove icon/text from this slot
+      applyTextToButton(selectedButton, position, '', '');
+      if (applyIconToButton) applyIconToButton(selectedButton, position, '');
+    }
   };
 
   const handleTextChange = (position, value) => {
@@ -95,6 +100,11 @@ function ButtonParts({
   const selectedZone = selectedButton ? dropZones[selectedButton] : null;
   const selectedButtonType = selectedZone?.dimensions?.buttonType ?? selectedZone?.buttonType ?? selectedZone?.type;
   const isPBlockButton = !!selectedZone && [5, 6, 7, 8, 9, 10, 11].includes(selectedButtonType);
+  // Small button: only 1x1 (single cell)
+  const isSmallButton = !!selectedZone && (
+    (selectedZone.colSpan === 1 && selectedZone.rowSpan === 1) ||
+    selectedButtonType === 1 || selectedButtonType === 7 || selectedButtonType === 8 || selectedButtonType === 11
+  );
 
   const handleDragStart = (e, buttonType) => {
     const dimensions = {
@@ -284,15 +294,16 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s0 === type}
                         onChange={() => handlePositionTypeChange('s0', type)}
+                        disabled={isSmallButton}
                       />
-                      <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''}`}></div>
+                      <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''} ${isSmallButton ? 'opacity-50' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     </div>
                   </label>
                 ))}
               </div>
               <div className="h-10 mt-2">
-                {positionTypes.s0 === 'icon' && (
+                {positionTypes.s0 === 'icon' && !isSmallButton && (
                   <button
                     type="button"
                     className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
@@ -302,7 +313,7 @@ function ButtonParts({
                     <span>Select Icon</span>
                   </button>
                 )}
-                {positionTypes.s0 === 'text' && (
+                {positionTypes.s0 === 'text' && !isSmallButton && (
                   <div className="flex flex-col gap-2">
                     <input
                       type="text"
@@ -313,20 +324,15 @@ function ButtonParts({
                     />
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
-                      <input
-                        type="color"
+                      <select
                         value={textColors.s0}
                         onChange={(e) => handleTextColorChange('s0', e.target.value)}
-                        className="w-10 h-8 border-2 border-gray-300 rounded cursor-pointer"
+                        className="w-20 px-2 py-1 text-xs border rounded"
                         title="Select text color"
-                      />
-                      <input
-                        type="text"
-                        value={textColors.s0}
-                        onChange={(e) => handleTextColorChange('s0', e.target.value)}
-                        className="flex-1 px-2 py-1 text-xs border rounded"
-                        placeholder="#ffffff"
-                      />
+                      >
+                        <option value="#000000">Black</option>
+                        <option value="#ffffff">White</option>
+                      </select>
                     </div>
                   </div>
                 )}
@@ -378,20 +384,15 @@ function ButtonParts({
                     />
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
-                      <input
-                        type="color"
+                      <select
                         value={textColors.s1}
                         onChange={(e) => handleTextColorChange('s1', e.target.value)}
-                        className="w-10 h-8 border-2 border-gray-300 rounded cursor-pointer"
+                        className="w-20 px-2 py-1 text-xs border rounded"
                         title="Select text color"
-                      />
-                      <input
-                        type="text"
-                        value={textColors.s1}
-                        onChange={(e) => handleTextColorChange('s1', e.target.value)}
-                        className="flex-1 px-2 py-1 text-xs border rounded"
-                        placeholder="#ffffff"
-                      />
+                      >
+                        <option value="#000000">Black</option>
+                        <option value="#ffffff">White</option>
+                      </select>
                     </div>
                   </div>
                 )}
@@ -413,15 +414,16 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s2 === type}
                         onChange={() => handlePositionTypeChange('s2', type)}
+                        disabled={isSmallButton}
                       />
-                      <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''}`}></div>
+                      <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''} ${isSmallButton ? 'opacity-50' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     </div>
                   </label>
                 ))}
               </div>
               <div className="h-10 mt-2">
-                {positionTypes.s2 === 'icon' && (
+                {positionTypes.s2 === 'icon' && !isSmallButton && (
                   <button
                     type="button"
                     className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
@@ -431,7 +433,7 @@ function ButtonParts({
                     <span>Select Icon</span>
                   </button>
                 )}
-                {positionTypes.s2 === 'text' && (
+                {positionTypes.s2 === 'text' && !isSmallButton && (
                   <div className="flex flex-col gap-2">
                     <input
                       type="text"
@@ -442,20 +444,15 @@ function ButtonParts({
                     />
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
-                      <input
-                        type="color"
+                      <select
                         value={textColors.s2}
                         onChange={(e) => handleTextColorChange('s2', e.target.value)}
-                        className="w-10 h-8 border-2 border-gray-300 rounded cursor-pointer"
+                        className="w-20 px-2 py-1 text-xs border rounded"
                         title="Select text color"
-                      />
-                      <input
-                        type="text"
-                        value={textColors.s2}
-                        onChange={(e) => handleTextColorChange('s2', e.target.value)}
-                        className="flex-1 px-2 py-1 text-xs border rounded"
-                        placeholder="#ffffff"
-                      />
+                      >
+                        <option value="#000000">Black</option>
+                        <option value="#ffffff">White</option>
+                      </select>
                     </div>
                   </div>
                 )}
