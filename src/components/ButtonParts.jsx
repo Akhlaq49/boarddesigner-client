@@ -37,11 +37,6 @@ function ButtonParts({
 
   const handlePositionTypeChange = (position, type) => {
     setPositionTypes(prev => ({ ...prev, [position]: type }));
-    if (type === 'empty' && selectedButton) {
-      // Remove icon/text from this slot
-      applyTextToButton(selectedButton, position, '', '');
-      if (applyIconToButton) applyIconToButton(selectedButton, position, '');
-    }
   };
 
   const handleTextChange = (position, value) => {
@@ -100,11 +95,6 @@ function ButtonParts({
   const selectedZone = selectedButton ? dropZones[selectedButton] : null;
   const selectedButtonType = selectedZone?.dimensions?.buttonType ?? selectedZone?.buttonType ?? selectedZone?.type;
   const isPBlockButton = !!selectedZone && [5, 6, 7, 8, 9, 10, 11].includes(selectedButtonType);
-  // Small button: only 1x1 (single cell)
-  const isSmallButton = !!selectedZone && (
-    (selectedZone.colSpan === 1 && selectedZone.rowSpan === 1) ||
-    selectedButtonType === 1 || selectedButtonType === 7 || selectedButtonType === 8 || selectedButtonType === 11
-  );
 
   const handleDragStart = (e, buttonType) => {
     const dimensions = {
@@ -294,16 +284,16 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s0 === type}
                         onChange={() => handlePositionTypeChange('s0', type)}
-                        disabled={isSmallButton && !isPBlockButton}
+                        disabled={!isPBlockButton && selectedZone && selectedZone.size === 'small'}
                       />
-                      <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''} ${isSmallButton ? 'opacity-50' : ''}`}></div>
+                      <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     </div>
                   </label>
                 ))}
               </div>
               <div className="h-10 mt-2">
-                {positionTypes.s0 === 'icon' && !isSmallButton && (
+                {positionTypes.s0 === 'icon' && (
                   <button
                     type="button"
                     className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
@@ -313,7 +303,7 @@ function ButtonParts({
                     <span>Select Icon</span>
                   </button>
                 )}
-                {positionTypes.s0 === 'text' && !isSmallButton && (
+                {positionTypes.s0 === 'text' && (
                   <div className="flex flex-col gap-2">
                     <input
                       type="text"
@@ -414,16 +404,16 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s2 === type}
                         onChange={() => handlePositionTypeChange('s2', type)}
-                        disabled={isSmallButton && !isPBlockButton}
+                        disabled={!isPBlockButton && selectedZone && selectedZone.size === 'small'}
                       />
-                      <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''} ${isSmallButton ? 'opacity-50' : ''}`}></div>
+                      <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     </div>
                   </label>
                 ))}
               </div>
               <div className="h-10 mt-2">
-                {positionTypes.s2 === 'icon' && !isSmallButton && (
+                {positionTypes.s2 === 'icon' && (
                   <button
                     type="button"
                     className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
@@ -433,7 +423,7 @@ function ButtonParts({
                     <span>Select Icon</span>
                   </button>
                 )}
-                {positionTypes.s2 === 'text' && !isSmallButton && (
+                {positionTypes.s2 === 'text' && (
                   <div className="flex flex-col gap-2">
                     <input
                       type="text"
