@@ -294,7 +294,7 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s0 === type}
                         onChange={() => handlePositionTypeChange('s0', type)}
-                        disabled={isSmallButton}
+                        disabled={isSmallButton && !isPBlockButton}
                       />
                       <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''} ${isSmallButton ? 'opacity-50' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
@@ -414,7 +414,7 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s2 === type}
                         onChange={() => handlePositionTypeChange('s2', type)}
-                        disabled={isSmallButton}
+                        disabled={isSmallButton && !isPBlockButton}
                       />
                       <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''} ${isSmallButton ? 'opacity-50' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
