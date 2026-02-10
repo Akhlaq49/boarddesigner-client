@@ -4581,36 +4581,6 @@
       "createdAt": "2026-02-08T16:14:34.042Z"
     },
     {
-      "id": "1770567373393",
-      "name": "0003",
-      "category": "pblock-level-2",
-      "timestamp": "08/02/2026, 9:16:13 pm",
-      "gridType": "dora-1x1",
-      "dropZones": {
-        "button1": {
-          "type": 8,
-          "dimensions": {
-            "colSpan": 1,
-            "rowSpan": 1,
-            "buttonType": 8
-          },
-          "zones": [
-            "button1"
-          ],
-          "color": null,
-          "isPrimary": true,
-          "primaryZone": "button1",
-          "s0": null,
-          "s1": null,
-          "s2": null
-        }
-      },
-      "frameColor": null,
-      "fullColor": null,
-      "wallColor": "#e8e8e8",
-      "createdAt": "2026-02-08T16:16:13.405Z"
-    },
-    {
       "id": "1770567516111",
       "name": "0004",
       "category": "pblock-level-2",
@@ -5691,6 +5661,93 @@
       "fullColor": null,
       "wallColor": "#e8e8e8",
       "createdAt": "2026-02-08T16:31:01.178Z"
+    },
+    {
+      "id": "1770747542227",
+      "name": "0003",
+      "category": "pblock-level-2",
+      "timestamp": "10/02/2026, 11:19:02 pm",
+      "gridType": "pblock-2x2",
+      "dropZones": {
+        "button1": {
+          "type": 8,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 2,
+            "buttonType": 8
+          },
+          "zones": [
+            "button1",
+            "button2",
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 8,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 2,
+            "buttonType": 8
+          },
+          "zones": [
+            "button1",
+            "button2",
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button3": {
+          "type": 8,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 2,
+            "buttonType": 8
+          },
+          "zones": [
+            "button1",
+            "button2",
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        },
+        "button4": {
+          "type": 8,
+          "dimensions": {
+            "colSpan": 2,
+            "rowSpan": 2,
+            "buttonType": 8
+          },
+          "zones": [
+            "button1",
+            "button2",
+            "button3",
+            "button4"
+          ],
+          "color": null,
+          "isPrimary": false,
+          "isMerged": true,
+          "mergedInto": "button1"
+        }
+      },
+      "frameColor": null,
+      "fullColor": null,
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-10T18:19:02.275Z"
     }
   ]
 }
