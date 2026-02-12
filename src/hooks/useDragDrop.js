@@ -100,13 +100,16 @@ const ICON_FILES = [
   'thermostat.DI5g8u2h.svg'
 ];
 
+const DEFAULT_COLOR = 'polar-white';
+const DEFAULT_WALL_COLOR = COLORS[DEFAULT_COLOR];
+
 export function useDragDrop() {
   const [gridType, setGridType] = useState('2x4');
   const [selectedButton, setSelectedButton] = useState(null);
   const [dropZones, setDropZones] = useState({});
-  const [selectedColor, setSelectedColor] = useState(null);
-  const [frameColor, setFrameColor] = useState(null);
-  const [fullColor, setFullColor] = useState(null);
+  const [selectedColor, setSelectedColor] = useState(DEFAULT_COLOR);
+  const [frameColor, setFrameColor] = useState(DEFAULT_COLOR);
+  const [fullColor, setFullColor] = useState(DEFAULT_COLOR);
   const [showIconPopup, setShowIconPopup] = useState(false);
   const [currentIconPosition, setCurrentIconPosition] = useState(null);
   const [showButtonColorPopup, setShowButtonColorPopup] = useState(false);
@@ -114,7 +117,7 @@ export function useDragDrop() {
   const [feedback, setFeedback] = useState({ message: '', type: '', show: false });
   const [boardWidth, setBoardWidth] = useState(50); // Percentage of available width
   const [colorPaletteWidth, setColorPaletteWidth] = useState(25); // Percentage of available width
-  const [wallColor, setWallColor] = useState('#e8e8e8'); // Default background color
+  const [wallColor, setWallColor] = useState(DEFAULT_WALL_COLOR);
   const [selectedButtonPart, setSelectedButtonPart] = useState(null); // For click-to-apply functionality
 
   const showFeedback = useCallback((message, type = 'info') => {
@@ -184,8 +187,9 @@ export function useDragDrop() {
 
   const resetDesign = useCallback(() => {
     setDropZones({});
-    setFrameColor(null);
-    setFullColor(null);
+    setFrameColor(DEFAULT_COLOR);
+    setFullColor(DEFAULT_COLOR);
+    setSelectedColor(DEFAULT_COLOR);
     resetSelections();
   }, [resetSelections]);
 
