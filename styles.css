@@ -525,6 +525,11 @@ section.fixed.w-full.h-full.overflow-hidden {
 
 .custom-button-3 {
     min-height: 120px;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+    justify-self: center;
+    align-self: center;
     background-color: #ffffff;
 }
 

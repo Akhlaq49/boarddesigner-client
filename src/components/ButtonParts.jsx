@@ -1,5 +1,48 @@
 import React, { useState, useEffect } from 'react';
 
+// Icon categories and their descriptions
+const ICON_CATEGORIES = {
+  'AC': 'Air Conditioner',
+  'BC': 'Building Control', 
+  'C&CM': 'Communication',
+  'C&H': 'Cooling & Heating',
+  'C': 'Control',
+  'CB': 'Window draperies',
+  'D': 'Dimming',
+  'E&R': 'Entertainment',
+  'G&S': 'Garden & Security',
+  'H&HS': 'HVAC',
+  'H&S': 'Home Security',
+  'IU': 'Interface Unit',
+  'KC': 'Kitchen Control',
+  'LL': 'Lighting',
+  'M&H': 'Music & Home',
+  'M&T': 'Music & Theatre',
+  'OB': 'Office Building',
+  'S&G': 'Safety & Garden',
+  'SCS': 'Smart Control System'
+};
+
+// Function to extract readable icon name from filename
+function getIconDisplayInfo(iconFilename) {
+  if (!iconFilename) return null;
+  
+  // Remove .svg extension and decode URI
+  let name = iconFilename.replace('.svg', '').replace('%20', ' ');
+  
+  // Find category prefix
+  const categoryPrefix = Object.keys(ICON_CATEGORIES).find(prefix => 
+    name.startsWith(prefix + '-') || name.startsWith(prefix)
+  );
+  
+  const description = categoryPrefix ? ICON_CATEGORIES[categoryPrefix] : 'Icon';
+  
+  return {
+    name: name,
+    description: description
+  };
+}
+
 function ButtonParts({
   selectedButton,
   setSelectedButton,
@@ -37,6 +80,11 @@ function ButtonParts({
 
   const handlePositionTypeChange = (position, type) => {
     setPositionTypes(prev => ({ ...prev, [position]: type }));
+    
+    // If type is 'empty', clear the icon/text from the button
+    if (type === 'empty' && selectedButton) {
+      applyTextToButton(selectedButton, position, '', '#ffffff');
+    }
   };
 
   const handleTextChange = (position, value) => {
@@ -95,6 +143,8 @@ function ButtonParts({
   const selectedZone = selectedButton ? dropZones[selectedButton] : null;
   const selectedButtonType = selectedZone?.dimensions?.buttonType ?? selectedZone?.buttonType ?? selectedZone?.type;
   const isPBlockButton = !!selectedZone && [5, 6, 7, 8, 9, 10, 11].includes(selectedButtonType);
+  const isSingleCellButton = !!selectedZone && selectedZone?.dimensions?.colSpan === 1 && selectedZone?.dimensions?.rowSpan === 1;
+  const disableOuterPositions = !isPBlockButton && isSingleCellButton;
 
   const handleDragStart = (e, buttonType) => {
     const dimensions = {
@@ -166,13 +216,12 @@ function ButtonParts({
                   className={`x-tab ${activeTab === 'label' ? 'active' : ''}`}
                   onClick={() => {
                     setActiveTab('label');
-                    setSelectedButton(null);
                     setSelectedButtonPart(null);
                   }}
                 >
                   <div className="font-medium">Icon & Text</div>
                 </button>
-                <button
+                {/* <button
                   type="button"
                   className={`x-tab ${activeTab === 'pblock' ? 'active' : ''}`}
                   onClick={() => {
@@ -182,7 +231,7 @@ function ButtonParts({
                   }}
                 >
                   <div className="font-medium">PBlock Buttons</div>
-                </button>
+                </button> */}
               </div>
             </div>
           </div>
@@ -255,8 +304,8 @@ function ButtonParts({
 
       {/* Icon & Text Tab Panel */}
       {activeTab === 'label' && (
-        <div role="tabpanel" className="py-2 animate-fade-in">
-          <div className="relative flex flex-col icon-text-config">
+        <div role="tabpanel" className="py-2 animate-fade-in" style={{ position: 'relative', minHeight: '500px' }}>
+          <div className="flex flex-col icon-text-config h-full" style={{ position: 'relative', zIndex: 1 }}>
             {/* Helper text for PBlock buttons */}
             {isPBlockButton && (
               <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
@@ -269,11 +318,11 @@ function ButtonParts({
               </div>
             )}
             {/* Right / Top Position */}
-            <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+            <fieldset className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
               <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
                 {isPBlockButton ? 'First Zone' : 'Right / Top'}
               </legend>
-              <div className="flex flex-row items-center gap-4">
+              <div className="flex flex-row items-center">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
                     <div className="flex items-center">
@@ -284,7 +333,7 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s0 === type}
                         onChange={() => handlePositionTypeChange('s0', type)}
-                        disabled={!isPBlockButton && selectedZone && selectedZone.size === 'small'}
+                        disabled={disableOuterPositions || (!isPBlockButton && selectedZone && selectedZone.size === 'small')}
                       />
                       <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
@@ -292,16 +341,37 @@ function ButtonParts({
                   </label>
                 ))}
               </div>
-              <div className="h-10 mt-2">
+              <div className="min-h-10 mt-2">
                 {positionTypes.s0 === 'icon' && (
-                  <button
-                    type="button"
-                    className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
-                    onClick={() => handleOpenIconPopup('s0')}
-                  >
-                    <i className="fas fa-image mr-2"></i>
-                    <span>Select Icon</span>
-                  </button>
+                  <>
+                    {selectedZone?.s0?.value ? (
+                      <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border">
+                        <img 
+                          src={`/ican/images/${selectedZone.s0.value}`} 
+                          alt="Selected icon" 
+                          className="w-6 h-6 object-contain"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">
+                            {getIconDisplayInfo(selectedZone.s0.value)?.name || selectedZone.s0.value.replace('.svg', '')}
+                          </span>
+                          <span className="text-xs text-gray-600">
+                            {getIconDisplayInfo(selectedZone.s0.value)?.description}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
+                        onClick={() => handleOpenIconPopup('s0')}
+                        disabled={disableOuterPositions}
+                      >
+                        <i className="fas fa-image mr-2"></i>
+                        <span>Select Icon</span>
+                      </button>
+                    )}
+                  </>
                 )}
                 {positionTypes.s0 === 'text' && (
                   <div className="flex flex-col gap-2">
@@ -311,6 +381,7 @@ function ButtonParts({
                       className="w-full px-3 py-2 text-sm border-2 rounded-lg transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       value={textValues.s0}
                       onChange={(e) => handleTextChange('s0', e.target.value)}
+                      disabled={disableOuterPositions}
                     />
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
@@ -319,6 +390,7 @@ function ButtonParts({
                         onChange={(e) => handleTextColorChange('s0', e.target.value)}
                         className="w-20 px-2 py-1 text-xs border rounded"
                         title="Select text color"
+                        disabled={disableOuterPositions}
                       >
                         <option value="#000000">Black</option>
                         <option value="#ffffff">White</option>
@@ -327,14 +399,17 @@ function ButtonParts({
                   </div>
                 )}
               </div>
+              {disableOuterPositions && (
+                <div className="mt-2 text-xs text-gray-500"></div>
+              )}
             </fieldset>
 
             {/* Center Position */}
-            <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+            <fieldset className=" p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
               <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
                 {isPBlockButton ? 'Second Zone' : 'Center'}
               </legend>
-              <div className="flex flex-row items-center gap-4">
+              <div className="flex flex-row items-center">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
                     <div className="flex items-center">
@@ -352,16 +427,36 @@ function ButtonParts({
                   </label>
                 ))}
               </div>
-              <div className="h-10 mt-2">
+              <div className="min-h-10 mt-2">
                 {positionTypes.s1 === 'icon' && (
-                  <button
-                    type="button"
-                    className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
-                    onClick={() => handleOpenIconPopup('s1')}
-                  >
-                    <i className="fas fa-image mr-2"></i>
-                    <span>Select Icon</span>
-                  </button>
+                  <>
+                    {selectedZone?.s1?.value ? (
+                      <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border">
+                        <img 
+                          src={`/ican/images/${selectedZone.s1.value}`} 
+                          alt="Selected icon" 
+                          className="w-6 h-6 object-contain"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">
+                            {getIconDisplayInfo(selectedZone.s1.value)?.name || selectedZone.s1.value.replace('.svg', '')}
+                          </span>
+                          <span className="text-xs text-gray-600">
+                            {getIconDisplayInfo(selectedZone.s1.value)?.description}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
+                        onClick={() => handleOpenIconPopup('s1')}
+                      >
+                        <i className="fas fa-image mr-2"></i>
+                        <span>Select Icon</span>
+                      </button>
+                    )}
+                  </>
                 )}
                 {positionTypes.s1 === 'text' && (
                   <div className="flex flex-col gap-2">
@@ -391,9 +486,9 @@ function ButtonParts({
 
             {/* Left / Bottom Position - Hidden for PBlock buttons */}
             {!isPBlockButton && (
-              <fieldset className="mb-5 p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+              <fieldset className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
                 <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Left / Bottom</legend>
-              <div className="flex flex-row items-center gap-4">
+              <div className="flex flex-row items-center">
                 {['empty', 'icon', 'text'].map(type => (
                   <label key={type} className="x-radio inline-block relative cursor-pointer">
                     <div className="flex items-center">
@@ -404,7 +499,7 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s2 === type}
                         onChange={() => handlePositionTypeChange('s2', type)}
-                        disabled={!isPBlockButton && selectedZone && selectedZone.size === 'small'}
+                        disabled={disableOuterPositions || (!isPBlockButton && selectedZone && selectedZone.size === 'small')}
                       />
                       <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
@@ -412,16 +507,37 @@ function ButtonParts({
                   </label>
                 ))}
               </div>
-              <div className="h-10 mt-2">
+              <div className="min-h-10 mt-2">
                 {positionTypes.s2 === 'icon' && (
-                  <button
-                    type="button"
-                    className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
-                    onClick={() => handleOpenIconPopup('s2')}
-                  >
-                    <i className="fas fa-image mr-2"></i>
-                    <span>Select Icon</span>
-                  </button>
+                  <>
+                    {selectedZone?.s2?.value ? (
+                      <div className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded border">
+                        <img 
+                          src={`/ican/images/${selectedZone.s2.value}`} 
+                          alt="Selected icon" 
+                          className="w-6 h-6 object-contain"
+                        />
+                        <div className="flex flex-col">
+                          <span className="text-sm font-medium">
+                            {getIconDisplayInfo(selectedZone.s2.value)?.name || selectedZone.s2.value.replace('.svg', '')}
+                          </span>
+                          <span className="text-xs text-gray-600">
+                            {getIconDisplayInfo(selectedZone.s2.value)?.description}
+                          </span>
+                        </div>
+                      </div>
+                    ) : (
+                      <button
+                        type="button"
+                        className="open-icon-popup-btn x-button raised px-4 py-2 text-sm transition-all hover:scale-105"
+                        onClick={() => handleOpenIconPopup('s2')}
+                        disabled={disableOuterPositions}
+                      >
+                        <i className="fas fa-image mr-2"></i>
+                        <span>Select Icon</span>
+                      </button>
+                    )}
+                  </>
                 )}
                 {positionTypes.s2 === 'text' && (
                   <div className="flex flex-col gap-2">
@@ -431,6 +547,7 @@ function ButtonParts({
                       className="w-full px-3 py-2 text-sm border-2 rounded-lg transition-all focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                       value={textValues.s2}
                       onChange={(e) => handleTextChange('s2', e.target.value)}
+                      disabled={disableOuterPositions}
                     />
                     <div className="flex items-center gap-2">
                       <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
@@ -439,6 +556,7 @@ function ButtonParts({
                         onChange={(e) => handleTextColorChange('s2', e.target.value)}
                         className="w-20 px-2 py-1 text-xs border rounded"
                         title="Select text color"
+                        disabled={disableOuterPositions}
                       >
                         <option value="#000000">Black</option>
                         <option value="#ffffff">White</option>
@@ -447,16 +565,37 @@ function ButtonParts({
                   </div>
                 )}
               </div>
+              {disableOuterPositions && (
+                <div className="mt-2 text-xs text-gray-500"></div>
+              )}
             </fieldset>
             )}
           </div>
+          {/* Overlay when no button is selected */}
+          {!selectedButton && (
+            <div style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              backgroundColor: 'rgba(100, 116, 139, 0.85)',
+              zIndex: 9999,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              borderRadius: '8px'
+            }}>
+              <div style={{ color: 'white', fontSize: '1.5rem', fontWeight: '600', textShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>Select Button</div>
+            </div>
+          )}
         </div>
       )}
 
       {/* PBlock Buttons Tab Panel */}
       {activeTab === 'pblock' && (
         <div role="tabpanel" className="py-2 animate-fade-in">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-3" style={{ width: '204px', height: '280px' }}>
             <button
               type="button"
               className={`custom-button-1 polar-white draggable-btn ${selectedButtonPart === 8 ? 'selected-part' : ''}`}

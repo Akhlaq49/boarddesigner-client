@@ -106,7 +106,7 @@ function App() {
             {/* Left Column - Button Parts (show only when Design Your Self is active) */}
             {showButtonParts && (
               <div className="h-100" style={{ 
-                width: '25%',
+                width: '20%',
                 minWidth: '200px',
                 
                 flexShrink: 0,

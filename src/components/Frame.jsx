@@ -1160,6 +1160,12 @@ function Frame({
     const buttonType = zone.dimensions?.buttonType ?? zone.buttonType ?? zone.type;
     const isButtonWithDots = [5, 6, 7, 8, 9, 10, 11].includes(buttonType);
 
+    // Only 2-row x 1-column buttons stack vertically; everything else stacks horizontally
+    const isVerticalStack = zone.dimensions.colSpan === 1 && zone.dimensions.rowSpan === 2;
+
+    // Determine if this is a single-cell button (1x1)
+    const isSingleCellButton = zone.dimensions.colSpan === 1 && zone.dimensions.rowSpan === 1;
+
     // Get custom dot positions or use defaults
     const customPositions = dotPositions[zoneId] || {};
     
@@ -1242,12 +1248,13 @@ function Frame({
 
     return (
       <div 
-        className="dropped-button" 
+        className={`dropped-button ${selectedButton === zoneId ? 'selected' : ''}`}
         style={buttonStyle}
+        onClick={() => setSelectedButton(zoneId)}
         onMouseMove={(e) => handleDotMouseMove(e, zoneId)}
         onMouseLeave={handleDotMouseLeave}
       >
-        <div className="button-content" style={{ position: 'relative', width: '100%', height: '100%' }}>
+        <div className={`button-content ${isVerticalStack ? 'vertical-layout' : 'horizontal-layout'}`} style={{ position: 'relative', width: '100%', height: '100%' }}>
           {/* Render draggable dots for buttons with dots */}
           {isButtonWithDots && (
             <>
@@ -1258,7 +1265,8 @@ function Frame({
           {/* Render original content for standard buttons */}
           {!isButtonWithDots && (
             <>
-              <span className="s0">
+              {!isSingleCellButton && (
+                <span className="s0">
                 {zone.s0?.type === 'icon' && zone.s0?.value && (
                   <img 
                     src={`/ican/images/${zone.s0.value}`} 
@@ -1278,9 +1286,8 @@ function Frame({
                 {zone.s0?.type === 'text' && zone.s0?.value && (
                   <span style={{ color: zone.s0?.color || '#ffffff' }}>{zone.s0.value}</span>
                 )}
-                {/* Align s0 to flex-end (right or top) */}
-                <style>{`.s0 { justify-content: flex-end !important; align-items: flex-start !important; display: flex !important; height: 100%; width: 100%; }`}</style>
-              </span>
+                </span>
+              )}
               <span className="s1">
                 {zone.s1?.type === 'icon' && zone.s1?.value && (
                   <img 
@@ -1301,10 +1308,9 @@ function Frame({
                 {zone.s1?.type === 'text' && zone.s1?.value && (
                   <span style={{ color: zone.s1?.color || '#ffffff' }}>{zone.s1.value}</span>
                 )}
-                {/* Align s1 to center */}
-                <style>{`.s1 { justify-content: center !important; align-items: center !important; display: flex !important; height: 100%; width: 100%; }`}</style>
               </span>
-              <span className="s2">
+              {!isSingleCellButton && (
+                <span className="s2">
                 {zone.s2?.type === 'icon' && zone.s2?.value && (
                   <img 
                     src={`/ican/images/${zone.s2.value}`} 
@@ -1324,9 +1330,8 @@ function Frame({
                 {zone.s2?.type === 'text' && zone.s2?.value && (
                   <span style={{ color: zone.s2?.color || '#ffffff' }}>{zone.s2.value}</span>
                 )}
-                {/* Align s2 to flex-start (left or bottom) */}
-                <style>{`.s2 { justify-content: flex-start !important; align-items: flex-end !important; display: flex !important; height: 100%; width: 100%; }`}</style>
-              </span>
+                </span>
+              )}
             </>
           )}
         </div>
