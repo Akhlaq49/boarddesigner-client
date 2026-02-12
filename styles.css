@@ -485,15 +485,19 @@ section.fixed.w-full.h-full.overflow-hidden {
 }
 
 .meteor-black {
-    background-color: #1e293b;
+    /* --tw-text-opacity: 1; */
+    background-image: url(/meteor-black.gUXuWB01.webp);
+    color: rgb(255 255 255 / var(--tw-text-opacity, 1));
+    /* filter: brightness(1.5); */
 }
 
 .texture-black {
-    background-color: #0f172a;
+    /* background-color: #0f172a; */
 }
 
 .pure-gold {
-    background-color: #fbbf24;
+    background-image: url(/pure-gold.Be-uofrm.webp);
+    color: rgb(255 255 255 / var(--tw-text-opacity, 1))
 }
 
 .antique-copper {

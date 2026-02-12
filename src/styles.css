@@ -1323,7 +1323,6 @@ header.fixed {
     justify-content: center;
     position: relative;
     transition: all 0.2s ease;
-    background-color: #ffffff; /* Clean white background */
     pointer-events: auto;
     cursor: default;
     padding: 0;
@@ -1390,10 +1389,6 @@ header.fixed {
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
-    /* Default texture for white buttons */
-    background-image: url('/images/polar-white.C_BHS7yz.webp');
-    /* Smooth texture blending */
-    background-blend-mode: overlay;
 }
 
 .draggable-btn::before {
@@ -2271,7 +2266,7 @@ legend {
 }
 
 .drop-zone.has-content {
-    animation: dropAnimation 0.3s ease;
+    animation: none;
 }
 
 /* Dropped Button Styles - Clean Flat Appearance */
@@ -2284,7 +2279,6 @@ legend {
     justify-content: center;
     position: relative;
     border-radius: 0;
-    background-color: #ffffff;
     border: none;
     pointer-events: auto;
     z-index: 1;
@@ -2292,8 +2286,6 @@ legend {
     background-position: center;
     background-repeat: no-repeat;
     overflow: hidden;
-    background-image: url('/images/polar-white.C_BHS7yz.webp');
-    background-blend-mode: overlay;
 }
 
 /* Selected button highlighting */
@@ -3215,7 +3207,7 @@ legend {
 /* Button Part Positioning */
 .wrapper #key .switch-button-template > div.part-1,
 .wrapper #key > div > div.part-1 {
-    background-position: 0 20%;
+    background-position: 100% 20%;
 }
 
 .wrapper #key .switch-button-template > div.part-2,
@@ -3225,7 +3217,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-3,
 .wrapper #key > div > div.part-3 {
-    background-position: 0 36%;
+    background-position: 100% 36%;
 }
 
 .wrapper #key .switch-button-template > div.part-4,
@@ -3235,7 +3227,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-5,
 .wrapper #key > div > div.part-5 {
-    background-position: 0 52%;
+    background-position: 100% 52%;
 }
 
 .wrapper #key .switch-button-template > div.part-6,
@@ -3245,7 +3237,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-7,
 .wrapper #key > div > div.part-7 {
-    background-position: 0 68%;
+    background-position: 100% 68%;
 }
 
 .wrapper #key .switch-button-template > div.part-8,

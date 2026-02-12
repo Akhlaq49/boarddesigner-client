@@ -1384,7 +1384,7 @@ function Frame({
 
         {/* Device Layout - Drop Zone */}
         <div
-          className={`layout polar-white custom basic layout-${gridType} ${config.hasDisplay ? 'with-digital-interface' : ''}`}
+          className={`layout custom basic layout-${gridType} ${config.hasDisplay ? 'with-digital-interface' : ''}`}
         data-place="frame"
         data-grid-type={gridType}
         style={{
@@ -1430,7 +1430,7 @@ function Frame({
               data-place={zone.id}
               data-grid-row={zone.row}
               data-grid-col={zone.col}
-              className={`polar-white part-${zone.id.replace('button', '')} drop-zone ${!shouldShow ? 'hidden' : ''} ${isMerged ? 'merged-hidden' : ''} ${isPrimary ? 'has-content' : ''} ${isHighlighted ? 'drag-over' : ''} ${selectedButton === zone.id ? 'selected' : ''}`}
+              className={`part-${zone.id.replace('button', '')} drop-zone ${!shouldShow ? 'hidden' : ''} ${isMerged ? 'merged-hidden' : ''} ${isPrimary ? 'has-content' : ''} ${isHighlighted ? 'drag-over' : ''} ${selectedButton === zone.id ? 'selected' : ''}`}
               style={zoneStyle}
               onDragOver={handleDragOver}
               onDragEnter={(e) => handleDragEnter(e, zone.id)}

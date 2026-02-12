@@ -23,7 +23,7 @@ const COLORS = [
 const TEXTURE_IMAGES = {
   'polar-white': '/images/polar-white.C_BHS7yz.webp',
   'royal-silver': '/images/royal-silver.DCV-2Hhk.webp',
-  'anthracite-gray': '/images/anthracite-gray.C5T6qsn_.webp',
+  'anthracite-gray': '/images/anthracite-gray.C5T6qsn.webp',
   'meteor-black': '/images/meteor-black.gUXuWB01.webp',
   'texture-black': '/images/texture-black.Cm2809Or.webp',
   'pure-gold': '/images/pure-gold.Be-uofrm.webp',
