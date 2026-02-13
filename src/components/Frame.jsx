@@ -1134,6 +1134,23 @@ function Frame({
         ? getTextureImage(fullColor)
         : null;
     
+    // Helper to get brightness filter based on color name
+    const getBrightnessFilter = (colorName) => {
+      const brightnessMap = {
+        'pure-gold': 1.2,
+        'antique-copper': 0.6,
+        'antique-bronze': 0.7,
+        'polar-white': 1.5,
+        'royal-silver': 1.1,
+        'anthracite-gray': 1.3,
+        'meteor-black': 1.2,
+        'texture-black': 1.1,
+        'red-cherry': 1.3,
+        'green-leaf': 1.2
+      };
+      return brightnessMap[colorName] || 1.4; // default 1.4 for any other texture
+    };
+    
     if (textureImage) {
       buttonStyle.backgroundImage = `url(${textureImage})`;
       buttonStyle.backgroundColor = zone.color 
@@ -1141,6 +1158,9 @@ function Frame({
         : fullColor 
           ? getColorValue(fullColor)
           : '#ffffff';
+      // Apply texture-specific brightness
+      const colorName = zone.color || fullColor;
+      buttonStyle.filter = `brightness(${getBrightnessFilter(colorName)})`;
     } else {
       if (zone.color) {
         // Individual button color takes precedence
@@ -1416,11 +1436,28 @@ function Frame({
               gridColumn: zone.col && zone.colSpan ? `${zone.col} / span ${zone.colSpan}` : (zone.col ? zone.col : undefined),
               gridRow: zone.row && zone.rowSpan ? `${zone.row} / span ${zone.rowSpan}` : (zone.row ? zone.row : undefined)
             } : {}),
-            // Apply fullColor to empty zones
+            // Apply fullColor to empty zones with texture-specific brightness
             ...(!isPrimary && fullColor ? {
               backgroundColor: getColorValue(fullColor),
               backgroundImage: getTextureImage(fullColor) ? `url(${getTextureImage(fullColor)})` : undefined,
-              borderColor: getColorValue(fullColor)
+              borderColor: getColorValue(fullColor),
+              ...(getTextureImage(fullColor) ? {
+                filter: `brightness(${(() => {
+                  const brightnessMap = {
+                    'pure-gold': 0.5,
+                    'antique-copper': 0.6,
+                    'antique-bronze': 0.7,
+                    'polar-white': 1.5,
+                    'royal-silver': 1.4,
+                    'anthracite-gray': 1.3,
+                    'meteor-black': 1.2,
+                    'texture-black': 1.1,
+                    'red-cherry': 1.3,
+                    'green-leaf': 1.2
+                  };
+                  return brightnessMap[fullColor] || 1.4;
+                })()})`
+              } : {})
             } : {})
           };
 
