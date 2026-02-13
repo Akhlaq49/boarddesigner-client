@@ -129,6 +129,23 @@ export function useDragDrop() {
   
   const getTextureImage = useCallback((colorName) => TEXTURE_IMAGES[colorName] || null, []);
 
+  // Helper function to determine text color based on background color luminance
+  const getTextColorForBackground = useCallback((colorName) => {
+    const hexColor = COLORS[colorName] || colorName || '#ffffff';
+    
+    // Convert hex to RGB and calculate luminance
+    const hex = hexColor.replace('#', '');
+    const r = parseInt(hex.substr(0, 2), 16);
+    const g = parseInt(hex.substr(2, 2), 16);
+    const b = parseInt(hex.substr(4, 2), 16);
+    
+    // Use relative luminance formula (WCAG)
+    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+    
+    // Return black text for light backgrounds (luminance > 0.5), white for dark backgrounds
+    return luminance > 0.5 ? '#000000' : '#ffffff';
+  }, []);
+
   const getButtonDimensions = (buttonType) => {
     const dimensions = {
       1: { colSpan: 1, rowSpan: 1 },
@@ -274,7 +291,7 @@ export function useDragDrop() {
     showFeedback(`Icon applied to ${position}`, 'success');
   }, [dropZones, updateDropZone, showFeedback]);
 
-  const applyTextToButton = useCallback((buttonId, position, text, color = '#ffffff') => {
+  const applyTextToButton = useCallback((buttonId, position, text) => {
     if (!buttonId) {
       showFeedback('Please select a button first', 'info');
       return;
@@ -289,10 +306,14 @@ export function useDragDrop() {
     const primaryZoneId = zone.isPrimary ? buttonId : (zone.mergedInto || buttonId);
     const primaryZone = dropZones[primaryZoneId] || zone;
     
-    // Create updated zone data - clear icon if it exists, set text with color
+    // Automatically determine text color based on button background color
+    const buttonColor = primaryZone.color || fullColor || 'polar-white';
+    const textColor = getTextColorForBackground(buttonColor);
+    
+    // Create updated zone data - clear icon if it exists, set text with auto-calculated color
     const updatedZone = { ...primaryZone };
     if (text) {
-      updatedZone[position] = { type: 'text', value: text, color: color };
+      updatedZone[position] = { type: 'text', value: text, color: textColor };
     } else {
       // Clear the position if text is empty
       delete updatedZone[position];
@@ -300,7 +321,7 @@ export function useDragDrop() {
     
     updateDropZone(primaryZoneId, updatedZone);
     showFeedback('Text applied', 'success');
-  }, [dropZones, updateDropZone, showFeedback]);
+  }, [dropZones, updateDropZone, showFeedback, fullColor, getTextColorForBackground]);
 
   const applyButtonColor = useCallback((buttonId, colorName) => {
     const zone = dropZones[buttonId];
@@ -380,6 +401,7 @@ export function useDragDrop() {
     placeButtonInZones,
     getColorValue,
     getTextureImage,
+    getTextColorForBackground,
     boardWidth,
     setBoardWidth,
     colorPaletteWidth,

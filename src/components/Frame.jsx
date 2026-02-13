@@ -68,6 +68,7 @@ function Frame({
   fullColor,
   getColorValue,
   getTextureImage,
+  getTextColorForBackground,
   setShowButtonColorPopup,
   setButtonColorTarget,
   selectedButtonPart,
@@ -1245,7 +1246,7 @@ function Frame({
               }}
             />
           ) : zoneData?.type === 'text' && zoneData?.value ? (
-            <span style={{ color: zoneData?.color || '#ffffff', fontSize: '14px', fontWeight: '500', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{zoneData.value}</span>
+            <span style={{ color: zoneData?.color, fontSize: '14px', fontWeight: '500', pointerEvents: 'none', whiteSpace: 'nowrap' }}>{zoneData.value}</span>
           ) : (
             <div className="dot-placeholder"></div>
           )}
@@ -1291,7 +1292,7 @@ function Frame({
                   />
                 )}
                 {zone.s0?.type === 'text' && zone.s0?.value && (
-                  <span style={{ color: zone.s0?.color || '#ffffff' }}>{zone.s0.value}</span>
+                  <span style={{ color: zone.s0?.color }}>{zone.s0.value}</span>
                 )}
                 </span>
               )}
@@ -1313,7 +1314,7 @@ function Frame({
                   />
                 )}
                 {zone.s1?.type === 'text' && zone.s1?.value && (
-                  <span style={{ color: zone.s1?.color || '#ffffff' }}>{zone.s1.value}</span>
+                  <span style={{ color: zone.s1?.color }}>{zone.s1.value}</span>
                 )}
               </span>
               {!isSingleCellButton && (
@@ -1335,7 +1336,7 @@ function Frame({
                   />
                 )}
                 {zone.s2?.type === 'text' && zone.s2?.value && (
-                  <span style={{ color: zone.s2?.color || '#ffffff' }}>{zone.s2.value}</span>
+                  <span style={{ color: zone.s2?.color }}>{zone.s2.value}</span>
                 )}
                 </span>
               )}

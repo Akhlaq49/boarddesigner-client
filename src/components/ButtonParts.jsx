@@ -72,36 +72,24 @@ function ButtonParts({
     s1: '',
     s2: ''
   });
-  const [textColors, setTextColors] = useState({
-    s0: '#ffffff',
-    s1: '#ffffff',
-    s2: '#ffffff'
-  });
 
   const handlePositionTypeChange = (position, type) => {
     setPositionTypes(prev => ({ ...prev, [position]: type }));
     
     // If type is 'empty', clear the icon/text from the button
     if (type === 'empty' && selectedButton) {
-      applyTextToButton(selectedButton, position, '', '#ffffff');
+      applyTextToButton(selectedButton, position, '');
     }
   };
 
   const handleTextChange = (position, value) => {
     setTextValues(prev => ({ ...prev, [position]: value }));
     if (selectedButton) {
-      applyTextToButton(selectedButton, position, value, textColors[position]);
+      applyTextToButton(selectedButton, position, value);
     }
   };
 
-  const handleTextColorChange = (position, color) => {
-    setTextColors(prev => ({ ...prev, [position]: color }));
-    if (selectedButton && textValues[position]) {
-      applyTextToButton(selectedButton, position, textValues[position], color);
-    }
-  };
-
-  // Sync text values and colors when button is selected
+  // Sync text values when button is selected
   useEffect(() => {
     if (labelOnly && activeTab !== 'label') {
       setActiveTab('label');
@@ -111,10 +99,9 @@ function ButtonParts({
       const primaryZoneId = zone.isPrimary ? selectedButton : (zone.mergedInto || selectedButton);
       const primaryZone = dropZones[primaryZoneId] || zone;
       
-      // Update position types
+      // Update position types and text values
       const newPositionTypes = { s0: 'empty', s1: 'empty', s2: 'empty' };
       const newTextValues = { s0: '', s1: '', s2: '' };
-      const newTextColors = { s0: '#ffffff', s1: '#ffffff', s2: '#ffffff' };
       
       ['s0', 's1', 's2'].forEach(pos => {
         if (primaryZone[pos]) {
@@ -123,19 +110,16 @@ function ButtonParts({
           } else if (primaryZone[pos].type === 'text') {
             newPositionTypes[pos] = 'text';
             newTextValues[pos] = primaryZone[pos].value || '';
-            newTextColors[pos] = primaryZone[pos].color || '#ffffff';
           }
         }
       });
       
       setPositionTypes(newPositionTypes);
       setTextValues(newTextValues);
-      setTextColors(newTextColors);
     } else {
       // Reset when no button is selected
       setPositionTypes({ s0: 'empty', s1: 'empty', s2: 'empty' });
       setTextValues({ s0: '', s1: '', s2: '' });
-      setTextColors({ s0: '#ffffff', s1: '#ffffff', s2: '#ffffff' });
     }
   }, [activeTab, labelOnly, selectedButton, dropZones]);
 
@@ -383,19 +367,6 @@ function ButtonParts({
                       onChange={(e) => handleTextChange('s0', e.target.value)}
                       disabled={disableOuterPositions}
                     />
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
-                      <select
-                        value={textColors.s0}
-                        onChange={(e) => handleTextColorChange('s0', e.target.value)}
-                        className="w-20 px-2 py-1 text-xs border rounded"
-                        title="Select text color"
-                        disabled={disableOuterPositions}
-                      >
-                        <option value="#000000">Black</option>
-                        <option value="#ffffff">White</option>
-                      </select>
-                    </div>
                   </div>
                 )}
               </div>
@@ -467,18 +438,6 @@ function ButtonParts({
                       value={textValues.s1}
                       onChange={(e) => handleTextChange('s1', e.target.value)}
                     />
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
-                      <select
-                        value={textColors.s1}
-                        onChange={(e) => handleTextColorChange('s1', e.target.value)}
-                        className="w-20 px-2 py-1 text-xs border rounded"
-                        title="Select text color"
-                      >
-                        <option value="#000000">Black</option>
-                        <option value="#ffffff">White</option>
-                      </select>
-                    </div>
                   </div>
                 )}
               </div>
@@ -549,19 +508,6 @@ function ButtonParts({
                       onChange={(e) => handleTextChange('s2', e.target.value)}
                       disabled={disableOuterPositions}
                     />
-                    <div className="flex items-center gap-2">
-                      <label className="text-xs font-medium text-gray-700 dark:text-gray-300">Color:</label>
-                      <select
-                        value={textColors.s2}
-                        onChange={(e) => handleTextColorChange('s2', e.target.value)}
-                        className="w-20 px-2 py-1 text-xs border rounded"
-                        title="Select text color"
-                        disabled={disableOuterPositions}
-                      >
-                        <option value="#000000">Black</option>
-                        <option value="#ffffff">White</option>
-                      </select>
-                    </div>
                   </div>
                 )}
               </div>

@@ -1308,6 +1308,19 @@ header.fixed {
     pointer-events: none;
 }
 
+/* Remove background image for PBlock frame containers */
+.frame-container-pblock-2x4::before,
+.frame-container-pblock-2x6::before,
+.frame-container-pblock-2x2::before,
+.frame-container-pblock-2x2-display::before,
+.frame-container-pblock-3x2::before,
+.frame-container-pblock-3x2-display::before,
+.frame-container-pblock-4x2::before,
+.frame-container-pblock-4x2-display::before {
+    background-image: none;
+    background-color: #000;
+}
+
 /* Adjust layout when digital interface is present */
 .layout-2x6.with-digital-interface {
     border-radius: 0 0 4px 4px;
@@ -2429,7 +2442,6 @@ legend {
     height: 10px;
     border: 2px solid rgba(0, 0, 0, 0.6);
     background-color: #f4d03f;
-    border-radius: 100%;
     pointer-events: none;
 
     /* box-shadow: 0 0 0 rgba(244, 208, 63, 0); */

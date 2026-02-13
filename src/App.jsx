@@ -47,6 +47,7 @@ function App() {
     placeButtonInZones,
     getColorValue,
     getTextureImage,
+    getTextColorForBackground,
     boardWidth,
     setBoardWidth,
     colorPaletteWidth,
@@ -171,6 +172,7 @@ function App() {
                 fullColor={fullColor}
                 getColorValue={getColorValue}
                 getTextureImage={getTextureImage}
+                getTextColorForBackground={getTextColorForBackground}
                 setShowButtonColorPopup={setShowButtonColorPopup}
                 setButtonColorTarget={setButtonColorTarget}
                 selectedButtonPart={selectedButtonPart}

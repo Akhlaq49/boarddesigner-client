@@ -338,15 +338,17 @@ function ColorPalette({
                     </button>
                     {activeColor === color.name && (
                       <div className="color-actions animate-slide-in">
-                        <button
-                          type="button"
-                          className="frame-color-btn"
-                          onClick={() => handleFrameClick(color.name)}
-                          data-place="frame"
-                          data-color={color.name}
-                        >
-                          <span>FRAME</span>
-                        </button>
+                        {!selectedMenu?.startsWith('pblock-level-') && (
+                          <button
+                            type="button"
+                            className="frame-color-btn"
+                            onClick={() => handleFrameClick(color.name)}
+                            data-place="frame"
+                            data-color={color.name}
+                          >
+                            <span>FRAME</span>
+                          </button>
+                        )}
                         <button
                           type="button"
                           className="button-color-action"
@@ -395,15 +397,17 @@ function ColorPalette({
                   </button>
                   {activeColor === color.name && (
                     <div className="color-actions animate-slide-in">
-                      <button
-                        type="button"
-                        className="frame-color-btn"
-                        onClick={() => handleFrameClick(color.name)}
-                        data-place="frame"
-                        data-color={color.name}
-                      >
-                        <span>FRAME</span>
-                      </button>
+                      {!selectedMenu?.startsWith('pblock-level-') && (
+                        <button
+                          type="button"
+                          className="frame-color-btn"
+                          onClick={() => handleFrameClick(color.name)}
+                          data-place="frame"
+                          data-color={color.name}
+                        >
+                          <span>FRAME</span>
+                        </button>
+                      )}
                       <button
                         type="button"
                         className="button-color-action"
