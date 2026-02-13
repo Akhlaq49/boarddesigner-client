@@ -334,86 +334,15 @@ export function useDragDrop() {
   const applyWallColor = useCallback((color) => {
     setWallColor(color);
     
-    // Create wall texture pattern using CSS
-    // Extract RGB values from color string
-    let r = 128, g = 128, b = 128;
-    if (color.startsWith('rgba') || color.startsWith('rgb')) {
-      const match = color.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/);
-      if (match) {
-        r = parseInt(match[1]);
-        g = parseInt(match[2]);
-        b = parseInt(match[3]);
-      }
-    } else if (color.startsWith('#')) {
-      const hex = color.replace('#', '');
-      r = parseInt(hex.substr(0, 2), 16);
-      g = parseInt(hex.substr(2, 2), 16);
-      b = parseInt(hex.substr(4, 2), 16);
-    }
-    
-    // Create very subtle darker flecks for organic texture (like the image)
-    // Very low contrast, tiny random-looking imperfections - fine-grained texture
-    // Note: Fleck color variables are calculated inline in generateFleckLayer function
-    
-    // Create organic, fine-grained texture using a noise-like pattern
-    // Multiple layers of tiny radial gradients at various positions create organic flecks
-    // This simulates the fine-grained, randomly distributed texture from the image
-    
-    // Generate many small fleck positions (distributed across the surface)
-    const generateFleckLayer = (count, opacity, size, baseOffset) => {
-      const flecks = [];
-      for (let i = 0; i < count; i++) {
-        // Pseudo-random but deterministic distribution
-        const x = ((i * 37 + baseOffset) % 97) + ((i * 13) % 3);
-        const y = ((i * 23 + baseOffset * 2) % 98) + ((i * 7) % 2);
-        const pos = `${x}% ${y}%`;
-        
-        // Vary fleck darkness slightly for organic look (deterministic)
-        const darkOffset = (i % 4);
-        const fleckColor = `rgba(${Math.max(0, r - 3 - darkOffset)}, ${Math.max(0, g - 3 - darkOffset)}, ${Math.max(0, b - 3 - darkOffset)}, ${opacity})`;
-        
-        flecks.push(`radial-gradient(circle at ${pos}, ${fleckColor} 0%, ${fleckColor} ${size}, transparent ${parseFloat(size) * 2.5}%)`);
-      }
-      return flecks;
-    };
-    
-    // Create multiple layers of flecks for depth
-    const layer1 = generateFleckLayer(40, 0.05, '0.35%', 0); // Medium flecks
-    const layer2 = generateFleckLayer(30, 0.04, '0.25%', 17); // Smaller flecks
-    const layer3 = generateFleckLayer(25, 0.03, '0.2%', 31);  // Tiny flecks
-    
-    // Combine all layers
-    const allFlecks = [...layer1, ...layer2, ...layer3];
-    
-    // Wall texture pattern - organic, fine-grained texture
-    const wallTexture = allFlecks.join(',\n      ') + ',\n      ' + color;
-    
-    // Apply to document body background
+    // Only change background color - do not change texture, background image, or any other properties
     document.body.style.backgroundColor = color;
-    document.body.style.backgroundImage = wallTexture;
-    
-    // Background properties for all layers
-    const totalLayers = allFlecks.length;
-    const bgSize = Array(totalLayers).fill('200% 200%').join(', ') + ', cover'; // Large size to spread flecks
-    const bgPos = Array(totalLayers).fill('0 0').join(', ') + ', center';
-    const bgBlend = Array(totalLayers).fill('normal').join(', ') + ', normal';
-    const bgRepeat = Array(totalLayers).fill('no-repeat').join(', ') + ', no-repeat';
-    
-    document.body.style.backgroundSize = bgSize;
-    document.body.style.backgroundPosition = bgPos;
-    document.body.style.backgroundBlendMode = bgBlend;
-    document.body.style.backgroundRepeat = bgRepeat;
     
     // Also apply to wrapper if it exists
     const wrapper = document.querySelector('.wrapper');
     if (wrapper) {
       wrapper.style.backgroundColor = color;
-      wrapper.style.backgroundImage = wallTexture;
-      wrapper.style.backgroundSize = bgSize;
-      wrapper.style.backgroundPosition = bgPos;
-      wrapper.style.backgroundBlendMode = bgBlend;
-      wrapper.style.backgroundRepeat = bgRepeat;
     }
+    
     showFeedback('Wall color applied', 'success');
   }, [showFeedback]);
 

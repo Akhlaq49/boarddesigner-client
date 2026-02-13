@@ -732,6 +732,7 @@ header.fixed {
     --frame-width: calc(var(--model-width) * 0.030);
     --frame-diff: calc(var(--frame-width) * 2);
     --gap-diff: calc(var(--gap) * 2);
+    --tw-text-opacity: 1;
 }
 
 /* Device Layout Styles - Match Sample UI */
@@ -3163,8 +3164,8 @@ legend {
     background-color: #557eb4;
     background-image: url('../images/concrete-wall.B8q9cs6V.png');
     background-position: 50%;
-    background-repeat: repeat;
-    display: inline-flex;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
     justify-content: center;
     min-height: 100vh;
     width: 100%;
@@ -3206,7 +3207,7 @@ legend {
 /* Button Part Positioning */
 .wrapper #key .switch-button-template > div.part-1,
 .wrapper #key > div > div.part-1 {
-    background-position: 100% 20%;
+    background-position: 0% 20%;
 }
 
 .wrapper #key .switch-button-template > div.part-2,
@@ -3216,7 +3217,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-3,
 .wrapper #key > div > div.part-3 {
-    background-position: 100% 36%;
+    background-position: 0% 36%;
 }
 
 .wrapper #key .switch-button-template > div.part-4,
@@ -3226,7 +3227,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-5,
 .wrapper #key > div > div.part-5 {
-    background-position: 100% 52%;
+    background-position: 0% 52%;
 }
 
 .wrapper #key .switch-button-template > div.part-6,
@@ -3236,7 +3237,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-7,
 .wrapper #key > div > div.part-7 {
-    background-position: 100% 68%;
+    background-position: 0% 68%;
 }
 
 .wrapper #key .switch-button-template > div.part-8,
@@ -3246,7 +3247,7 @@ legend {
 
 .wrapper #key .switch-button-template > div.part-9,
 .wrapper #key > div > div.part-9 {
-    background-position: 0 84%;
+    background-position: 0% 84%;
 }
 
 .wrapper #key .switch-button-template > div.part-10,

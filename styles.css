@@ -496,8 +496,8 @@ section.fixed.w-full.h-full.overflow-hidden {
 }
 
 .pure-gold {
-    background-image: url(/pure-gold.Be-uofrm.webp);
-    color: rgb(255 255 255 / var(--tw-text-opacity, 1))
+    --tw-text-opacity: 1;
+    filter: brightness(1.1);
 }
 
 .antique-copper {
