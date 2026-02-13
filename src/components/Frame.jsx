@@ -1127,13 +1127,6 @@ function Frame({
       buttonStyle.gridRow = `span ${zone.dimensions.rowSpan}`;
     }
 
-    // Apply colors and textures to button
-    const textureImage = zone.color 
-      ? getTextureImage(zone.color)
-      : fullColor 
-        ? getTextureImage(fullColor)
-        : null;
-    
     // Helper to get brightness filter based on color name
     const getBrightnessFilter = (colorName) => {
       const brightnessMap = {
@@ -1148,27 +1141,25 @@ function Frame({
         'red-cherry': 1.3,
         'green-leaf': 1.2
       };
-      return brightnessMap[colorName] || ''; // default 1.4 for any other texture
+      return brightnessMap[colorName] || 1.4;
     };
+
+    // Determine which color to use: zone.color takes precedence, then fullColor, then frameColor
+    const buttonColor = zone.color || fullColor || frameColor;
+    
+    // Get texture image and apply consistent styling for both empty and filled buttons
+    const textureImage = getTextureImage(buttonColor);
     
     if (textureImage) {
+      // Apply texture with brightness filter
       buttonStyle.backgroundImage = `url(${textureImage})`;
-      // Apply texture-specific brightness
-      const colorName = zone.color || fullColor;
-      buttonStyle.filter = `brightness(${getBrightnessFilter(colorName)})`;
+      buttonStyle.filter = `brightness(${getBrightnessFilter(buttonColor)})`;
       buttonStyle.color = 'rgb(255 255 255 / var(--tw-text-opacity, 1))';
     } else {
-      if (zone.color) {
-        // Individual button color takes precedence
-        buttonStyle.backgroundColor = getColorValue(zone.color);
-        buttonStyle.borderColor = getColorValue(zone.color);
-      } else if (fullColor) {
-        // Full color applied to all
-        buttonStyle.backgroundColor = getColorValue(fullColor);
-        buttonStyle.borderColor = getColorValue(fullColor);
-      } else if (frameColor) {
-        // Frame color only affects border
-        buttonStyle.borderColor = getColorValue(frameColor);
+      // No texture available, apply solid color
+      if (buttonColor) {
+        buttonStyle.backgroundColor = getColorValue(buttonColor);
+        buttonStyle.borderColor = getColorValue(buttonColor);
       }
     }
 
@@ -1435,7 +1426,7 @@ function Frame({
             // Apply fullColor to empty zones with texture-specific brightness
             ...(!isPrimary && fullColor ? {
               ...(getTextureImage(fullColor) ? {
-                // If texture exists, only apply background image and filter
+                // If texture exists, only apply background image and filter (no solid backgroundColor)
                 backgroundImage: `url(${getTextureImage(fullColor)})`,
                 borderColor: getColorValue(fullColor),
                 filter: `brightness(${(() => {
@@ -1451,7 +1442,7 @@ function Frame({
                     'red-cherry': 1.3,
                     'green-leaf': 1.2
                   };
-                  return brightnessMap[fullColor] || '';
+                  return brightnessMap[fullColor] || 1.4;
                 })()})`,
                 color: 'rgb(255 255 255 / var(--tw-text-opacity, 1))'
               } : {
