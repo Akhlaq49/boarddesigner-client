@@ -185,10 +185,21 @@ export function useDragDrop() {
 
   const loadDesign = useCallback((designData) => {
     setGridType(designData.gridType);
-    setDropZones(designData.dropZones);
-    if (designData.frameColor) setFrameColor(designData.frameColor);
-    if (designData.fullColor) setFullColor(designData.fullColor);
-    if (designData.wallColor) setWallColor(designData.wallColor);
+    // Reset all button colors to polar-white in drop zones
+    const resetZones = {};
+    if (designData.dropZones) {
+      Object.keys(designData.dropZones).forEach(zoneId => {
+        resetZones[zoneId] = {
+          ...designData.dropZones[zoneId],
+          color: DEFAULT_COLOR
+        };
+      });
+    }
+    setDropZones(resetZones);
+    // Always reset frame and button colors to polar-white
+    setFrameColor(DEFAULT_COLOR);
+    setFullColor(DEFAULT_COLOR);
+    setWallColor(DEFAULT_WALL_COLOR);
     setSelectedButton(null);
     setSelectedButtonPart(null);
     setSelectedColor(null);
@@ -214,6 +225,7 @@ export function useDragDrop() {
     setFrameColor(DEFAULT_COLOR);
     setFullColor(DEFAULT_COLOR);
     setSelectedColor(DEFAULT_COLOR);
+    setWallColor(DEFAULT_WALL_COLOR);
     resetSelections();
   }, [resetSelections]);
 

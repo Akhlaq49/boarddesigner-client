@@ -208,7 +208,7 @@ function App() {
             }}>
               <Frame
                 gridType={gridType}
-                setGridType={setGridType}
+                setGridType={handleGridTypeChange}
                 dropZones={dropZones}
                 selectedButton={selectedButton}
                 setSelectedButton={setSelectedButton}
