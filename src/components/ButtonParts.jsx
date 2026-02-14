@@ -302,13 +302,13 @@ function ButtonParts({
               </div>
             )}
             {/* Right / Top Position */}
-            <fieldset className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+            <fieldset disabled={disableOuterPositions} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
               <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">
                 {isPBlockButton ? 'First Zone' : 'Right / Top'}
               </legend>
               <div className="flex flex-row items-center">
                 {['empty', 'icon', 'text'].map(type => (
-                  <label key={type} className="x-radio inline-block relative cursor-pointer">
+                  <label key={type} className={`x-radio inline-block relative ${disableOuterPositions ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
                     <div className="flex items-center">
                       <input
                         name="s0"
@@ -317,9 +317,9 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s0 === type}
                         onChange={() => handlePositionTypeChange('s0', type)}
-                        disabled={disableOuterPositions || (!isPBlockButton && selectedZone && selectedZone.size === 'small')}
+                        disabled={disableOuterPositions}
                       />
-                      <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''}`}></div>
+                      <div className={`radio-circle ${positionTypes.s0 === type ? 'checked' : ''} ${disableOuterPositions ? 'disabled' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     </div>
                   </label>
@@ -445,11 +445,11 @@ function ButtonParts({
 
             {/* Left / Bottom Position - Hidden for PBlock buttons */}
             {!isPBlockButton && (
-              <fieldset className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
+              <fieldset disabled={disableOuterPositions} className="p-3 rounded-lg bg-gray-50 dark:bg-gray-800/50 border border-gray-200 dark:border-gray-700 transition-all hover:shadow-md">
                 <legend className="text-sm font-semibold mb-3 text-gray-700 dark:text-gray-300">Left / Bottom</legend>
               <div className="flex flex-row items-center">
                 {['empty', 'icon', 'text'].map(type => (
-                  <label key={type} className="x-radio inline-block relative cursor-pointer">
+                  <label key={type} className={`x-radio inline-block relative ${disableOuterPositions ? 'cursor-not-allowed opacity-50' : 'cursor-pointer'}`}>
                     <div className="flex items-center">
                       <input
                         name="s2"
@@ -458,9 +458,9 @@ function ButtonParts({
                         value={type}
                         checked={positionTypes.s2 === type}
                         onChange={() => handlePositionTypeChange('s2', type)}
-                        disabled={disableOuterPositions || (!isPBlockButton && selectedZone && selectedZone.size === 'small')}
+                        disabled={disableOuterPositions}
                       />
-                      <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''}`}></div>
+                      <div className={`radio-circle ${positionTypes.s2 === type ? 'checked' : ''} ${disableOuterPositions ? 'disabled' : ''}`}></div>
                       <div className="text-sm pl-2 font-medium">{type.charAt(0).toUpperCase() + type.slice(1)}</div>
                     </div>
                   </label>

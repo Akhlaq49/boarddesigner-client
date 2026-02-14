@@ -2041,6 +2041,23 @@ header.fixed {
     animation: radioCheck 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Disabled radio button styling */
+.radio-circle.disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+.radio-circle.disabled:hover {
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: none;
+}
+
+.x-radio input:disabled + .radio-circle {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
 @keyframes radioCheck {
     from {
         transform: translate(-50%, -50%) scale(0);
@@ -3490,7 +3507,9 @@ fieldset > legend {
 }
 
 fieldset[disabled] {
-    opacity: 0.5;
+    opacity: 0.6;
+    pointer-events: none;
+    cursor: not-allowed;
 }
 
 /* Responsive Adjustments */
