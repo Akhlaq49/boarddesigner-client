@@ -566,17 +566,11 @@ function Frame({
       return; // Exit early to prevent normal selection
     } else if (dropZones[zoneId]) {
       // Normal selection mode - select the button
-      console.log('Zone clicked (handleZoneClick - has content):', zoneId, 'Selected color:', selectedColor, 'applyButtonColor exists:', !!applyButtonColor);
       setSelectedButton(zoneId);
       // If there's a selected color, apply it to the clicked button
       if (selectedColor && applyButtonColor) {
-        console.log('Applying color via handleZoneClick:', zoneId, selectedColor);
         applyButtonColor(zoneId, selectedColor);
-      } else {
-        console.log('NOT applying via handleZoneClick - selectedColor:', selectedColor, 'applyButtonColor:', !!applyButtonColor);
       }
-    } else {
-      console.log('Zone clicked but no content:', zoneId);
     }
   };
 
@@ -1415,14 +1409,10 @@ function Frame({
         style={buttonStyle}
         onClick={(e) => {
           e.stopPropagation();
-          console.log('Button clicked (renderButton):', zoneId, 'Selected color:', selectedColor, 'applyButtonColor exists:', !!applyButtonColor);
           setSelectedButton(zoneId);
           // If there's a selected color, apply it to the clicked button
           if (selectedColor && applyButtonColor) {
-            console.log('Applying color to button:', zoneId, selectedColor);
             applyButtonColor(zoneId, selectedColor);
-          } else {
-            console.log('NOT applying - selectedColor:', selectedColor, 'applyButtonColor:', !!applyButtonColor);
           }
         }}
         onMouseMove={(e) => handleDotMouseMove(e, zoneId)}
@@ -1545,12 +1535,12 @@ function Frame({
           backgroundColor: frameColor ? getColorValue(frameColor) : '#000'
         }}
       >
-        {/* Digital Interface for Thermostat models */}
+        {/* Digital Interface for Thermostat and PBlock models */}
         {config.hasDisplay && (
           <div className="digital-interface">
             <img 
-              src="/images/thermostat-interface.png" 
-              alt="Thermostat Digital Interface" 
+              src={gridType.startsWith('pblock') ? '/images/pblock-interface.png' : '/images/thermostat-interface.png'}
+              alt={gridType.startsWith('pblock') ? 'PBlock Digital Interface' : 'Thermostat Digital Interface'}
               className="digital-interface-image"
             />
           </div>

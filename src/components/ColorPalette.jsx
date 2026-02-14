@@ -62,7 +62,6 @@ function ColorPalette({
   const alphaRef = useRef(null);
 
   const handleColorClick = (colorName) => {
-    console.log('Color selected:', colorName);
     setSelectedColor(colorName);
     setActiveColor(colorName);
   };
