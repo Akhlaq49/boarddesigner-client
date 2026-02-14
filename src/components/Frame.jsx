@@ -66,6 +66,7 @@ function Frame({
   showFeedback,
   frameColor,
   fullColor,
+  applyButtonColor,
   getColorValue,
   getTextureImage,
   getTextColorForBackground,
@@ -564,8 +565,18 @@ function Frame({
       showFeedback('Button placed successfully! Click another zone to place more.', 'success');
       return; // Exit early to prevent normal selection
     } else if (dropZones[zoneId]) {
-      // Normal selection mode
+      // Normal selection mode - select the button
+      console.log('Zone clicked (handleZoneClick - has content):', zoneId, 'Selected color:', selectedColor, 'applyButtonColor exists:', !!applyButtonColor);
       setSelectedButton(zoneId);
+      // If there's a selected color, apply it to the clicked button
+      if (selectedColor && applyButtonColor) {
+        console.log('Applying color via handleZoneClick:', zoneId, selectedColor);
+        applyButtonColor(zoneId, selectedColor);
+      } else {
+        console.log('NOT applying via handleZoneClick - selectedColor:', selectedColor, 'applyButtonColor:', !!applyButtonColor);
+      }
+    } else {
+      console.log('Zone clicked but no content:', zoneId);
     }
   };
 
@@ -1402,7 +1413,18 @@ function Frame({
       <div 
         className={`dropped-button ${selectedButton === zoneId ? 'selected' : ''}`}
         style={buttonStyle}
-        onClick={() => setSelectedButton(zoneId)}
+        onClick={(e) => {
+          e.stopPropagation();
+          console.log('Button clicked (renderButton):', zoneId, 'Selected color:', selectedColor, 'applyButtonColor exists:', !!applyButtonColor);
+          setSelectedButton(zoneId);
+          // If there's a selected color, apply it to the clicked button
+          if (selectedColor && applyButtonColor) {
+            console.log('Applying color to button:', zoneId, selectedColor);
+            applyButtonColor(zoneId, selectedColor);
+          } else {
+            console.log('NOT applying - selectedColor:', selectedColor, 'applyButtonColor:', !!applyButtonColor);
+          }
+        }}
         onMouseMove={(e) => handleDotMouseMove(e, zoneId)}
         onMouseLeave={handleDotMouseLeave}
       >

@@ -5748,6 +5748,521 @@
       "fullColor": null,
       "wallColor": "#e8e8e8",
       "createdAt": "2026-02-10T18:19:02.275Z"
+    },
+    {
+      "id": "1771096282070",
+      "name": "00001",
+      "category": "design-self",
+      "timestamp": "2/15/2026, 12:11:22 AM",
+      "gridType": "2x4",
+      "dropZones": {
+        "button1": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button5": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button5"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button6"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button7": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button7"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button7",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button8"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button8",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": "polar-white",
+      "fullColor": "polar-white",
+      "wallColor": "#ffffff",
+      "createdAt": "2026-02-14T19:11:22.077Z"
+    },
+    {
+      "id": "1771096325215",
+      "name": "00002",
+      "category": "design-self",
+      "timestamp": "2/15/2026, 12:12:05 AM",
+      "gridType": "dora-2x8",
+      "dropZones": {
+        "button1": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button5": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button5"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button6"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button7": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button7"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button7",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button8"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button8",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button9": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button9"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button9",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button10": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button10"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button10",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button11": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button11"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button11",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button12": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button12"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button12",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": "polar-white",
+      "fullColor": "polar-white",
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-14T19:12:05.220Z"
+    },
+    {
+      "id": "1771096377072",
+      "name": "00003",
+      "category": "design-self",
+      "timestamp": "2/15/2026, 12:12:57 AM",
+      "gridType": "dora-thermostat",
+      "dropZones": {
+        "button1": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button1"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button1",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button2": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button2"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button2",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button3": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button3"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button3",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button4": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button4"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button4",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button5": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button5"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button5",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button6": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button6"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button6",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button7": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button7"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button7",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        },
+        "button8": {
+          "type": 1,
+          "dimensions": {
+            "colSpan": 1,
+            "rowSpan": 1,
+            "buttonType": 1
+          },
+          "zones": [
+            "button8"
+          ],
+          "color": "polar-white",
+          "isPrimary": true,
+          "primaryZone": "button8",
+          "s0": null,
+          "s1": null,
+          "s2": null
+        }
+      },
+      "frameColor": "polar-white",
+      "fullColor": "polar-white",
+      "wallColor": "#e8e8e8",
+      "createdAt": "2026-02-14T19:12:57.080Z"
     }
   ]
 }

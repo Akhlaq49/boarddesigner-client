@@ -8,6 +8,7 @@ import ButtonColorPopup from './components/ButtonColorPopup';
 import FeedbackMessage from './components/FeedbackMessage';
 import AddToCartModal from './components/AddToCartModal';
 import CartView from './components/CartView';
+import SaveDesign from './components/SaveDesign';
 import { useDragDrop } from './hooks/useDragDrop';
 import { useCart } from './hooks/useCart';
 
@@ -16,6 +17,7 @@ function App() {
   const [frameCaptureImage, setFrameCaptureImage] = useState(null);
   const [showAddToCartModal, setShowAddToCartModal] = useState(false);
   const [showCartModal, setShowCartModal] = useState(false);
+  const [showSaveDesignModal, setShowSaveDesignModal] = useState(false);
   
   const { cart, addToCart, removeFromCart, clearCart } = useCart();
   
@@ -97,6 +99,27 @@ function App() {
     };
   }, [loadDesign]);
 
+  // Auto-load design 00001 on page load
+  useEffect(() => {
+    const autoLoadDesign = async () => {
+      try {
+        const response = await fetch(`/designs.json?ts=${Date.now()}`);
+        if (!response.ok) return;
+        const data = await response.json();
+        const design00001 = data.designs?.find(d => d.name === '00001');
+        if (design00001) {
+          loadDesign(design00001);
+        }
+      } catch (error) {
+        console.error('Error auto-loading design 00001:', error);
+      }
+    };
+
+    if (!isCartView) {
+      autoLoadDesign();
+    }
+  }, [loadDesign, isCartView]);
+
   return (
     <>
       {isCartView ? (
@@ -126,6 +149,7 @@ function App() {
           setSelectedButtonPart={setSelectedButtonPart}
           onOpenAddToCart={() => setShowAddToCartModal(true)}
           onOpenCart={() => window.open('/?view=cart', 'cart', 'width=1200,height=800')}
+          onOpenSaveDesign={() => setShowSaveDesignModal(true)}
           cartCount={cart.length}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
@@ -197,6 +221,7 @@ function App() {
                 showFeedback={showFeedback}
                 applyFrameColor={applyFrameColor}
                 applyFullColor={applyFullColor}
+                applyButtonColor={applyButtonColor}
                 frameColor={frameColor}
                 fullColor={fullColor}
                 getColorValue={getColorValue}
@@ -289,6 +314,17 @@ function App() {
           cart={cart}
           onRemoveItem={removeFromCart}
           onClearCart={clearCart}
+        />
+
+        <SaveDesign
+          isOpen={showSaveDesignModal}
+          onClose={() => setShowSaveDesignModal(false)}
+          dropZones={dropZones}
+          gridType={gridType}
+          frameColor={frameColor}
+          fullColor={fullColor}
+          wallColor={wallColor}
+          onLoadDesign={loadDesign}
         />
       </div>
     </section>

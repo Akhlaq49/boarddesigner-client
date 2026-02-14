@@ -9,6 +9,8 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
     if (gt.startsWith('pblock-2x2') || gt === 'pblock-2x6') return 'pblock-level-2';
     if (gt.startsWith('pblock-3x2')) return 'pblock-level-3';
     if (gt.startsWith('pblock-4x2') || gt === 'pblock-2x4') return 'pblock-level-4';
+    // Design Your Self category products
+    if (gt === 'dora-2x4' || gt === 'dora-2x8' || gt === 'dora-thermostat') return 'design-self';
     return '2-8';
   };
   const [category, setCategory] = useState(() => getDefaultCategory(gridType));
@@ -204,6 +206,7 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
                 <option value="2-8">2-8 Buttons Switch</option>
                 <option value="3-12">3-12 Button Switch</option>
                 <option value="2-8-room">2-8 Room Controller</option>
+                <option value="design-self">Design Your Self</option>
                 <option value="pblock-level-2">PBlock Level 2</option>
                 <option value="pblock-level-3">PBlock Level 3</option>
                 <option value="pblock-level-4">PBlock Level 4</option>

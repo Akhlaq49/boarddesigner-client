@@ -46,9 +46,9 @@ const PRODUCT_CATEGORIES = [
     name: 'Design Your Self',
     products: [
       // { id: 'dora-1x1', columns: 1, rows: 1, label: 'Single Square Button' },
-      { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora Keypad 2×4' },
-      { id: 'dora-2x8', columns: 2, rows: 6, label: 'Dora XLarge 2×6' },
-      { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat 4+4' },
+      // { id: 'dora-2x4', columns: 2, rows: 4, label: 'Dora Keypad 2×4' },
+      // { id: 'dora-2x8', columns: 2, rows: 6, label: 'Dora XLarge 2×6' },
+      // { id: 'dora-thermostat', columns: 2, rows: 4, label: 'Dora Thermostat 4+4' },
       // { id: 'pblock-2x6', columns: 2, rows: 6, label: 'Pblock 2×6' },
       // { id: 'pblock-2x2', columns: 2, rows: 2, label: 'PBlock 2×2 (Max 4 Buttons)' },
       // { id: 'pblock-2x2-display', columns: 2, rows: 1, label: 'PBlock 2×2 + Display' },
@@ -62,10 +62,11 @@ const PRODUCT_CATEGORIES = [
 
 const PBLOCK_LEVEL_IDS = ['pblock-level-2', 'pblock-level-3', 'pblock-level-4'];
 
-function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenAddToCart, onOpenCart, cartCount, activeTab, setActiveTab }) {
+function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenAddToCart, onOpenCart, onOpenSaveDesign, cartCount, activeTab, setActiveTab }) {
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
   const [savedDesigns28Room, setSavedDesigns28Room] = useState([]);
+  const [savedDesignsDesignSelf, setSavedDesignsDesignSelf] = useState([]);
   const [savedDesignsPblockL2, setSavedDesignsPblockL2] = useState([]);
   const [savedDesignsPblockL3, setSavedDesignsPblockL3] = useState([]);
   const [savedDesignsPblockL4, setSavedDesignsPblockL4] = useState([]);
@@ -101,6 +102,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       const designs28 = allDesigns.filter(d => d.category === '2-8');
       const designs312 = allDesigns.filter(d => d.category === '3-12');
       const designs28Room = allDesigns.filter(d => d.category === '2-8-room');
+      const designsDesignSelf = allDesigns.filter(d => d.category === 'design-self');
       const designsPblockL2 = allDesigns.filter(d => d.category === 'pblock-level-2');
       const designsPblockL3 = allDesigns.filter(d => d.category === 'pblock-level-3');
       const designsPblockL4 = allDesigns.filter(d => d.category === 'pblock-level-4');
@@ -108,6 +110,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
       setSavedDesigns28(designs28);
       setSavedDesigns312(designs312);
       setSavedDesigns28Room(designs28Room);
+      setSavedDesignsDesignSelf(designsDesignSelf);
       setSavedDesignsPblockL2(designsPblockL2);
       setSavedDesignsPblockL3(designsPblockL3);
       setSavedDesignsPblockL4(designsPblockL4);
@@ -136,24 +139,6 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   style={{ height: '70px', width: 'auto', display: 'block' }}
                 />
               </div>
-              <button 
-                className="home-page-btn"
-                onClick={onNavigateHome || (() => window.location.reload())}
-                title="Back to Home Page"
-                style={{
-                  padding: '0.4rem 1rem',
-                  backgroundColor: '#f0f0f0',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '500',
-                  transition: 'background-color 0.2s'
-                }}
-              >
-                <i className="fas fa-arrow-left" style={{ marginRight: '6px' }}></i>
-                Home Page
-              </button>
             </div>
 
             {/* Center: Category Tabs */}
@@ -289,11 +274,34 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   </span>
                 )}
               </button>
+              {/* <button
+                type="button"
+                className="save-design-btn"
+                onClick={onOpenSaveDesign}
+                title="Save Design"
+                style={{
+                  padding: '0.5rem 1.2rem',
+                  backgroundColor: '#FF9800',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                <i className="fas fa-save"></i>
+                <span>Save Design</span>
+              </button> */}
               <button
                 type="button"
                 className="save-pdf-btn"
                 onClick={onDownloadPDF}
-                title="Save Design as PDF"
+                title="Export as PDF"
                 style={{
                   padding: '0.5rem 1.2rem',
                   backgroundColor: '#ff5252',
@@ -310,7 +318,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                 }}
               >
                 <i className="fas fa-download"></i>
-                <span>Save Design PDF</span>
+                <span>Export PDF</span>
               </button>
             </div>
           </div>
@@ -354,6 +362,21 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   {savedDesigns28Room.map((design, idx) => (
                     <SavedDesignsThumbnail
                       key={`design-28-room-${idx}`}
+                      design={design}
+                      onLoad={(design) => {
+                        window.dispatchEvent(new CustomEvent('loadSavedDesign', {
+                          detail: design
+                        }));
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {activeCategory?.id === 'design-self' && savedDesignsDesignSelf.length > 0 && (
+                <div style={{ display: 'flex', gap: '0.5rem', paddingRight: '0.75rem', borderRight: '2px solid #ddd', marginRight: '0.75rem' }}>
+                  {savedDesignsDesignSelf.map((design, idx) => (
+                    <SavedDesignsThumbnail
+                      key={`design-self-${idx}`}
                       design={design}
                       onLoad={(design) => {
                         window.dispatchEvent(new CustomEvent('loadSavedDesign', {

@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 const COLORS = {
   'polar-white': '#ffffff',
@@ -118,6 +118,11 @@ export function useDragDrop() {
   const [frameColor, setFrameColor] = useState(DEFAULT_COLOR);
   const [fullColor, setFullColor] = useState(DEFAULT_COLOR);
   const [showIconPopup, setShowIconPopup] = useState(false);
+
+  // Debug: Track selectedColor changes
+  useEffect(() => {
+    console.log('selectedColor changed to:', selectedColor);
+  }, [selectedColor]);
   const [currentIconPosition, setCurrentIconPosition] = useState(null);
   const [showButtonColorPopup, setShowButtonColorPopup] = useState(false);
   const [buttonColorTarget, setButtonColorTarget] = useState(null);
@@ -331,17 +336,24 @@ export function useDragDrop() {
   }, [dropZones, updateDropZone, showFeedback, fullColor, getTextColorForBackground]);
 
   const applyButtonColor = useCallback((buttonId, colorName) => {
+    console.log('=== applyButtonColor START ===');
+    console.log('buttonId:', buttonId, 'colorName:', colorName);
+    console.log('dropZones keys:', Object.keys(dropZones));
     const zone = dropZones[buttonId];
     if (!zone) {
+      console.log('ERROR: Button not found:', buttonId, 'Available zones:', Object.keys(dropZones));
       showFeedback('Button not found', 'error');
       return;
     }
 
+    console.log('Zone found:', JSON.stringify(zone, null, 2));
     // If this is a merged button, apply color to all merged zones
     if (zone.zones && zone.zones.length > 0) {
+      console.log('Applying to merged zones:', zone.zones);
       zone.zones.forEach(zId => {
         const z = dropZones[zId];
         if (z) {
+          console.log('Updating zone:', zId, 'with color:', colorName);
           updateDropZone(zId, {
             ...z,
             color: colorName
@@ -350,12 +362,14 @@ export function useDragDrop() {
       });
     } else {
       // Single zone button
+      console.log('Applying to single zone:', buttonId, 'current color:', zone.color, 'new color:', colorName);
       updateDropZone(buttonId, {
         ...zone,
         color: colorName
       });
     }
 
+    console.log('=== applyButtonColor END ===');
     showFeedback('Color applied to button', 'success');
   }, [dropZones, updateDropZone, showFeedback]);
 
