@@ -100,6 +100,13 @@ const ICON_FILES = [
   'thermostat.DI5g8u2h.svg'
 ];
 
+// Icons available for PBlock layouts - common smart home controls
+const PBLOCK_ICON_FILES = [
+  'LL-01.svg',
+  'LL-02.svg',
+  'C&H-01.svg'
+];
+
 const DEFAULT_COLOR = 'polar-white';
 const DEFAULT_WALL_COLOR = COLORS[DEFAULT_COLOR];
 
@@ -402,6 +409,7 @@ export function useDragDrop() {
     getColorValue,
     getTextureImage,
     getTextColorForBackground,
+    pblockIcons: PBLOCK_ICON_FILES,
     boardWidth,
     setBoardWidth,
     colorPaletteWidth,

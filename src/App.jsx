@@ -30,6 +30,7 @@ function App() {
     frameColor,
     fullColor,
     icons,
+    pblockIcons,
     showIconPopup,
     setShowIconPopup,
     currentIconPosition,
@@ -62,6 +63,10 @@ function App() {
   const [activeTab, setActiveTab] = useState('2-8-buttons');
 
   const showButtonParts = activeTab === 'design-self' || activeTab.startsWith('pblock-level-');
+  
+  // Use PBlock-specific icons when in PBlock layout
+  const isPBlock = activeTab.startsWith('pblock-level-');
+  const activeIcons = isPBlock ? pblockIcons : icons;
 
   const handleGridTypeChange = (nextGridType) => {
     resetDesign();
@@ -219,7 +224,7 @@ function App() {
         <IconPopup
           show={showIconPopup}
           onClose={() => setShowIconPopup(false)}
-          icons={icons}
+          icons={activeIcons}
           onSelectIcon={(iconPath) => {
             if (currentIconPosition && selectedButton) {
               applyIconToButton(selectedButton, currentIconPosition, iconPath);
