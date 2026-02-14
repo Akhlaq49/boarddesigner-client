@@ -62,7 +62,7 @@ const PRODUCT_CATEGORIES = [
 
 const PBLOCK_LEVEL_IDS = ['pblock-level-2', 'pblock-level-3', 'pblock-level-4'];
 
-function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenSaveDesign, activeTab, setActiveTab }) {
+function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelectedButton, setSelectedButtonPart, onOpenAddToCart, onOpenCart, cartCount, activeTab, setActiveTab }) {
   const [savedDesigns28, setSavedDesigns28] = useState([]);
   const [savedDesigns312, setSavedDesigns312] = useState([]);
   const [savedDesigns28Room, setSavedDesigns28Room] = useState([]);
@@ -219,16 +219,16 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
               ))}
             </div>
             
-            {/* Right side: Save Design and Save PDF Buttons */}
+            {/* Right side: Add to Cart and Cart Buttons */}
             <div className="flex-shrink-0 header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-              {/* <button
+              <button
                 type="button"
-                className="save-design-btn"
-                onClick={onOpenSaveDesign}
-                title="Save Design Configuration"
+                className="add-to-cart-btn"
+                onClick={onOpenAddToCart}
+                title="Add Current Design to Cart"
                 style={{
                   padding: '0.5rem 1.2rem',
-                  backgroundColor: '#2196F3',
+                  backgroundColor: '#FF9800',
                   color: 'white',
                   border: 'none',
                   borderRadius: '6px',
@@ -241,9 +241,54 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                   transition: 'background-color 0.2s'
                 }}
               >
-                <i className="fas fa-save"></i>
-                <span>Save Design</span>
-              </button> */}
+                <i className="fas fa-plus"></i>
+                <span>Add to Cart</span>
+              </button>
+              <button
+                type="button"
+                className="cart-btn"
+                onClick={onOpenCart}
+                title="View Design Cart"
+                style={{
+                  padding: '0.5rem 1.2rem',
+                  backgroundColor: '#9C27B0',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '0.9rem',
+                  fontWeight: '500',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  transition: 'background-color 0.2s',
+                  position: 'relative'
+                }}
+              >
+                <i className="fas fa-shopping-cart"></i>
+                <span>Cart</span>
+                {cartCount > 0 && (
+                  <span
+                    style={{
+                      position: 'absolute',
+                      top: '-8px',
+                      right: '-8px',
+                      backgroundColor: '#ff5252',
+                      color: 'white',
+                      borderRadius: '50%',
+                      width: '24px',
+                      height: '24px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.75rem',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {cartCount}
+                  </span>
+                )}
+              </button>
               <button
                 type="button"
                 className="save-pdf-btn"

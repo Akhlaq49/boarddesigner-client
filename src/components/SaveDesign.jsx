@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useCart } from '../hooks/useCart';
 
 function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColor, wallColor, onLoadDesign }) {
+  const { addToCart } = useCart();
   // Auto-select category based on current gridType
   const getDefaultCategory = (gt) => {
     if (!gt) return '2-8';
@@ -40,6 +42,33 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
   useEffect(() => {
     loadDesigns();
   }, [category, loadDesigns]);
+
+  const addDesignToCart = async () => {
+    if (!designName.trim()) {
+      alert('Please enter a design name');
+      return;
+    }
+
+    const designData = {
+      name: designName,
+      category,
+      timestamp: new Date().toLocaleString(),
+      gridType,
+      dropZones,
+      frameColor,
+      fullColor,
+      wallColor
+    };
+
+    try {
+      addToCart(designData);
+      setDesignName('');
+      alert(`Design "${designName}" added to cart!`);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
+      alert('Failed to add design to cart');
+    }
+  };
 
   const saveDesign = async () => {
     if (!designName.trim()) {
@@ -202,7 +231,7 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
               />
             </div>
 
-            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+            <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end', flexWrap: 'wrap' }}>
               <button
                 onClick={() => setShowList(true)}
                 style={{
@@ -218,6 +247,22 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
                 }}
               >
                 View Saved Designs
+              </button>
+              <button
+                onClick={addDesignToCart}
+                style={{
+                  padding: '0.75rem 1.5rem',
+                  backgroundColor: '#FF9800',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '6px',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  fontWeight: '500',
+                  transition: 'background-color 0.2s'
+                }}
+              >
+                Add to Cart
               </button>
               <button
                 onClick={saveDesign}
@@ -304,6 +349,21 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
                         }}
                       >
                         Load
+                      </button>
+                      <button
+                        onClick={() => addToCart(design)}
+                        style={{
+                          padding: '0.5rem 1rem',
+                          backgroundColor: '#FF9800',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '4px',
+                          cursor: 'pointer',
+                          fontSize: '0.9rem',
+                          transition: 'background-color 0.2s'
+                        }}
+                      >
+                        Add to Cart
                       </button>
                       <button
                         onClick={() => setDeleteConfirm(design.name)}

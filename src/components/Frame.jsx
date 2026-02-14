@@ -76,7 +76,8 @@ function Frame({
   selectedColor,
   selectedCategory,
   setSelectedCategory,
-  setDownloadPDFHandler
+  setDownloadPDFHandler,
+  setCaptureImageHandler
 }) {
   const config = GRID_CONFIGS[gridType] || GRID_CONFIGS['dora-2x4'];
   const [highlightedZones, setHighlightedZones] = useState([]);
@@ -1041,12 +1042,155 @@ function Frame({
     }
   }, [config, frameColor, fullColor, getColorValue, gridType, showFeedback, generateProductCode, dropZones]);
 
+  // Capture frame as image for cart
+  const captureFrameImage = useCallback(async () => {
+    try {
+      const frameElement = frameRef.current;
+      if (!frameElement) {
+        return null;
+      }
+
+      const html2canvas = (await import('html2canvas')).default;
+
+      const frameWidth = frameElement.offsetWidth;
+      const frameHeight = frameElement.offsetHeight;
+
+      // --- Phase 1: Pre-load all icon white versions (async, no DOM changes) ---
+      const liveIcons = frameElement.querySelectorAll('img.button-icon');
+      const iconData = new Map();
+
+      for (const img of liveIcons) {
+        try {
+          const src = img.getAttribute('src') || img.src;
+
+          const loadedImg = await new Promise((resolve, reject) => {
+            const testImg = new Image();
+            testImg.crossOrigin = 'anonymous';
+            testImg.onload = () => resolve(testImg);
+            testImg.onerror = () => reject(new Error('Failed to load: ' + src));
+            testImg.src = src;
+            setTimeout(() => reject(new Error('Timeout loading: ' + src)), 5000);
+          });
+
+          const c = document.createElement('canvas');
+          const ctx = c.getContext('2d');
+          const minSize = 200;
+          const w = Math.max(loadedImg.naturalWidth || minSize, minSize);
+          const h = Math.max(loadedImg.naturalHeight || minSize, minSize);
+          c.width = w;
+          c.height = h;
+          ctx.drawImage(loadedImg, 0, 0, w, h);
+
+          // Convert to white
+          const imageData = ctx.getImageData(0, 0, w, h);
+          const pixels = imageData.data;
+          for (let i = 0; i < pixels.length; i += 4) {
+            if (pixels[i + 3] > 0) {
+              pixels[i] = 255;
+              pixels[i + 1] = 255;
+              pixels[i + 2] = 255;
+            }
+          }
+          ctx.putImageData(imageData, 0, 0);
+
+          iconData.set(img, {
+            whiteSrc: c.toDataURL('image/png'),
+            originalSrc: src,
+            originalFilter: img.style.filter,
+            originalWebkitFilter: img.style.webkitFilter
+          });
+        } catch (err) {
+          console.warn('Failed to pre-load icon for cart capture:', err);
+        }
+      }
+
+      // --- Phase 2: Synchronous swap, capture, restore ---
+      const styleOverride = document.createElement('style');
+      styleOverride.id = 'cart-capture-style-override';
+      styleOverride.textContent = `
+        .button-icon, img.button-icon,
+        .button-content .button-icon, .dropped-button .button-icon,
+        .button-content img.button-icon, .dropped-button img.button-icon {
+          filter: none !important;
+          -webkit-filter: none !important;
+        }
+        .dropped-button .button-content,
+        .button-content {
+          overflow: visible !important;
+        }
+        .button-content .s0,
+        .button-content .s1,
+        .button-content .s2 {
+          overflow: visible !important;
+        }
+      `;
+      document.head.appendChild(styleOverride);
+
+      // Hide action buttons
+      const removeBtns = frameElement.querySelectorAll('.remove-button');
+      const colorBtns = frameElement.querySelectorAll('.button-color-btn');
+      removeBtns.forEach(btn => btn.style.display = 'none');
+      colorBtns.forEach(btn => btn.style.display = 'none');
+
+      // Swap icon sources to white versions
+      for (const [img, data] of iconData) {
+        img.src = data.whiteSrc;
+        img.style.filter = 'none';
+        img.style.webkitFilter = 'none';
+      }
+
+      // Small delay for rendering
+      await new Promise(r => setTimeout(r, 100));
+
+      let canvas;
+      try {
+        canvas = await html2canvas(frameElement, {
+          scale: 2,
+          useCORS: true,
+          allowTaint: false,
+          backgroundColor: null,
+          logging: false,
+          foreignObjectRendering: false,
+          removeContainer: false,
+          imageTimeout: 15000,
+          timeout: 60000,
+          width: frameWidth,
+          height: frameHeight,
+          scrollX: -window.scrollX,
+          scrollY: -window.scrollY
+        });
+      } finally {
+        // --- Phase 3: Restore everything ---
+        document.head.removeChild(styleOverride);
+        removeBtns.forEach(btn => btn.style.display = '');
+        colorBtns.forEach(btn => btn.style.display = '');
+        for (const [img, data] of iconData) {
+          img.src = data.originalSrc;
+          img.style.filter = data.originalFilter;
+          img.style.webkitFilter = data.originalWebkitFilter;
+        }
+      }
+
+      return canvas.toDataURL('image/png');
+    } catch (error) {
+      console.error('Error capturing frame image:', error);
+      return null;
+    }
+  }, []);
+
   // Register PDF download handler with parent
   useEffect(() => {
     if (setDownloadPDFHandler) {
       setDownloadPDFHandler(() => handleDownloadPDF);
     }
   }, [setDownloadPDFHandler, handleDownloadPDF]);
+
+  // Register capture image handler with parent
+  useEffect(() => {
+    if (setCaptureImageHandler) {
+      setCaptureImageHandler(() => captureFrameImage);
+    }
+  }, [setCaptureImageHandler, captureFrameImage]);
 
   // Dot drag-and-drop handlers
   const handleDotMouseDown = useCallback((e, zoneId, dotKey) => {

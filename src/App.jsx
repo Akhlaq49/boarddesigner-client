@@ -6,12 +6,21 @@ import ColorPalette from './components/ColorPalette';
 import IconPopup from './components/IconPopup';
 import ButtonColorPopup from './components/ButtonColorPopup';
 import FeedbackMessage from './components/FeedbackMessage';
-import SaveDesign from './components/SaveDesign';
+import AddToCartModal from './components/AddToCartModal';
+import CartView from './components/CartView';
 import { useDragDrop } from './hooks/useDragDrop';
+import { useCart } from './hooks/useCart';
 
 function App() {
   const [frameDownloadPDF, setFrameDownloadPDF] = useState(null);
-  const [showSaveDesignModal, setShowSaveDesignModal] = useState(false);
+  const [frameCaptureImage, setFrameCaptureImage] = useState(null);
+  const [showAddToCartModal, setShowAddToCartModal] = useState(false);
+  const [showCartModal, setShowCartModal] = useState(false);
+  
+  const { cart, addToCart, removeFromCart, clearCart } = useCart();
+  
+  // Check if we're in cart view mode
+  const isCartView = new URLSearchParams(window.location.search).get('view') === 'cart';
   
   const {
     gridType,
@@ -89,7 +98,20 @@ function App() {
   }, [loadDesign]);
 
   return (
-    <section className="fixed w-full h-full" style={{ overflowX: 'auto', overflowY: 'auto' }}>
+    <>
+      {isCartView ? (
+        // Cart View - Full Screen in New Window
+        <CartView
+          isOpen={true}
+          isNewWindow={true}
+          onClose={() => window.close()}
+          cart={cart}
+          onRemoveItem={removeFromCart}
+          onClearCart={clearCart}
+        />
+      ) : (
+        // Designer View - Main App
+        <section className="fixed w-full h-full" style={{ overflowX: 'auto', overflowY: 'auto' }}>
       <div className="wrapper flex flex-col align-middle justify-center transition-colors duration-300 select-none">
         <Header 
           boardWidth={boardWidth}
@@ -102,7 +124,9 @@ function App() {
           onDownloadPDF={() => frameDownloadPDF && frameDownloadPDF()}
           setSelectedButton={setSelectedButton}
           setSelectedButtonPart={setSelectedButtonPart}
-          onOpenSaveDesign={() => setShowSaveDesignModal(true)}
+          onOpenAddToCart={() => setShowAddToCartModal(true)}
+          onOpenCart={() => window.open('/?view=cart', 'cart', 'width=1200,height=800')}
+          cartCount={cart.length}
           activeTab={activeTab}
           setActiveTab={setActiveTab}
         />
@@ -184,6 +208,7 @@ function App() {
                 setSelectedButtonPart={setSelectedButtonPart}
                 selectedColor={selectedColor}
                 setDownloadPDFHandler={setFrameDownloadPDF}
+                setCaptureImageHandler={setFrameCaptureImage}
                 wallColor={wallColor}
               />
             </div>
@@ -246,18 +271,29 @@ function App() {
 
         <FeedbackMessage feedback={feedback} />
 
-        <SaveDesign
-          isOpen={showSaveDesignModal}
-          onClose={() => setShowSaveDesignModal(false)}
+        <AddToCartModal
+          isOpen={showAddToCartModal}
+          onClose={() => setShowAddToCartModal(false)}
           dropZones={dropZones}
           gridType={gridType}
           frameColor={frameColor}
           fullColor={fullColor}
           wallColor={wallColor}
-          onLoadDesign={loadDesign}
+          captureFrameImage={frameCaptureImage}
+          addToCart={addToCart}
+        />
+
+        <CartView
+          isOpen={showCartModal}
+          onClose={() => setShowCartModal(false)}
+          cart={cart}
+          onRemoveItem={removeFromCart}
+          onClearCart={clearCart}
         />
       </div>
     </section>
+      )}
+    </>
   );
 }
 
