@@ -1533,7 +1533,7 @@ function Frame({
         id="key"
         className={`frame-container-${gridType} ${config.hasDisplay ? 'with-digital-interface' : ''}`}
         style={{ 
-          backgroundColor: frameColor ? getColorValue(frameColor) : '#000'
+          backgroundColor: gridType.startsWith('pblock') ? 'transparent' : (frameColor ? getColorValue(frameColor) : '#000')
         }}
       >
         {/* Digital Interface for Thermostat and PBlock models */}
