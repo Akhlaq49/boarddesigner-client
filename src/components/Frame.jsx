@@ -599,27 +599,6 @@ function Frame({
     }
   };
 
-  const handleRemove = (e, zoneId) => {
-    e.stopPropagation();
-    const zone = dropZones[zoneId];
-    if (zone && zone.zones) {
-      // Clear all merged zones
-      zone.zones.forEach(z => clearDropZone(z));
-    } else {
-      clearDropZone(zoneId);
-    }
-    if (selectedButton === zoneId) {
-      setSelectedButton(null);
-    }
-    showFeedback('Button removed', 'success');
-  };
-
-  const handleColorClick = (e, zoneId) => {
-    e.stopPropagation();
-    setButtonColorTarget(zoneId);
-    setShowButtonColorPopup(true);
-  };
-
   const handleDownloadPDF = useCallback(async () => {
     try {
       const frameElement = frameRef.current;
