@@ -1524,20 +1524,20 @@ function Frame({
             </>
           )}
         </div>
-        <button
+        {/* <button
           className="remove-button"
           onClick={(e) => handleRemove(e, zoneId)}
           title="Remove"
         >
           ×
-        </button>
-        <button
+        </button> */}
+        {/* <button
           className="button-color-btn"
           onClick={(e) => handleColorClick(e, zoneId)}
           title="Change Color"
         >
           🎨
-        </button>
+        </button> */}
       </div>
     );
   };

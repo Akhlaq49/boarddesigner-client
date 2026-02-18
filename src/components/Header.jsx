@@ -136,7 +136,7 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                 <img
                   src="/images/logo-mmti.png"
                   alt="MMTI Technology & Interior"
-                  style={{ height: '70px', width: 'auto', display: 'block' }}
+                  className="header-logo-img"
                 />
               </div>
             </div>
@@ -153,16 +153,8 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                       if (setSelectedButtonPart) setSelectedButtonPart(null);
                     }}
                     style={{
-                      padding: '0.5rem 1.5rem',
                       backgroundColor: activeTab === category.id ? '#ffeb3b' : 'transparent',
-                      color: activeTab === category.id ? '#000' : '#555',
-                      border: 'none',
-                      cursor: 'pointer',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      transition: 'all 0.2s',
-                      borderRadius: '6px',
-                      whiteSpace: 'nowrap'
+                      color: activeTab === category.id ? '#000' : '#555'
                     }}
                   >
                     {category.name}
@@ -178,18 +170,10 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
                           if (setSelectedButton) setSelectedButton(null);
                           if (setSelectedButtonPart) setSelectedButtonPart(null);
                         }}
+                        className="nav-pblock-select"
                         style={{
-                          padding: '0.5rem 1.4rem 0.5rem 0.9rem',
                           backgroundColor: isPblockTabActive ? '#ffeb3b' : 'transparent',
-                          color: isPblockTabActive ? '#000' : '#555',
-                          border: '1px solid #ddd',
-                          cursor: 'pointer',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          transition: 'all 0.2s',
-                          borderRadius: '6px',
-                          whiteSpace: 'nowrap',
-                          appearance: 'auto'
+                          color: isPblockTabActive ? '#000' : '#555'
                         }}
                         aria-label="PBlock levels"
                       >
@@ -205,50 +189,21 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
             </div>
             
             {/* Right side: Add to Cart and Cart Buttons */}
-            <div className="flex-shrink-0 header-actions" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+            <div className="flex-shrink-0 header-actions">
               <button
                 type="button"
-                className="add-to-cart-btn"
+                className="add-to-cart-btn header-action-btn"
                 onClick={onOpenAddToCart}
                 title="Add Current Design to Cart"
-                style={{
-                  padding: '0.5rem 1.2rem',
-                  backgroundColor: '#FF9800',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  transition: 'background-color 0.2s'
-                }}
               >
                 <i className="fas fa-plus"></i>
                 <span>Add to Cart</span>
               </button>
               <button
                 type="button"
-                className="cart-btn"
+                className="cart-btn header-action-btn"
                 onClick={onOpenCart}
                 title="View Design Cart"
-                style={{
-                  padding: '0.5rem 1.2rem',
-                  backgroundColor: '#9C27B0',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  transition: 'background-color 0.2s',
-                  position: 'relative'
-                }}
               >
                 <i className="fas fa-shopping-cart"></i>
                 <span>Cart</span>
@@ -299,23 +254,9 @@ function Header({ onNavigateHome, gridType, setGridType, onDownloadPDF, setSelec
               </button> */}
               <button
                 type="button"
-                className="save-pdf-btn"
+                className="save-pdf-btn header-action-btn"
                 onClick={onDownloadPDF}
                 title="Export as PDF"
-                style={{
-                  padding: '0.5rem 1.2rem',
-                  backgroundColor: '#ff5252',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '6px',
-                  cursor: 'pointer',
-                  fontSize: '0.9rem',
-                  fontWeight: '500',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '0.5rem',
-                  transition: 'background-color 0.2s'
-                }}
               >
                 <i className="fas fa-download"></i>
                 <span>Export PDF</span>
