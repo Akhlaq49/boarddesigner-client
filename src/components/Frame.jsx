@@ -75,6 +75,7 @@ function Frame({
   selectedButtonPart,
   setSelectedButtonPart,
   selectedColor,
+  isLabelMode,
   selectedCategory,
   setSelectedCategory,
   setDownloadPDFHandler,
@@ -567,8 +568,8 @@ function Frame({
     } else if (dropZones[zoneId]) {
       // Normal selection mode - select the button
       setSelectedButton(zoneId);
-      // If there's a selected color, apply it to the clicked button
-      if (selectedColor && applyButtonColor) {
+      // If there's a selected color, apply it to the clicked button (but not in Icon & Text mode)
+      if (selectedColor && applyButtonColor && !isLabelMode) {
         applyButtonColor(zoneId, selectedColor);
       }
     }
@@ -1410,8 +1411,8 @@ function Frame({
         onClick={(e) => {
           e.stopPropagation();
           setSelectedButton(zoneId);
-          // If there's a selected color, apply it to the clicked button
-          if (selectedColor && applyButtonColor) {
+          // If there's a selected color, apply it to the clicked button (but not in Icon & Text mode)
+          if (selectedColor && applyButtonColor && !isLabelMode) {
             applyButtonColor(zoneId, selectedColor);
           }
         }}

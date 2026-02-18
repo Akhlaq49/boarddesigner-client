@@ -59,7 +59,8 @@ function ButtonParts({
   dropZones,
   selectedButtonPart,
   setSelectedButtonPart,
-  labelOnly = false
+  labelOnly = false,
+  onActiveTabChange
 }) {
   const [activeTab, setActiveTab] = useState(labelOnly ? 'label' : 'parts');
   const [positionTypes, setPositionTypes] = useState({
@@ -72,6 +73,13 @@ function ButtonParts({
     s1: '',
     s2: ''
   });
+
+  // Notify parent when the active tab changes
+  useEffect(() => {
+    if (onActiveTabChange) {
+      onActiveTabChange(activeTab);
+    }
+  }, [activeTab, onActiveTabChange]);
 
   const handlePositionTypeChange = (position, type) => {
     setPositionTypes(prev => ({ ...prev, [position]: type }));

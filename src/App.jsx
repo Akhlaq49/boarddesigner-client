@@ -73,6 +73,9 @@ function App() {
   // Track active category tab
   const [activeTab, setActiveTab] = useState('2-8-buttons');
 
+  // Track ButtonParts internal tab (parts vs label/icon-text)
+  const [buttonPartsActiveTab, setButtonPartsActiveTab] = useState('parts');
+
   const showButtonParts = activeTab === 'design-self' || activeTab.startsWith('pblock-level-');
   
   // Use PBlock-specific icons when in PBlock layout
@@ -188,6 +191,7 @@ function App() {
                       selectedButtonPart={selectedButtonPart}
                       setSelectedButtonPart={setSelectedButtonPart}
                       labelOnly={activeTab.startsWith('pblock-level-')}
+                      onActiveTabChange={setButtonPartsActiveTab}
                     />
                   </div>
                 </div>
@@ -232,6 +236,7 @@ function App() {
                 selectedButtonPart={selectedButtonPart}
                 setSelectedButtonPart={setSelectedButtonPart}
                 selectedColor={selectedColor}
+                isLabelMode={buttonPartsActiveTab === 'label'}
                 setDownloadPDFHandler={setFrameDownloadPDF}
                 setCaptureImageHandler={setFrameCaptureImage}
                 wallColor={wallColor}
