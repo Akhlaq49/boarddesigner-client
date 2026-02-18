@@ -222,6 +222,7 @@ function SavedDesignsThumbnail({ design, onLoad }) {
 
   return (
     <button
+      className="saved-design-thumbnail"
       onClick={() => onLoad(design)}
       title={`${design.name}\nSaved: ${design.timestamp}`}
       style={{

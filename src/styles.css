@@ -263,17 +263,24 @@ header.fixed {
 }
 
 .app-header {
-    height: 140px;
+    height: auto;
+    min-height: 140px;
 }
 
 .header-top-row {
-    height: 50px;
+    height: auto;
+    min-height: 50px;
 }
 
 .header-products-row {
-    height: 90px;
+    height: auto;
+    min-height: 90px;
     padding: 1rem 0;
     overflow-x: auto;
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    flex-shrink: 0;
 }
 
 .header-actions {
@@ -3629,6 +3636,7 @@ fieldset[disabled] {
 @media (max-width: 1024px) {
     /* Stack the 3 columns vertically */
     .app-columns-row {
+        flex-direction: column;
         flex-wrap: wrap !important;
         min-width: 0 !important;
         gap: 0.5rem;
@@ -3637,7 +3645,7 @@ fieldset[disabled] {
     .app-col-left {
         width: 100% !important;
         min-width: 0 !important;
-        order: 2;
+        order: 3;
         padding: 0 8px;
     }
 
@@ -3654,7 +3662,7 @@ fieldset[disabled] {
         width: 100% !important;
         min-width: 0 !important;
         max-width: 100% !important;
-        order: 3;
+        order: 2;
         padding: 0 8px;
     }
 
@@ -3860,26 +3868,39 @@ fieldset[disabled] {
 
     /* Product icons row */
     .header-products-row {
-        height: auto;
-        padding: 0.4rem 0;
+        min-height: 70px;
+        padding: 0.4rem 0.5rem;
         overflow-x: auto;
+        overflow-y: hidden;
         flex-wrap: nowrap;
         -webkit-overflow-scrolling: touch;
-        gap: 0.25rem !important;
+        gap: 0.35rem !important;
+        scrollbar-width: thin;
+        width: 315px !important;
     }
 
     .header-products-row::-webkit-scrollbar {
-        height: 3px;
+        height: 4px;
+    }
+
+    .header-products-row::-webkit-scrollbar-track {
+        background: transparent;
     }
 
     .header-products-row::-webkit-scrollbar-thumb {
-        background: #ccc;
+        background: #999;
         border-radius: 2px;
     }
 
-    /* App content padding */
+    /* Responsive thumbnail sizing */
+    .saved-design-thumbnail {
+        width: 45px;
+        height: 45px;
+        flex-shrink: 0;
+    }
+
     .app-content {
-        padding-top: 200px;
+        padding-top: 220px;
     }
 
     /* Frame layouts - scale to fit mobile */
@@ -4101,7 +4122,7 @@ fieldset[disabled] {
     }
 
     .app-content {
-        padding-top: 220px;
+        padding-top: 250px;
     }
 
     .header-logo-img {
@@ -4118,7 +4139,22 @@ fieldset[disabled] {
         padding: 0.3rem 0.5rem !important;
     }
 
-    /* Frame layouts - even smaller */
+    /* Responsive thumbnail sizing */
+    .saved-design-thumbnail {
+        width: 40px;
+        height: 40px;
+        flex-shrink: 0;
+    }
+    /* Improve product row scroll visibility */
+    .header-products-row::-webkit-scrollbar {
+        height: 5px;
+    }
+
+    .header-products-row::-webkit-scrollbar-thumb {
+        background: #777;
+        border-radius: 3px;
+    }
+
     .layout-dora-2x2,
     .layout-2x4,
     .layout-dora-2x4,
