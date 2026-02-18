@@ -85,7 +85,31 @@ function Frame({
   const [highlightedZones, setHighlightedZones] = useState([]);
   const [draggingDot, setDraggingDot] = useState(null);
   const [dotPositions, setDotPositions] = useState({});
-  const frameRef = useRef(null);  
+  const frameRef = useRef(null);
+
+  // Click outside frame to deselect (but not when interacting with color palette, icon popup, button parts, etc.)
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (frameRef.current && !frameRef.current.contains(e.target)) {
+        // Don't deselect if clicking on color palette, icon popup, button color popup, or button parts panel
+        const interactiveSelectors = [
+          '.color-palette-container',
+          '.icon-popup-modal',
+          '.button-color-popup',
+          '.x-card',
+          '.open-icon-popup-btn'
+        ];
+        const isInteractiveClick = interactiveSelectors.some(sel => e.target.closest(sel));
+        if (!isInteractiveClick) {
+          setSelectedButton(null);
+          setSelectedButtonPart(null);
+        }
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [setSelectedButton, setSelectedButtonPart]);
+
   // Product code generation logic
   const generateProductCode = useCallback(() => {
     const hasDisplay = config.hasDisplay;
