@@ -472,9 +472,9 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
           <p className="text-sm">Add designs to see them here</p>
         </div>
       ) : (
-        <div style={{ maxWidth: '900px', margin: '0 auto' }}>
+        <div className="cart-content-container">
           {/* Catalog Header */}
-          <div style={{ marginBottom: '2rem', padding: '1.5rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+          <div className="cart-catalog-header">
             <h2 style={{ marginTop: 0, marginBottom: '0.5rem', color: '#333' }}>
               Design Cart Catalog
             </h2>
@@ -489,16 +489,10 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
             {cart.map((item, index) => (
               <div
                 key={item.id}
-                style={{
-                  backgroundColor: 'white',
-                  borderRadius: '8px',
-                  overflow: 'hidden',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                  border: '1px solid #e0e0e0'
-                }}
+                className="cart-item"
               >
                 {/* Item Header */}
-                <div style={{ padding: '1.5rem', backgroundColor: '#f8f8f8', borderBottom: '1px solid #e0e0e0' }}>
+                <div className="cart-item-header">
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                     <span style={{
                       backgroundColor: '#9C27B0',
@@ -517,14 +511,14 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
                 </div>
 
                 {/* Item Content */}
-                <div style={{ padding: '1.5rem', display: 'flex', gap: '1.5rem' }}>
+                <div className="cart-item-content">
                   {/* Left: Design Preview */}
-                  <div style={{ flex: '0 0 400px' }}>
+                  <div className="cart-design-preview">
                     {renderDesignPreview(item)}
                   </div>
 
                   {/* Right: Button Details */}
-                  <div style={{ flex: '1', minWidth: '0' }}>
+                  <div className="cart-design-details">
                     {/* Frame Information */}
                     <div style={{ marginBottom: '1.5rem', padding: '1rem', backgroundColor: '#f0f7ff', borderRadius: '6px', borderLeft: '3px solid #2196F3' }}>
                       <h4 style={{ marginTop: 0, marginBottom: '0.75rem', color: '#000', fontSize: '1rem', fontWeight: 'bold' }}>
@@ -699,54 +693,27 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
         // Full screen window mode
         <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column', backgroundColor: '#fafafa' }}>
           {/* Header matching main app header */}
-          <header style={{
-            backgroundColor: 'white',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-            padding: '1rem 1.5rem',
-            borderBottom: '1px solid #e0e0e0'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <header className="cart-header">
+            <div className="cart-header-content">
               {/* Left: Title with Cart Count */}
-              <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>
-                  <i className="fas fa-shopping-cart" style={{ marginRight: '0.75rem', color: '#9C27B0' }}></i>
+              <div className="cart-title-section">
+                <h2 className="cart-title">
+                  <i className="fas fa-shopping-cart cart-title-icon"></i>
                   Design Cart
-                  <span style={{
-                    marginLeft: '0.75rem',
-                    backgroundColor: '#9C27B0',
-                    color: 'white',
-                    padding: '0.25rem 0.75rem',
-                    borderRadius: '20px',
-                    fontSize: '0.9rem',
-                    fontWeight: 'bold'
-                  }}>
+                  <span className="cart-count-badge">
                     {cart.length}
                   </span>
                 </h2>
               </div>
 
               {/* Right: Action Buttons */}
-              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexShrink: 0 }}>
+              <div className="cart-actions">
                 {cart.length > 0 && (
                   <>
                     <button
                       onClick={handlePrintAll}
                       disabled={printing}
-                      style={{
-                        padding: '0.5rem 1.2rem',
-                        backgroundColor: '#2196F3',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: printing ? 'not-allowed' : 'pointer',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        transition: 'background-color 0.2s',
-                        opacity: printing ? 0.6 : 1
-                      }}
+                      className="cart-action-btn print"
                     >
                       <i className="fas fa-print"></i>
                       <span>{printing ? 'Preparing...' : 'Print All'}</span>
@@ -754,41 +721,14 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
                     <button
                       onClick={handleExportPDF}
                       disabled={exportingPDF}
-                      style={{
-                        padding: '0.5rem 1.2rem',
-                        backgroundColor: '#4CAF50',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: exportingPDF ? 'not-allowed' : 'pointer',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        transition: 'background-color 0.2s',
-                        opacity: exportingPDF ? 0.6 : 1
-                      }}
+                      className="cart-action-btn export"
                     >
                       <i className="fas fa-download"></i>
                       <span>{exportingPDF ? 'Exporting...' : 'Export PDF'}</span>
                     </button>
                     <button
                       onClick={onClearCart}
-                      style={{
-                        padding: '0.5rem 1.2rem',
-                        backgroundColor: '#f44336',
-                        color: 'white',
-                        border: 'none',
-                        borderRadius: '6px',
-                        cursor: 'pointer',
-                        fontSize: '0.9rem',
-                        fontWeight: '500',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '0.5rem',
-                        transition: 'background-color 0.2s'
-                      }}
+                      className="cart-action-btn clear"
                     >
                       <i className="fas fa-trash"></i>
                       <span>Clear All</span>
@@ -797,20 +737,7 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
                 )}
                 <button
                   onClick={onClose}
-                  style={{
-                    padding: '0.5rem 1.2rem',
-                    backgroundColor: '#f0f0f0',
-                    color: '#333',
-                    border: 'none',
-                    borderRadius: '6px',
-                    cursor: 'pointer',
-                    fontSize: '0.9rem',
-                    fontWeight: '500',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                    transition: 'background-color 0.2s'
-                  }}
+                  className="cart-action-btn close"
                 >
                   <i className="fas fa-times"></i>
                   <span>Close</span>
@@ -829,55 +756,27 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-[95vw] h-[95vh] overflow-hidden flex flex-col">
             {/* Header matching main app header */}
-            <header style={{
-              backgroundColor: 'white',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-              padding: '1rem 1.5rem',
-              borderBottom: '1px solid #e0e0e0',
-              borderRadius: '0.5rem 0.5rem 0 0'
-            }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <header className="cart-header" style={{ borderRadius: '0.5rem 0.5rem 0 0' }}>
+              <div className="cart-header-content">
                 {/* Left: Title with Cart Count */}
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', flexShrink: 0 }}>
-                  <h2 style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: '#333' }}>
-                    <i className="fas fa-shopping-cart" style={{ marginRight: '0.75rem', color: '#9C27B0' }}></i>
+                <div className="cart-title-section">
+                  <h2 className="cart-title">
+                    <i className="fas fa-shopping-cart cart-title-icon"></i>
                     Design Cart
-                    <span style={{
-                      marginLeft: '0.75rem',
-                      backgroundColor: '#9C27B0',
-                      color: 'white',
-                      padding: '0.25rem 0.75rem',
-                      borderRadius: '20px',
-                      fontSize: '0.9rem',
-                      fontWeight: 'bold'
-                    }}>
+                    <span className="cart-count-badge">
                       {cart.length}
                     </span>
                   </h2>
                 </div>
 
                 {/* Right: Action Buttons */}
-                <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexShrink: 0 }}>
+                <div className="cart-actions">
                   {cart.length > 0 && (
                     <>
                       <button
                         onClick={handlePrintAll}
                         disabled={printing}
-                        style={{
-                          padding: '0.5rem 1.2rem',
-                          backgroundColor: '#2196F3',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: printing ? 'not-allowed' : 'pointer',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          transition: 'background-color 0.2s',
-                          opacity: printing ? 0.6 : 1
-                        }}
+                        className="cart-action-btn print"
                       >
                         <i className="fas fa-print"></i>
                         <span>{printing ? 'Preparing...' : 'Print All'}</span>
@@ -885,41 +784,14 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
                       <button
                         onClick={handleExportPDF}
                         disabled={exportingPDF}
-                        style={{
-                          padding: '0.5rem 1.2rem',
-                          backgroundColor: '#4CAF50',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: exportingPDF ? 'not-allowed' : 'pointer',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          transition: 'background-color 0.2s',
-                          opacity: exportingPDF ? 0.6 : 1
-                        }}
+                        className="cart-action-btn export"
                       >
                         <i className="fas fa-download"></i>
                         <span>{exportingPDF ? 'Exporting...' : 'Export PDF'}</span>
                       </button>
                       <button
                         onClick={onClearCart}
-                        style={{
-                          padding: '0.5rem 1.2rem',
-                          backgroundColor: '#f44336',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          cursor: 'pointer',
-                          fontSize: '0.9rem',
-                          fontWeight: '500',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '0.5rem',
-                          transition: 'background-color 0.2s'
-                        }}
+                        className="cart-action-btn clear"
                       >
                         <i className="fas fa-trash"></i>
                         <span>Clear All</span>
@@ -928,20 +800,7 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
                   )}
                   <button
                     onClick={onClose}
-                    style={{
-                      padding: '0.5rem 1.2rem',
-                      backgroundColor: '#f0f0f0',
-                      color: '#333',
-                      border: 'none',
-                      borderRadius: '6px',
-                      cursor: 'pointer',
-                      fontSize: '0.9rem',
-                      fontWeight: '500',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '0.5rem',
-                      transition: 'background-color 0.2s'
-                    }}
+                    className="cart-action-btn close"
                   >
                     <i className="fas fa-times"></i>
                     <span>Close</span>
