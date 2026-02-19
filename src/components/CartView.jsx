@@ -22,6 +22,75 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
     return settings[gridType] || { cols: 2, rows: 4 };
   };
 
+  // Helper function to generate product code for each cart item
+  const generateProductCodeForItem = (item) => {
+    const gridConfigs = {
+      'dora-1x1': { columns: 1, rows: 1, visibleZones: 1, label: 'Single Square Button', hasDisplay: false },
+      'dora-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'Dora 2×2', hasDisplay: false },
+      'dora-2x4': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Keypad 2×4', hasDisplay: false },
+      'dora-2x8': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora XLarge 2×6', hasDisplay: false },
+      'dora-thermostat': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Thermostat 4+4', hasDisplay: true },
+      'pblock-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock 2×2', hasDisplay: false },
+      'pblock-2x2-display': { columns: 2, rows: 1, visibleZones: 2, label: 'PBlock 2×2 + Display', hasDisplay: true },
+      'pblock-3x2': { columns: 2, rows: 3, visibleZones: 6, label: 'PBlock 3×2', hasDisplay: false },
+      'pblock-3x2-display': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock 3×2 + Display', hasDisplay: true },
+      'pblock-4x2': { columns: 2, rows: 4, visibleZones: 8, label: 'PBlock 4×2', hasDisplay: false },
+      'pblock-4x2-display': { columns: 2, rows: 3, visibleZones: 6, label: 'PBlock 4×2 + Display', hasDisplay: true }
+    };
+    
+    const config = gridConfigs[item.gridType] || { columns: 2, rows: 4, visibleZones: 8, label: item.gridType, hasDisplay: false };
+    const hasDisplay = config.hasDisplay;
+    const rows = config.rows;
+    const columns = config.columns;
+    let rowCodes = [];
+    
+    const dropZones = item.dropZones || {};
+    
+    // Iterate through each row to count buttons
+    for (let row = 1; row <= rows; row++) {
+      let buttonCount = 0;
+      for (let col = 1; col <= columns; col++) {
+        const zoneId = columns === 1 
+          ? `button${row}`
+          : `button${(row - 1) * columns + col}`;
+        const zone = dropZones[zoneId];
+        if (zone && zone.isPrimary) {
+          buttonCount++;
+        }
+      }
+      rowCodes.push(buttonCount.toString());
+    }
+    
+    const buttonConfig = rowCodes.join('');
+    const displayPrefix = hasDisplay ? 'D' : '';
+    const configSuffix = displayPrefix + buttonConfig;
+    
+    // Generate product code with suffix
+    let productCode;
+    
+    if (item.gridType.includes('pblock')) {
+      // PBlock products use MM2_PB_ format
+      productCode = `MM2_PB_${configSuffix}`;
+    } else if (item.gridType === 'dora-thermostat') {
+      productCode = `MM1_4T_${configSuffix}`;
+    } else if (item.gridType === 'dora-2x8') {
+      productCode = `MM1_40_66_${configSuffix}`;
+    } else {
+      // Default keypad code for all other dora types (dora-2x4, dora-2x2, etc.)
+      productCode = `MM1_40_${configSuffix}`;
+    }
+    
+    return { 
+      materialCode: productCode,
+      seriesCode: '',
+      baseCode: '',
+      buttonConfig,
+      hasDisplay,
+      label: config.label,
+      fullCode: productCode
+    };
+  };
+
   const renderDesignPreview = (item) => {
     // If we have a captured design image, display that
     if (item.designImage) {
@@ -163,61 +232,6 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
       let yPosition = margin;
       let pageNumber = 1;
 
-      // Helper function to generate product code for each cart item
-      const generateProductCodeForItem = (item) => {
-        const gridConfigs = {
-          'dora-1x1': { columns: 1, rows: 1, visibleZones: 1, label: 'Single Square Button', hasDisplay: false },
-          'dora-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'Dora 2×2', hasDisplay: false },
-          'dora-2x4': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Keypad 2×4', hasDisplay: false },
-          'dora-2x8': { columns: 2, rows: 6, visibleZones: 12, label: 'Dora XLarge 2×6', hasDisplay: false },
-          'dora-thermostat': { columns: 2, rows: 4, visibleZones: 8, label: 'Dora Thermostat 4+4', hasDisplay: true },
-          'pblock-2x2': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock 2×2', hasDisplay: false },
-          'pblock-2x2-display': { columns: 2, rows: 1, visibleZones: 2, label: 'PBlock 2×2 + Display', hasDisplay: true },
-          'pblock-3x2': { columns: 2, rows: 3, visibleZones: 6, label: 'PBlock 3×2', hasDisplay: false },
-          'pblock-3x2-display': { columns: 2, rows: 2, visibleZones: 4, label: 'PBlock 3×2 + Display', hasDisplay: true },
-          'pblock-4x2': { columns: 2, rows: 4, visibleZones: 8, label: 'PBlock 4×2', hasDisplay: false },
-          'pblock-4x2-display': { columns: 2, rows: 3, visibleZones: 6, label: 'PBlock 4×2 + Display', hasDisplay: true }
-        };
-        
-        const config = gridConfigs[item.gridType] || { columns: 2, rows: 4, visibleZones: 8, label: item.gridType, hasDisplay: false };
-        const hasDisplay = config.hasDisplay;
-        const rows = config.rows;
-        const columns = config.columns;
-        let rowCodes = [];
-        
-        const dropZones = item.dropZones || {};
-        
-        // Iterate through each row to count buttons
-        for (let row = 1; row <= rows; row++) {
-          let buttonCount = 0;
-          for (let col = 1; col <= columns; col++) {
-            const zoneId = columns === 1 
-              ? `button${row}`
-              : `button${(row - 1) * columns + col}`;
-            const zone = dropZones[zoneId];
-            if (zone && zone.isPrimary) {
-              buttonCount++;
-            }
-          }
-          rowCodes.push(buttonCount.toString());
-        }
-        
-        const buttonConfig = rowCodes.join('');
-        const displayPrefix = hasDisplay ? 'D' : '';
-        const baseCode = displayPrefix + buttonConfig;
-        const materialCode = 'MM2';
-        const seriesCode = item.gridType.includes('dora') ? 'DR' : 'PB';
-        
-        return { 
-          materialCode, 
-          seriesCode, 
-          baseCode, 
-          buttonConfig, 
-          hasDisplay,
-          label: config.label
-        };
-      };
-
       // Title page
       pdf.setFontSize(20);
       pdf.setFont(undefined, 'bold');
@@ -309,7 +323,7 @@ const CartView = ({ isOpen, onClose, cart, onRemoveItem, onClearCart, isNewWindo
         
         // Generate product code for this item
         const productCodeData = generateProductCodeForItem(item);
-        const fullProductCode = `${productCodeData.materialCode}-${productCodeData.seriesCode}-${productCodeData.baseCode}`;
+        const fullProductCode = productCodeData.fullCode;
         
         pdf.setFontSize(9);
         pdf.setFont(undefined, 'bold');

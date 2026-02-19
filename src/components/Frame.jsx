@@ -137,20 +137,31 @@ function Frame({
     // Build the code string
     const buttonConfig = rowCodes.join('');
     const displayPrefix = hasDisplay ? 'D' : '';
-    const baseCode = displayPrefix + buttonConfig;
+    const configSuffix = displayPrefix + buttonConfig;
     
-    // Material prefix (MM1 = metal, MM2 = plastic) - default to MM2 for now
-    const materialCode = 'MM2';
+    // Generate product code with suffix
+    let productCode;
     
-    // Product series code
-    let seriesCode = 'PB'; // Pblock
-    if (gridType.includes('dora')) {
-      seriesCode = 'DR'; // Dora
+    if (gridType.includes('pblock')) {
+      // PBlock products use MM2_PB_ format
+      productCode = `MM2_PB_${configSuffix}`;
+    } else if (gridType === 'dora-thermostat') {
+      productCode = `MM1_4T_${configSuffix}`;
+    } else if (gridType === 'dora-2x8') {
+      productCode = `MM1_40_66_${configSuffix}`;
+    } else {
+      // Default keypad code for all other dora types (dora-2x4, dora-2x2, etc.)
+      productCode = `MM1_40_${configSuffix}`;
     }
     
-    // Full product code format: MM2-DR/PB-D221-114-1RS
-    // For now, return simplified version, can be extended with color codes
-    return { materialCode, seriesCode, baseCode, buttonConfig, hasDisplay };
+    return { 
+      materialCode: productCode,
+      seriesCode: '',
+      baseCode: '',
+      buttonConfig,
+      hasDisplay,
+      fullCode: productCode
+    };
   }, [config, dropZones, gridType]);  
   // Get selectedColor and fullColor from props or context if needed
   // For now, we'll get it from the button data when placing
@@ -888,7 +899,7 @@ function Frame({
         
         // Product Code Generation
         const productCodeData = generateProductCode();
-        const fullProductCode = `${productCodeData.materialCode}-${productCodeData.seriesCode}-${productCodeData.baseCode}`;
+        const fullProductCode = productCodeData.fullCode;
         
         pdf.setFontSize(11);
         pdf.setFont(undefined, 'bold');
