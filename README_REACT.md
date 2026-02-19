@@ -1,6 +1,6 @@
-# KNX Switch Designer - React Version
+# MM Technology interior - React Version
 
-This is the React conversion of the KNX Switch Designer application.
+This is the React conversion of the MM Technology interior application.
 
 ## Setup Instructions
 

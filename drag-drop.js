@@ -1,5 +1,5 @@
 /**
- * Clean Drag and Drop Implementation for KNX Switch Designer
+ * Clean Drag and Drop Implementation for MM Technology interior
  * Handles dragging button parts onto the device layout
  */
 

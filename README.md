@@ -1,4 +1,4 @@
-# KNX Switch Designer - Drag and Drop Implementation
+# MM Technology interior - Drag and Drop Implementation
 
 A clean, modern drag-and-drop interface for designing custom KNX switches.
 

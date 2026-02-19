@@ -849,7 +849,7 @@ function Frame({
         pdf.setFontSize(20);
         pdf.setFont(undefined, 'bold');
         pdf.setTextColor(40, 40, 40);
-        pdf.text('KNX Switch Designer', pageWidthMM / 2, 9.5, { align: 'center' });
+        pdf.text('MM Technology interior', pageWidthMM / 2, 9.5, { align: 'center' });
 
         // Add top border line
         pdf.setDrawColor(150, 120, 90);

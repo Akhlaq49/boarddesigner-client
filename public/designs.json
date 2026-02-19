@@ -2,10 +2,10 @@
   "designs": [
     {
       "id": "1770282450837",
-      "name": "a",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:07:30 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 3,
@@ -143,10 +143,10 @@
     },
     {
       "id": "1770282488167",
-      "name": "2",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:08:08 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 4,
@@ -296,10 +296,10 @@
     },
     {
       "id": "1770282533347",
-      "name": "3",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:08:53 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 3,
@@ -438,10 +438,10 @@
     },
     {
       "id": "1770282564707",
-      "name": "4",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:09:24 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button5": {
           "type": 2,
@@ -579,10 +579,10 @@
     },
     {
       "id": "1770282616319",
-      "name": "5",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:10:16 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 3,
@@ -726,10 +726,10 @@
     },
     {
       "id": "1770282650504",
-      "name": "6",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:10:50 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 3,
@@ -873,10 +873,10 @@
     },
     {
       "id": "1770282677210",
-      "name": "7",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:11:17 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 1,
@@ -1020,10 +1020,10 @@
     },
     {
       "id": "1770282698867",
-      "name": "8",
+      "name": "dora-2x8",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:11:38 PM",
-      "gridType": "2x4",
+      "gridType": "dora2x4",
       "dropZones": {
         "button1": {
           "type": 1,
@@ -1161,10 +1161,10 @@
     },
     {
       "id": "1770282730026",
-      "name": "9",
+      "name": "dora-2x4",
       "category": "2-8",
       "timestamp": "2/5/2026, 2:12:10 PM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 1,
@@ -5754,7 +5754,7 @@
       "name": "00001",
       "category": "design-self",
       "timestamp": "2/15/2026, 12:11:22 AM",
-      "gridType": "2x4",
+      "gridType": "dora-2x4",
       "dropZones": {
         "button1": {
           "type": 1,
