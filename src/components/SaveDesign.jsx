@@ -176,7 +176,7 @@ function SaveDesign({ isOpen, onClose, dropZones, gridType, frameColor, fullColo
         borderRadius: '12px',
         padding: '2rem',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-        minWidth: '400px',
+        width: '90%',
         maxWidth: '600px',
         maxHeight: '80vh',
         overflowY: 'auto'

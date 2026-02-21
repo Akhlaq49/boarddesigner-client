@@ -159,19 +159,10 @@ function App() {
         />
         
         <div className="container-fluid h-100 app-content">
-          <div className="row h-100 g-3" style={{ display: 'flex', margin: 0, flexWrap: 'nowrap', minWidth: 'fit-content' }}>
+          <div className="row h-100 g-3 app-columns-row">
             {/* Left Column - Button Parts (show only when Design Your Self is active) */}
             {showButtonParts && (
-              <div className="h-100" style={{ 
-                width: '20%',
-                minWidth: '200px',
-                
-                flexShrink: 0,
-                flexGrow: 0,
-                padding: '0 8px',
-                position: 'relative',
-                zIndex: 1001
-              }}>
+              <div className="h-100 app-col-left">
                 <div className="h-100">
                   <div className="x-card bg-white dark:bg-secondary-800 rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100" style={{ overflow: 'visible' }}>
                     <ButtonParts
@@ -199,16 +190,8 @@ function App() {
             )}
 
             {/* Center Column - Frame */}
-            <div className="h-100 d-flex align-items-center justify-content-center" style={{ 
-              width: `${boardWidth}%`,
-              minWidth: '300px',
-              maxWidth: 'calc(100% - 500px)', // Ensure space for left (300px) + right (240px) columns
-              flex: '1 1 auto',
-              flexShrink: 1,
-              padding: '0 8px',
-              overflow: 'visible',
-              position: 'relative',
-              zIndex: 1001
+            <div className="h-100 d-flex align-items-center justify-content-center app-col-center" style={{ 
+              width: `${boardWidth}%`
             }}>
               <Frame
                 gridType={gridType}
@@ -244,17 +227,7 @@ function App() {
             </div>
 
             {/* Right Column - Color Palette */}
-            <div className="h-100" style={{ 
-             
-              minWidth: '240px',
-              maxWidth: '300px',
-              flexShrink: 0,
-              flexGrow: 0,
-              padding: '0 8px 0 8px',
-              marginRight: '0',
-              position: 'relative',
-              zIndex: 1001
-            }}>
+            <div className="h-100 app-col-right">
               <div className="h-100">
                 <div className="x-card bg-white dark:bg-secondary-800 rounded-md shadow p-2 shadow-lg shadow-black/50 bg-slate-100" style={{ overflow: 'visible' }}>
                   <ColorPalette
